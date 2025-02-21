@@ -1,27 +1,29 @@
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.util.List;
 
 class Filme {
     private String nome;
-    private long data;
-    private float investimento;
+    private LocalDate data;
+    private int investimento;
     private float bilheteira;
-    private String franquia;
     private String genero;
+    private List<String> financiadores;
 
     public Filme() {
-
+        this.nome = null;
+        this.data = null;
+        this.investimento = 0;
+        this.bilheteira = 0;
+        this.financiadores = null;
+        this.genero = null;
     }
 
-    public Filme(String nome, long data, float investimento, float bilheteira, String franquia, String genero) {
+    public Filme(String nome, LocalDate data, int investimento, float bilheteira, List<String> financiadores, String genero) {
         this.nome = nome;
         this.data = data;
         this.investimento = investimento;
         this.bilheteira = bilheteira;
-        this.franquia = franquia;
+        this.financiadores = financiadores;
         this.genero = genero;
     }
 
@@ -33,19 +35,19 @@ class Filme {
         this.nome = nome;
     }
 
-    public long getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(long data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
-    public float getInvestimento() {
+    public int getInvestimento() {
         return investimento;
     }
 
-    public void setInvestimento(float investimento) {
+    public void setInvestimento(int investimento) {
         this.investimento = investimento;
     }
 
@@ -57,12 +59,12 @@ class Filme {
         this.bilheteira = bilheteira;
     }
 
-    public String getFranquia() {
-        return franquia;
+    public List<String> getfinanciadores() {
+        return financiadores;
     }
 
-    public void setFranquia(String franquia) {
-        this.franquia = franquia;
+    public void setfinanciadores(List<String> financiadores) {
+        this.financiadores = financiadores;
     }
 
     public String getGenero() {
@@ -81,7 +83,7 @@ public class Main {
       //  Scanner scanner = new Scanner(System.in);
 
         LocalDateTime data = LocalDateTime.of(2025, Month.FEBRUARY, 21, 12, 0, 0, 0);
-        long epoch = data.toInstant(ZoneOffset.UTC).toEpochMilli();
+        LocalDate epoch = data.toInstant(ZoneOffset.UTC).toEpochMilli();
 
         System.out.println("Timestamp epoch (milli): " + epoch);
 
