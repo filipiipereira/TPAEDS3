@@ -12,7 +12,7 @@ colunas_desejadas = [
     "Release Date", 
     "Production Budget (USD)", 
     "Worldwide Box Office (USD)", 
-    "Franchise", 
+    "Production/Financing Companies", 
     "Genre"
 ]
 
