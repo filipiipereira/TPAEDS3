@@ -3,6 +3,8 @@ public class Main {
         LoadCsv lc = new LoadCsv();
         lc.LoadFromCsv();
         SequentialFile sf = new SequentialFile();
-        sf.get(1).toStr();
+        sf.get(4).toStr();
+        if(sf.delete(4)) System.out.println("Deletado!");
+        else System.out.println("Erro!");
     }
 }

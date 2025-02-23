@@ -25,7 +25,7 @@ public class SequentialFile{
             file.writeInt(objectId);
             file.seek(file.length());
             file.writeByte(0);//flag
-            file.writeInt(film.byteSize());
+            file.writeInt(film.registerByteSize());
             file.writeInt(film.getId());
             file.writeUTF(film.getName());
             file.writeLong(film.getDate());
@@ -89,4 +89,30 @@ public class SequentialFile{
         }
         return film;
     }
+    public boolean delete(int id) {
+    boolean find = false;
+    try (RandomAccessFile arquivo = new RandomAccessFile(this.name, "rw")) {
+        arquivo.seek(4); 
+        while (arquivo.getFilePointer() < arquivo.length() && !find) {
+            long pos = arquivo.getFilePointer(); 
+            byte lapide = arquivo.readByte();    
+            int tamanhoRegistro = arquivo.readInt(); 
+            if (lapide == 0) { 
+                int idLido = arquivo.readInt();  
+                if (idLido == id) {
+                    arquivo.seek(pos);          
+                    arquivo.writeByte('*');     
+                    find = true;                
+                } else {
+                    arquivo.seek(pos + 1 + 4 + tamanhoRegistro); 
+                }
+            } else {
+                arquivo.seek(pos + 1 + 4 + tamanhoRegistro); 
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return find;
+}
 }

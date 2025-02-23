@@ -86,7 +86,7 @@ public class Film {
         this.genre = genre;
     }
 
-    public int byteSize(){
+    public int registerByteSize(){
         int size = 0;
         size += 4; //id
         size += 2 + name.getBytes().length; // name; writeUTF() uses 2 bytes for the size of the string
