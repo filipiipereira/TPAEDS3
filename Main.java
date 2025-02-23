@@ -4,7 +4,7 @@ public class Main {
         lc.LoadFromCsv();
         SequentialFile sf = new SequentialFile();
         sf.get(4).toStr();
-        if(sf.delete(4)) System.out.println("Deletado!");
-        else System.out.println("Erro!");
+        if(sf.delete(4)) System.out.println("OK (Delete)");
+        else System.out.println("ERRO (Delete)");
     }
 }
