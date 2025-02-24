@@ -91,23 +91,23 @@ public class SequentialFile{
     }
     public boolean delete(int id) {
     boolean find = false;
-    try (RandomAccessFile arquivo = new RandomAccessFile(this.name, "rw")) {
-        arquivo.seek(4); 
-        while (arquivo.getFilePointer() < arquivo.length() && !find) {
-            long pos = arquivo.getFilePointer(); 
-            byte lapide = arquivo.readByte();    
-            int tamanhoRegistro = arquivo.readInt(); 
-            if (lapide == 0) { 
-                int idLido = arquivo.readInt();  
-                if (idLido == id) {
-                    arquivo.seek(pos);          
-                    arquivo.writeByte('*');     
+    try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
+        file.seek(4); 
+        while (file.getFilePointer() < file.length() && !find) {
+            long position = file.getFilePointer(); 
+            byte flag = file.readByte();    
+            int registerSize = file.readInt(); 
+            if (flag == 0) { 
+                int readID = file.readInt();  
+                if (readID == id) {
+                    file.seek(position);          
+                    file.writeByte('*');     
                     find = true;                
                 } else {
-                    arquivo.seek(pos + 1 + 4 + tamanhoRegistro); 
+                    file.seek(position + 1 + 4 + registerSize); 
                 }
             } else {
-                arquivo.seek(pos + 1 + 4 + tamanhoRegistro); 
+                file.seek(position + 1 + 4 + registerSize); 
             }
         }
     } catch (Exception e) {
