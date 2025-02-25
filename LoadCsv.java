@@ -49,8 +49,8 @@ public class LoadCsv{
                 String genre = values[4];
                 List<String> financingCompanies = new ArrayList<>(Arrays.asList(values[5].split(",")));
                 Film film = new Film(0, name, epochDate, budget, boxOffice, financingCompanies, genre);
-                if(sequentialFile.Insert(film)) System.out.println("ok");
-                else System.out.println("error");
+                if(sequentialFile.Insert(film)) System.out.println("OK (Insert)");
+                else System.out.println("ERROR (Insert)");
                 linha= br.readLine();
             }
         }catch(IOException e){

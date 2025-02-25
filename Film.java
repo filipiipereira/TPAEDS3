@@ -1,4 +1,9 @@
 
+import java.time.Instant;
+import java.time.LocalDate;
+//import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Film {
@@ -103,11 +108,18 @@ public class Film {
         return size;
     }
 
+    public String dateFormater(long timestamp) {
+        LocalDate data = Instant.ofEpochSecond(timestamp+86400).atZone(ZoneId.systemDefault()).toLocalDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return data.format(formatter);
+    }
+
     public void toStr(){
-        System.out.print("Nome: " + name + "; Data de lançamento: " + date + "; Orçamento: " + budget + "; Bilheteria global: " + boxOffice + "; Genêro: " + genre + "; Companhias financiadoras: ");
+        System.out.print("Nome: " + name + "; Data de lançamento: " + dateFormater(date) + "; Orçamento: " + budget + "; Bilheteria global: " + boxOffice + "; Genêro: " + genre + "; Companhias financiadoras: ");
         for(String company : financingCompanies){
             System.out.print(company + ", ");
         }
+        System.out.println();
         System.err.println("");
     }
 }
