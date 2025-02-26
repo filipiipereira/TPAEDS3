@@ -55,6 +55,7 @@ public class SequentialFile{
         }
         return response;
     }
+
     public Film get(int id){
         Film film = null;
         boolean find = false;
@@ -89,6 +90,87 @@ public class SequentialFile{
         }
         return film;
     }
+
+    public boolean update(Film newFilm) {
+        boolean updated = false;
+        try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
+            file.seek(4);
+    
+            while (file.getFilePointer() < file.length() && !updated) {
+                long pos = file.getFilePointer();
+                byte flag = file.readByte();
+                int registerSize = file.readInt();
+    
+                if (flag != '*') {
+                    int id = file.readInt();
+                    if (id == newFilm.getId()) {
+                        byte[] bytes = file.readUTF().getBytes();
+                        file.readLong(); // Data
+                        file.readInt();  // Orçamento
+                        file.readFloat(); // Bilheteria
+                        file.readFully(new byte[10]); // Gênero
+                        int financingCompanies = file.readInt();
+                        for (int i = 0; i < financingCompanies; i++) {
+                            file.readUTF();
+                        }
+    
+                        int newSize = newFilm.registerByteSize();
+                        if (newSize <= registerSize) {
+                            file.seek(pos);
+                            file.writeByte(0); // flag
+                            file.writeInt(newSize);
+                            file.writeInt(newFilm.getId());
+                            file.writeUTF(newFilm.getName());
+                            file.writeLong(newFilm.getDate());
+                            file.writeInt(newFilm.getBudget());
+                            file.writeFloat(newFilm.getBoxOffice());
+    
+                            String gender = newFilm.getGenre();
+                            for (int i = 0; i < 10; i++) {
+                                file.writeByte(i < gender.length() ? gender.charAt(i) : ' ');
+                            }
+    
+                            file.writeInt(newFilm.getFinancingCompanies().size());
+                            for (String company : newFilm.getFinancingCompanies()) {
+                                file.writeUTF(company);
+                            }
+                        } else {
+                            file.seek(pos);
+                            file.writeByte('*'); // Marcar como excluído
+                            file.seek(file.length());
+                            file.writeByte(0);
+                            file.writeInt(newSize);
+                            file.writeInt(newFilm.getId());
+                            file.writeUTF(newFilm.getName());
+                            file.writeLong(newFilm.getDate());
+                            file.writeInt(newFilm.getBudget());
+                            file.writeFloat(newFilm.getBoxOffice());
+    
+                            String gender = newFilm.getGenre();
+                            for (int i = 0; i < 10; i++) {
+                                file.writeByte(i < gender.length() ? gender.charAt(i) : ' ');
+                            }
+    
+                            file.writeInt(newFilm.getFinancingCompanies().size());
+                            for (String company : newFilm.getFinancingCompanies()) {
+                                file.writeUTF(company);
+                            }
+                        }
+                        updated = true;
+                    } else {
+                        file.seek(pos + 1 + 4 + registerSize);
+                    }
+                } else {
+                    file.seek(pos + 1 + 4 + registerSize);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return updated;
+    }
+    
+    
     public boolean delete(int id) {
     boolean find = false;
     try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
