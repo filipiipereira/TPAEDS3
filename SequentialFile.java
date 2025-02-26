@@ -172,29 +172,29 @@ public class SequentialFile{
     
     
     public boolean delete(int id) {
-    boolean find = false;
-    try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
-        file.seek(4); 
-        while (file.getFilePointer() < file.length() && !find) {
-            long position = file.getFilePointer(); 
-            byte flag = file.readByte();    
-            int registerSize = file.readInt(); 
-            if (flag == 0) { 
-                int readID = file.readInt();  
-                if (readID == id) {
-                    file.seek(position);          
-                    file.writeByte('*');     
-                    find = true;                
+        boolean find = false;
+        try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
+            file.seek(4); 
+            while (file.getFilePointer() < file.length() && !find) {
+                long position = file.getFilePointer(); 
+                byte flag = file.readByte();    
+                int registerSize = file.readInt(); 
+                if (flag == 0) { 
+                    int readID = file.readInt();  
+                    if (readID == id) {
+                        file.seek(position);          
+                        file.writeByte('*');     
+                        find = true;                
+                    } else {
+                        file.seek(position + 1 + 4 + registerSize); 
+                    }
                 } else {
                     file.seek(position + 1 + 4 + registerSize); 
                 }
-            } else {
-                file.seek(position + 1 + 4 + registerSize); 
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return find;
     }
-    return find;
-}
 }
