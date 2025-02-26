@@ -29,7 +29,6 @@ public class LoadCsv{
                         values[i] = "";
                     }
                 }
-                System.out.println(values[0]);
                 String name = values[0];
                 LocalDate date = null;
                 long epochDate = -1;
@@ -49,8 +48,7 @@ public class LoadCsv{
                 String genre = values[4];
                 List<String> financingCompanies = new ArrayList<>(Arrays.asList(values[5].split(",")));
                 Film film = new Film(0, name, epochDate, budget, boxOffice, financingCompanies, genre);
-                if(sequentialFile.Insert(film)) System.out.println("OK (Insert)");
-                else System.out.println("ERROR (Insert)");
+                sequentialFile.Insert(film);
                 linha= br.readLine();
             }
         }catch(IOException e){
