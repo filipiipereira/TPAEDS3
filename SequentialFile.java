@@ -198,5 +198,3 @@ public class SequentialFile{
         return find;
     }
 }
-
-//sahdsahadhdahuidahuiadhuiasdhuis
