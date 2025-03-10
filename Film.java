@@ -114,11 +114,10 @@ public class Film {
     }
 
     public void toStr(){
-        System.out.print("Nome: " + name + "; Data de lançamento: " + dateFormater(date) + "; Orçamento: " + budget + "; Bilheteria global: " + boxOffice + "; Genêro: " + genre + "; Companhias financiadoras: ");
-        for(String company : financingCompanies){
-            System.out.print(company + ", ");
+        System.out.print("\nFILM: \nName: \"" + name + "\"; \nRelease Date: " + dateFormater(date) + "; \nBudget: " + budget + "$; \nGlobal Box-Office: " + boxOffice + "$; \nGenre: " + genre + "; \nFinancing companies: ");
+        for(int i = 0; i < financingCompanies.size(); i++){
+            if(i == financingCompanies.size() - 1) System.out.println(financingCompanies.get(i));
+            else System.out.print(financingCompanies.get(i) + "\", \"");
         }
-        System.out.println();
-        System.err.println("");
     }
 }

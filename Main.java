@@ -7,7 +7,7 @@ public class Main {
         int option;
         Scanner scanner = new Scanner(System.in);
         do{
-            System.out.println("Menu: ");
+            System.out.println("\nMenu: ");
             System.out.println("0) End program");
             System.out.println("1) Load films from Csv");
             System.out.println("2) Insert new film");
@@ -15,7 +15,7 @@ public class Main {
             System.out.println("4) Delete film");
             System.out.println("5) Show data from a movie");
             do { 
-                System.out.println("Choose an option: ");
+                System.out.println("\nChoose an option: ");
                 option = scanner.nextInt(); 
             } while (!(option == 0 || option == 1 || option == 2 || option == 3 || option == 4 || option == 5));
             switch(option){

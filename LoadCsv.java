@@ -13,6 +13,7 @@ public class LoadCsv{
         String linha;
         SequentialFile sequentialFile = new SequentialFile();
         try(BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))){
+            System.out.println("Loading...");
             br.readLine(); //ignores the first one(header)
             linha = br.readLine();
             while(linha != null){
@@ -51,5 +52,6 @@ public class LoadCsv{
         }catch(IOException e){
             e.printStackTrace();
         }
+        System.out.println("Load completed");
     }
 }
