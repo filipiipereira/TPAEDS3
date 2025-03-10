@@ -16,7 +16,7 @@ public class SequentialFile{
                 file.seek(0);
                 int lastId = file.readInt();
                 objectId = lastId + 1;
-                film.setId(lastId);
+                film.setId(objectId);
             }
             else{
                 objectId = 1;
@@ -62,8 +62,13 @@ public class SequentialFile{
         try(RandomAccessFile file = new RandomAccessFile(this.name, "r")){
             file.seek(4);//jumping over the last id
             while(file.getFilePointer() < file.length() && !find){
-                if(file.readByte() != '*'){
-                    int registerLength = file.readInt(); 
+                Byte flag = file.readByte();
+                int registerLength = file.readInt(); // Lê o tamanho do registro
+                long pos = file.getFilePointer();
+                if(flag == '*'){
+                    file.seek(pos + registerLength);
+                }
+                else{ 
                     int registerId = file.readInt(); 
                     String registerName = file.readUTF();
                     long registerDate = file.readLong();
