@@ -6,7 +6,6 @@ public class Main {
     public static void main(String[] args) {
         int option;
         Scanner scanner = new Scanner(System.in);
-        Controller controller = new Controller();
         do{
             System.out.println("Menu: ");
             System.out.println("0) End program");
@@ -21,23 +20,24 @@ public class Main {
             } while (!(option == 0 || option == 1 || option == 2 || option == 3 || option == 4 || option == 5));
             switch(option){
                 case 1:
-                    LoadCsv lc = new LoadCsv();
-                    lc.LoadFromCsv();
+                    LoadCsv.LoadFromCsv();
                     break;
                 case 2:
-                    if(controller.Insert(scanner)) System.out.println("Inserted successfully");
+                    if(Controller.Insert(scanner)) System.out.println("Inserted successfully");
                     else System.out.println("error in insert");
                     break;
                 case 3: 
-                    if(controller.Update(scanner)) System.out.println("Uptaded successfully");
+                    if(Controller.Update(scanner)) System.out.println("Uptaded successfully");
                     else System.out.println("error in update");
                     break;
                 case 4: 
-                    if(controller.Delete(scanner)) System.out.println("Deleted successfully");
+                    if(Controller.Delete(scanner)) System.out.println("Deleted successfully");
                     else System.out.println("error in delete");
                     break;
                 case 5: 
-                    controller.Get(scanner);
+                    Film film = Controller.Get(scanner);
+                    if(film == null) System.out.println("Film not found");
+                    else film.toStr();
             }
         }while(option != 0);
         scanner.close();

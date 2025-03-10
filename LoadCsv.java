@@ -8,14 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 public class LoadCsv{
-    private String name;
-    public LoadCsv(){
-        this.name = "filmsDataSet.csv";
-    }
-    public void LoadFromCsv(){
+    private static String CSV_NAME = "filmsDataSet.csv";
+    public static void LoadFromCsv(){
         String linha;
         SequentialFile sequentialFile = new SequentialFile();
-        try(BufferedReader br = new BufferedReader(new FileReader(name))){
+        try(BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))){
             br.readLine(); //ignores the first one(header)
             linha = br.readLine();
             while(linha != null){

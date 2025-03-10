@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Controller{
-    public Film Form(Scanner scanner){
+    public static Film Form(Scanner scanner){
         System.out.print("Name: ");
         scanner.nextLine();//cleaning buffer
         String name = scanner.nextLine();
@@ -32,32 +32,26 @@ public class Controller{
         Film film = new Film(0, name, epochDate, budget, boxOffice, financingCompanies, genre);
         return film;
     }
-    public boolean Insert(Scanner scanner){
+    public static boolean Insert(Scanner scanner){
         boolean response = false;
-        SequentialFile sf = new SequentialFile();
-        return(sf.Insert(Form(scanner)));
+        return(SequentialFile.Insert(Form(scanner)));
     }
-    public boolean Update(Scanner scanner){
+    public static boolean Update(Scanner scanner){
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
-        SequentialFile sf = new SequentialFile();
-        sf.Get(id).toStr();
+        SequentialFile.Get(id).toStr();
         Film film = Form(scanner);
         film.setId(id);
-        return(sf.Update(film));
+        return(SequentialFile.Update(film));
     }
-    public boolean Delete(Scanner scanner){
+    public static boolean Delete(Scanner scanner){
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
-        SequentialFile sf = new SequentialFile();
-        return(sf.Delete(id));
+        return(SequentialFile.Delete(id));
     }
-    public void Get(Scanner scanner){
+    public static Film Get(Scanner scanner){
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
-        SequentialFile sf = new SequentialFile();
-        Film film = sf.Get(id);
-        if(film == null) System.out.println("Film not found");
-        else film.toStr();
+        return SequentialFile.Get(id);
     }
 }

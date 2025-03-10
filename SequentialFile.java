@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SequentialFile{
-    private String name;
-    public SequentialFile(){
-        this.name = "SequentialFile.dat";
-    }
-    public boolean Insert(Film film){
+    private static String FILE_NAME = "SequentialFile.dat";
+    public static boolean Insert(Film film){
         boolean response = false;
-        try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             int objectId;
             if(file.length() != 0){
                 file.seek(0);
@@ -32,22 +29,13 @@ public class SequentialFile{
             file.writeInt(film.getBudget());
             file.writeFloat(film.getBoxOffice());
             //write fixed-size string
-            String fixedString = film.getGenre();
-            int fixedStringSize = fixedString.length();
-            if(fixedStringSize <= 10){
-                file.writeBytes(fixedString);
-                for (int i = fixedStringSize; i < 10; i++) {
-                    file.writeByte(' ');
-                }
-            }
-            else{
-                for (int i = 0; i < 10; i++) {
-                    file.writeByte(fixedString.charAt(i));
-                }
+            String genre = film.getGenre();
+            for (int i = 0; i < 10; i++) {
+                file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
             }
             file.writeInt(film.getFinancingCompanies().size());
-            for(int i = 0; i < film.getFinancingCompanies().size(); i++){
-                file.writeUTF(film.getFinancingCompanies().get(i));
+            for (String company : film.getFinancingCompanies()) {
+                file.writeUTF(company);
             }
             response = true;
         } catch (Exception e) {
@@ -56,10 +44,10 @@ public class SequentialFile{
         return response;
     }
 
-    public Film Get(int id){
+    public static Film Get(int id){
         Film film = null;
         boolean find = false;
-        try(RandomAccessFile file = new RandomAccessFile(this.name, "r")){
+        try(RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")){
             file.seek(4);//jumping over the last id
             while(file.getFilePointer() < file.length() && !find){
                 Byte flag = file.readByte();
@@ -96,14 +84,14 @@ public class SequentialFile{
         return film;
     }
 
-    public boolean Update(Film newFilm) {
+    public static boolean Update(Film newFilm) {
         boolean response = false;
-        try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4);
             while (file.getFilePointer() < file.length() && !response) {
-                long pos = file.getFilePointer();
                 byte flag = file.readByte();
                 int registerSize = file.readInt();
+                long pos = file.getFilePointer();
                 if (flag != '*') {
                     int id = file.readInt();
                     if (id == newFilm.getId()) {
@@ -151,10 +139,10 @@ public class SequentialFile{
                         }
                         response = true;
                     } else {
-                        file.seek(pos + 1 + 4 + registerSize);
+                        file.seek(pos + registerSize);
                     }
                 } else {
-                    file.seek(pos + 1 + 4 + registerSize);
+                    file.seek(pos + registerSize);
                 }
             }
         } catch (Exception e) {
@@ -164,9 +152,9 @@ public class SequentialFile{
     }
     
     
-    public boolean Delete(int id) {
+    public static boolean Delete(int id) {
         boolean response = false;
-        try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4); 
             while (file.getFilePointer() < file.length() && !response) {
                 long position = file.getFilePointer(); 
