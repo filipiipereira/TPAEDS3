@@ -8,14 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 public class LoadCsv{
-    private String name;
-    public LoadCsv(){
-        this.name = "filmsDataSet.csv";
-    }
-    public void LoadFromCsv(){
+    private static String CSV_NAME = "filmsDataSet.csv";
+    public static void LoadFromCsv(){
         String linha;
         SequentialFile sequentialFile = new SequentialFile();
-        try(BufferedReader br = new BufferedReader(new FileReader(name))){
+        try(BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))){
+            System.out.println("Loading...");
             br.readLine(); //ignores the first one(header)
             linha = br.readLine();
             while(linha != null){
@@ -29,7 +27,6 @@ public class LoadCsv{
                         values[i] = "";
                     }
                 }
-                System.out.println(values[0]);
                 String name = values[0];
                 LocalDate date = null;
                 long epochDate = -1;
@@ -49,12 +46,12 @@ public class LoadCsv{
                 String genre = values[4];
                 List<String> financingCompanies = new ArrayList<>(Arrays.asList(values[5].split(",")));
                 Film film = new Film(0, name, epochDate, budget, boxOffice, financingCompanies, genre);
-                if(sequentialFile.Insert(film)) System.out.println("OK (Insert)");
-                else System.out.println("ERROR (Insert)");
+                sequentialFile.Insert(film);
                 linha= br.readLine();
             }
         }catch(IOException e){
             e.printStackTrace();
         }
+        System.out.println("Load completed");
     }
 }

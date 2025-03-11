@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SequentialFile{
-    private String name;
-    public SequentialFile(){
-        this.name = "SequentialFile.dat";
-    }
-    public boolean Insert(Film film){
+    private static String FILE_NAME = "SequentialFile.dat";
+    public static boolean Insert(Film film){
         boolean response = false;
-        try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             int objectId;
             if(file.length() != 0){
                 file.seek(0);
                 int lastId = file.readInt();
                 objectId = lastId + 1;
-                film.setId(lastId);
+                film.setId(objectId);
             }
             else{
                 objectId = 1;
@@ -32,22 +29,13 @@ public class SequentialFile{
             file.writeInt(film.getBudget());
             file.writeFloat(film.getBoxOffice());
             //write fixed-size string
-            String fixedString = film.getGenre();
-            int fixedStringSize = fixedString.length();
-            if(fixedStringSize <= 10){
-                file.writeBytes(fixedString);
-                for (int i = fixedStringSize; i < 10; i++) {
-                    file.writeByte(' ');
-                }
-            }
-            else{
-                for (int i = 0; i < 10; i++) {
-                    file.writeByte(fixedString.charAt(i));
-                }
+            String genre = film.getGenre();
+            for (int i = 0; i < 10; i++) {
+                file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
             }
             file.writeInt(film.getFinancingCompanies().size());
-            for(int i = 0; i < film.getFinancingCompanies().size(); i++){
-                file.writeUTF(film.getFinancingCompanies().get(i));
+            for (String company : film.getFinancingCompanies()) {
+                file.writeUTF(company);
             }
             response = true;
         } catch (Exception e) {
@@ -56,14 +44,19 @@ public class SequentialFile{
         return response;
     }
 
-    public Film get(int id){
+    public static Film Get(int id){
         Film film = null;
         boolean find = false;
-        try(RandomAccessFile file = new RandomAccessFile(this.name, "r")){
+        try(RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")){
             file.seek(4);//jumping over the last id
             while(file.getFilePointer() < file.length() && !find){
-                if(file.readByte() != '*'){
-                    int registerLength = file.readInt(); 
+                Byte flag = file.readByte();
+                int registerLength = file.readInt(); // Lê o tamanho do registro
+                long pos = file.getFilePointer();
+                if(flag == '*'){
+                    file.seek(pos + registerLength);
+                }
+                else{ 
                     int registerId = file.readInt(); 
                     String registerName = file.readUTF();
                     long registerDate = file.readLong();
@@ -91,29 +84,17 @@ public class SequentialFile{
         return film;
     }
 
-    public boolean update(Film newFilm) {
-        boolean updated = false;
-        try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
+    public static boolean Update(Film newFilm) {
+        boolean response = false;
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4);
-    
-            while (file.getFilePointer() < file.length() && !updated) {
-                long pos = file.getFilePointer();
+            while (file.getFilePointer() < file.length() && !response) {
                 byte flag = file.readByte();
                 int registerSize = file.readInt();
-    
+                long pos = file.getFilePointer();
                 if (flag != '*') {
                     int id = file.readInt();
                     if (id == newFilm.getId()) {
-                        byte[] bytes = file.readUTF().getBytes();
-                        file.readLong(); // Data
-                        file.readInt();  // Orçamento
-                        file.readFloat(); // Bilheteria
-                        file.readFully(new byte[10]); // Gênero
-                        int financingCompanies = file.readInt();
-                        for (int i = 0; i < financingCompanies; i++) {
-                            file.readUTF();
-                        }
-    
                         int newSize = newFilm.registerByteSize();
                         if (newSize <= registerSize) {
                             file.seek(pos);
@@ -156,26 +137,26 @@ public class SequentialFile{
                                 file.writeUTF(company);
                             }
                         }
-                        updated = true;
+                        response = true;
                     } else {
-                        file.seek(pos + 1 + 4 + registerSize);
+                        file.seek(pos + registerSize);
                     }
                 } else {
-                    file.seek(pos + 1 + 4 + registerSize);
+                    file.seek(pos + registerSize);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return updated;
+        return response;
     }
     
     
-    public boolean delete(int id) {
-        boolean find = false;
-        try (RandomAccessFile file = new RandomAccessFile(this.name, "rw")) {
+    public static boolean Delete(int id) {
+        boolean response = false;
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4); 
-            while (file.getFilePointer() < file.length() && !find) {
+            while (file.getFilePointer() < file.length() && !response) {
                 long position = file.getFilePointer(); 
                 byte flag = file.readByte();    
                 int registerSize = file.readInt(); 
@@ -184,7 +165,7 @@ public class SequentialFile{
                     if (readID == id) {
                         file.seek(position);          
                         file.writeByte('*');     
-                        find = true;                
+                        response = true;                
                     } else {
                         file.seek(position + 1 + 4 + registerSize); 
                     }
@@ -195,6 +176,6 @@ public class SequentialFile{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return find;
+        return response;
     }
 }
