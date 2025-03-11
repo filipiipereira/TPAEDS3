@@ -17,8 +17,11 @@ public class Main {
             do { 
                 System.out.println("\nChoose an option: ");
                 option = scanner.nextInt(); 
-            } while (!(option == 0 || option == 1 || option == 2 || option == 3 || option == 4 || option == 5));
+            } while (!(option <= 0 || option >= 5));
             switch(option){
+                case 0:
+                    System.out.println("Saindo...");
+                    break;
                 case 1:
                     LoadCsv.LoadFromCsv();
                     break;
@@ -38,6 +41,9 @@ public class Main {
                     Film film = Controller.Get(scanner);
                     if(film == null) System.out.println("Film not found");
                     else film.toStr();
+                    break;
+                default:
+                    System.out.println("Opção Inválida!");
             }
         }while(option != 0);
         scanner.close();

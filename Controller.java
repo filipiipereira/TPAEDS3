@@ -11,7 +11,7 @@ public class Controller{
         System.out.print("Name: ");
         scanner.nextLine();//cleaning buffer
         String name = scanner.nextLine();
-        System.out.println("Date(yyyy-MM-dd): ");
+        System.out.print("Date(yyyy-MM-dd): ");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(scanner.nextLine(), formatter);
         long epochDate = date.atStartOfDay(UTC).toEpochSecond();
