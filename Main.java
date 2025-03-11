@@ -14,13 +14,11 @@ public class Main {
             System.out.println("3) Update film");
             System.out.println("4) Delete film");
             System.out.println("5) Show data from a movie");
-            do { 
-                System.out.println("\nChoose an option: ");
-                option = scanner.nextInt(); 
-            } while (!(option <= 0 || option >= 5));
+            System.out.println("\nChoose an option: ");
+            option = scanner.nextInt(); 
             switch(option){
                 case 0:
-                    System.out.println("Saindo...");
+                    System.out.println("See you next time!");
                     break;
                 case 1:
                     LoadCsv.LoadFromCsv();
