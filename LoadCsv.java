@@ -7,51 +7,84 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-public class LoadCsv{
+
+/**
+ * Classe responsável por carregar dados de um arquivo CSV e armazená-los como objetos do tipo Film.
+ */
+public class LoadCsv {
+    
+    /**
+     * Nome do arquivo CSV a ser carregado.
+     */
     private static String CSV_NAME = "filmsDataSet.csv";
-    public static void LoadFromCsv(){
+    
+    /**
+     * Método para carregar os dados do arquivo CSV e inseri-los em um arquivo sequencial.
+     * 
+     * O método faz a leitura linha por linha do arquivo, processa os dados, converte tipos quando necessário
+     * e cria objetos da classe Film, os quais são inseridos em um arquivo sequencial.
+     */
+    public static void LoadFromCsv() {
         String linha;
         SequentialFile sequentialFile = new SequentialFile();
-        try(BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))){
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))) {
             System.out.println("Loading...");
-            br.readLine(); //ignores the first one(header)
+            br.readLine(); // Ignora o cabeçalho
             linha = br.readLine();
-            while(linha != null){
+            
+            while (linha != null) {
+                // Divide a linha respeitando valores entre aspas
                 String[] originalValues = linha.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
                 String[] values = new String[6];
+                
+                // Copia os valores existentes
                 for (int i = 0; i < originalValues.length; i++) {
                     values[i] = originalValues[i];
                 }
-                if(originalValues.length < 6){
-                    for(int i = originalValues.length; i < 6; i++){
+                
+                // Preenche os valores ausentes com strings vazias
+                if (originalValues.length < 6) {
+                    for (int i = originalValues.length; i < 6; i++) {
                         values[i] = "";
                     }
                 }
+                
+                // Processa os valores extraídos
                 String name = values[0];
                 LocalDate date = null;
                 long epochDate = -1;
+                
                 if (!values[1].isEmpty()) {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     date = LocalDate.parse(values[1], formatter);
                     epochDate = date.atStartOfDay(UTC).toEpochSecond();
                 }
+                
                 int budget = 0;
-                if(!values[2].isEmpty()){
+                if (!values[2].isEmpty()) {
                     budget = Integer.parseInt(values[2]);
                 }
+                
                 float boxOffice = 0;
-                if(!values[3].isEmpty()){
+                if (!values[3].isEmpty()) {
                     boxOffice = Float.parseFloat(values[3]);
                 }
+                
                 String genre = values[4];
                 List<String> financingCompanies = new ArrayList<>(Arrays.asList(values[5].split(",")));
+                
+                // Cria um objeto Film e o insere no arquivo sequencial
                 Film film = new Film(0, name, epochDate, budget, boxOffice, financingCompanies, genre);
                 sequentialFile.Insert(film);
-                linha= br.readLine();
+                
+                // Lê a próxima linha
+                linha = br.readLine();
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        
         System.out.println("Load completed");
     }
 }
