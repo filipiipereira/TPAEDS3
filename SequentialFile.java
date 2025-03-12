@@ -4,6 +4,8 @@
  */
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class SequentialFile {
@@ -201,37 +203,43 @@ public class SequentialFile {
             int quantityRecords = 0;
             int quantityPaths = 0;
             file.seek(4); //jumping lastId record
-            while(quantityPaths < m){
-                Film blockFilm[] = new Film[b];
-                while(quantityRecords < b){
-                    Byte flag = file.readByte();
-                    int registerLength = file.readInt(); 
-                    long pos = file.getFilePointer();
-                    if(flag == '*'){
-                        file.seek(pos + registerLength);
-                    }
-                    else{ 
-                        int registerId = file.readInt(); 
-                        String registerName = file.readUTF();
-                        long registerDate = file.readLong();
-                        int registerBudget = file.readInt();
-                        float registerBoxOffice = file.readFloat();
-                        byte[] genreBytes = new byte[10];
-                        file.readFully(genreBytes); 
-                        String registerGenre = new String(genreBytes).trim();
-                        int numCompanies = file.readInt();
-                        List<String> registerFinancingCompanies = new ArrayList<>();
-                        for (int i = 0; i < numCompanies; i++) {
-                            registerFinancingCompanies.add(file.readUTF()); 
+            while(file.getFilePointer() != file.length()){
+                while(quantityPaths < m){
+                    Film blockFilm[] = new Film[b];
+                    while(quantityRecords < b){
+                        //reading record
+                        Byte flag = file.readByte();
+                        int registerLength = file.readInt(); 
+                        long pos = file.getFilePointer();
+                        if(flag == '*'){
+                            file.seek(pos + registerLength);
                         }
-                        for(String s : registerFinancingCompanies){
+                        else{ 
+                            int registerId = file.readInt(); 
+                            String registerName = file.readUTF();
+                            long registerDate = file.readLong();
+                            int registerBudget = file.readInt();
+                            float registerBoxOffice = file.readFloat();
+                            byte[] genreBytes = new byte[10];
+                            file.readFully(genreBytes); 
+                            String registerGenre = new String(genreBytes).trim();
+                            int numCompanies = file.readInt();
+                            List<String> registerFinancingCompanies = new ArrayList<>();
+                            for (int i = 0; i < numCompanies; i++) {
+                                registerFinancingCompanies.add(file.readUTF()); 
+                            }
+                            for(String s : registerFinancingCompanies){
+                            }
+                            //if valid record, adding it to array
+                            Film film = new Film(registerId, registerName, registerDate, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
+                            blockFilm[quantityRecords] = film;
+                            quantityRecords++;
                         }
-                        Film film = new Film(registerId, registerName, registerDate, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
-                        blockFilm[quantityRecords] = film;
-                        quantityRecords++;
+                        Arrays.sort(blockFilm, Comparator.comparingInt(film -> film.getId()));
                     }
+                    try (RandomAccessFile file = new RandomAccessFile("FILE_NAME", "r")) {
+                    quantityPaths++;
                 }
-                quantityPaths++;
             }
         } catch (Exception e) {
             e.printStackTrace();
