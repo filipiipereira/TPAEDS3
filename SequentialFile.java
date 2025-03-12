@@ -178,4 +178,46 @@ public class SequentialFile{
         }
         return response;
     }
+
+    public static void Sort(int b, int m){
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
+            int quantityRecords = 0;
+            int quantityPaths = 0;
+            file.seek(4); //jumping lastId record
+            while(quantityPaths < m){
+                Film blockFilm[] = new Film[b];
+                while(quantityRecords < b){
+                    Byte flag = file.readByte();
+                    int registerLength = file.readInt(); 
+                    long pos = file.getFilePointer();
+                    if(flag == '*'){
+                        file.seek(pos + registerLength);
+                    }
+                    else{ 
+                        int registerId = file.readInt(); 
+                        String registerName = file.readUTF();
+                        long registerDate = file.readLong();
+                        int registerBudget = file.readInt();
+                        float registerBoxOffice = file.readFloat();
+                        byte[] genreBytes = new byte[10];
+                        file.readFully(genreBytes); 
+                        String registerGenre = new String(genreBytes).trim();
+                        int numCompanies = file.readInt();
+                        List<String> registerFinancingCompanies = new ArrayList<>();
+                        for (int i = 0; i < numCompanies; i++) {
+                            registerFinancingCompanies.add(file.readUTF()); 
+                        }
+                        for(String s : registerFinancingCompanies){
+                        }
+                        Film film = new Film(registerId, registerName, registerDate, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
+                        blockFilm[quantityRecords] = film;
+                        quantityRecords++;
+                    }
+                }
+                quantityPaths++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
