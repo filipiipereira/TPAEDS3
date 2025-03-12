@@ -12,6 +12,9 @@ public class Main {
     public static void main(String[] args) {
         int option;
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("");
+        System.out.println("FILIPAO VOCE É O CARAAAAA, VOCE É FODAAAAAAA S2 SALVE DO JULIADA");
         
         do {
             System.out.println("\nMenu: ");
@@ -21,6 +24,7 @@ public class Main {
             System.out.println("3) Update film");
             System.out.println("4) Delete film");
             System.out.println("5) Show data from a movie");
+            System.out.println("6) Sort");
             System.out.println("\nChoose an option: ");
             
             option = scanner.nextInt(); 
@@ -56,6 +60,9 @@ public class Main {
                         System.out.println("Film not found");
                     else 
                         film.toStr();
+                    break;
+                case 6: 
+                    SequentialFile.ExternalSort(200, 5);
                     break;
                 default:
                     System.out.println("Invalid option. Please try again.");

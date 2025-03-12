@@ -11,26 +11,8 @@ import java.util.List;
 public class SequentialFile {
     private static String FILE_NAME = "SequentialFile.dat";
 
-    /**
-     * Insere um novo filme no arquivo sequencial.
-     * @param film Objeto Film a ser inserido.
-     * @return true se a inserção for bem-sucedida, false caso contrário.
-     */
-    public static boolean Insert(Film film) {
-        boolean response = false;
-        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
-            int objectId;
-            if (file.length() != 0) {
-                file.seek(0);
-                int lastId = file.readInt();
-                objectId = lastId + 1;
-            } else {
-                objectId = 1;
-            }
-            film.setId(objectId);
-            file.seek(0);
-            file.writeInt(objectId);
-            file.seek(file.length());
+    public static void WriteFilm(RandomAccessFile file, Film film){
+        try {
             file.writeByte(0); // flag
             file.writeInt(film.registerByteSize());
             file.writeInt(film.getId());
@@ -49,6 +31,56 @@ public class SequentialFile {
             for (String company : film.getFinancingCompanies()) {
                 file.writeUTF(company);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static Film ReadFilm(RandomAccessFile file){
+        Film film = null;
+        try {
+            int registerId = file.readInt();
+            String registerName = file.readUTF();
+            long registerDate = file.readLong();
+            int registerBudget = file.readInt();
+            float registerBoxOffice = file.readFloat();
+            byte[] genreBytes = new byte[10];
+            file.readFully(genreBytes);
+            String registerGenre = new String(genreBytes).trim();
+            int numCompanies = file.readInt();
+            List<String> registerFinancingCompanies = new ArrayList<>();
+            for (int i = 0; i < numCompanies; i++) {
+                registerFinancingCompanies.add(file.readUTF());
+            }
+            film = new Film(registerId, registerName, registerDate, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return film;
+    }
+
+    /**
+     * Insere um novo filme no arquivo sequencial.
+     * @param film Objeto Film a ser inserido.
+     * @return true se a inserção for bem-sucedida, false caso contrário.
+     */
+    public static boolean Insert(Film film) {
+        boolean response = false;
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
+            int objectId;
+            if (file.length() != 0) {
+                file.seek(0);
+                int lastId = file.readInt();
+                objectId = lastId + 1;
+            } else {
+                objectId = 1;
+            }
+            film.setId(objectId);
+            file.seek(0);
+            file.writeInt(film.getId());
+            file.seek(file.length());
+            WriteFilm(file, film);
             response = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,21 +105,9 @@ public class SequentialFile {
                 if (flag == '*') {
                     file.seek(pos + registerLength);
                 } else {
-                    int registerId = file.readInt();
-                    String registerName = file.readUTF();
-                    long registerDate = file.readLong();
-                    int registerBudget = file.readInt();
-                    float registerBoxOffice = file.readFloat();
-                    byte[] genreBytes = new byte[10];
-                    file.readFully(genreBytes);
-                    String registerGenre = new String(genreBytes).trim();
-                    int numCompanies = file.readInt();
-                    List<String> registerFinancingCompanies = new ArrayList<>();
-                    for (int i = 0; i < numCompanies; i++) {
-                        registerFinancingCompanies.add(file.readUTF());
-                    }
-                    if (registerId == id) {
-                        film = new Film(registerId, registerName, registerDate, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
+                    Film recordFilm = ReadFilm(file);
+                    if (recordFilm.getId() == id) {
+                        film = recordFilm;
                         find = true;
                     }
                 }
@@ -108,56 +128,28 @@ public class SequentialFile {
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4);
             while (file.getFilePointer() < file.length() && !response) {
+                long pos = file.getFilePointer();
                 byte flag = file.readByte();
                 int registerSize = file.readInt();
-                long pos = file.getFilePointer();
                 if (flag != '*') {
                     int id = file.readInt();
                     if (id == newFilm.getId()) {
                         int newSize = newFilm.registerByteSize();
                         if (newSize <= registerSize) {
                             file.seek(pos);
-                            file.writeByte(0); // flag
-                            file.writeInt(newSize);
-                            file.writeInt(newFilm.getId());
-                            file.writeUTF(newFilm.getName());
-                            file.writeLong(newFilm.getDate());
-                            file.writeInt(newFilm.getBudget());
-                            file.writeFloat(newFilm.getBoxOffice());
-                            String genre = newFilm.getGenre();
-                            for (int i = 0; i < 10; i++) {
-                                file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
-                            }
-                            file.writeInt(newFilm.getFinancingCompanies().size());
-                            for (String company : newFilm.getFinancingCompanies()) {
-                                file.writeUTF(company);
-                            }
+                            WriteFilm(file, newFilm);
                         } else {
                             file.seek(pos);
                             file.writeByte('*'); // Marcar como excluído
                             file.seek(file.length());
-                            file.writeByte(0);
-                            file.writeInt(newSize);
-                            file.writeInt(newFilm.getId());
-                            file.writeUTF(newFilm.getName());
-                            file.writeLong(newFilm.getDate());
-                            file.writeInt(newFilm.getBudget());
-                            file.writeFloat(newFilm.getBoxOffice());
-                            String genre = newFilm.getGenre();
-                            for (int i = 0; i < 10; i++) {
-                                file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
-                            }
-                            file.writeInt(newFilm.getFinancingCompanies().size());
-                            for (String company : newFilm.getFinancingCompanies()) {
-                                file.writeUTF(company);
-                            }
+                            WriteFilm(file, newFilm);
                         }
                         response = true;
                     } else {
-                        file.seek(pos + registerSize);
+                        file.seek(pos + 5 + registerSize); //register size does not count flag byte and registter size bytes(+5)
                     }
                 } else {
-                    file.seek(pos + registerSize);
+                    file.seek(pos + 5 + registerSize); //register size does not count flag byte and registter size bytes(+5)
                 }
             }
         } catch (Exception e) {
@@ -198,15 +190,19 @@ public class SequentialFile {
         return response;
     }
 
-    public static void Sort(int b, int m){
+    public static void ExternalSort(int b, int m){
+        //Distribution
+        int totalRecords = 0;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
-            int quantityRecords = 0;
-            int quantityPaths = 0;
+            int quantityRecords;
+            int quantityPaths;
             file.seek(4); //jumping lastId record
             while(file.getFilePointer() != file.length()){
-                while(quantityPaths < m){
+                quantityPaths = 0;
+                while(quantityPaths < m && file.getFilePointer() != file.length()){
                     Film blockFilm[] = new Film[b];
-                    while(quantityRecords < b){
+                    quantityRecords = 0;
+                    while(quantityRecords < b && file.getFilePointer() != file.length()){
                         //reading record
                         Byte flag = file.readByte();
                         int registerLength = file.readInt(); 
@@ -215,34 +211,92 @@ public class SequentialFile {
                             file.seek(pos + registerLength);
                         }
                         else{ 
-                            int registerId = file.readInt(); 
-                            String registerName = file.readUTF();
-                            long registerDate = file.readLong();
-                            int registerBudget = file.readInt();
-                            float registerBoxOffice = file.readFloat();
-                            byte[] genreBytes = new byte[10];
-                            file.readFully(genreBytes); 
-                            String registerGenre = new String(genreBytes).trim();
-                            int numCompanies = file.readInt();
-                            List<String> registerFinancingCompanies = new ArrayList<>();
-                            for (int i = 0; i < numCompanies; i++) {
-                                registerFinancingCompanies.add(file.readUTF()); 
-                            }
-                            for(String s : registerFinancingCompanies){
-                            }
-                            //if valid record, adding it to array
-                            Film film = new Film(registerId, registerName, registerDate, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
+                            Film film = ReadFilm(file);
                             blockFilm[quantityRecords] = film;
                             quantityRecords++;
+                            totalRecords++;
                         }
-                        Arrays.sort(blockFilm, Comparator.comparingInt(film -> film.getId()));
                     }
-                    try (RandomAccessFile file = new RandomAccessFile("FILE_NAME", "r")) {
+                    Arrays.sort(blockFilm, Comparator.comparingInt(film -> film.getId()));
+                    try (RandomAccessFile tempFile = new RandomAccessFile("TempFile" + (quantityPaths+1), "rw")) {
+                        tempFile.seek(file.length());
+                        for(Film film : blockFilm){
+                            WriteFilm(tempFile, film);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     quantityPaths++;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        Intercalation(m, b, totalRecords, "TempFile", "TempFileTwo");
+    }
+
+    public static void Intercalation(int currentNumberOfFiles, int b, int totalRecords, String fileName1, String fileName2){
+        if(currentNumberOfFiles > 1){
+            int nextNumbemOfFiles = (int)Math.ceil(totalRecords/(currentNumberOfFiles*b));
+            //positionsTempFile
+            long positionTempFile[] = new long[currentNumberOfFiles];
+            for(int i = 0; i < currentNumberOfFiles; i++){
+                positionTempFile[i] = 0;
+            }
+            //positionsTempFile2
+            long positionTempFile2[] = new long[nextNumbemOfFiles];
+            for(int i = 0; i < nextNumbemOfFiles; i++){
+                positionTempFile2[i] = 0;
+            }
+            for(int tRecords = 0; tRecords < totalRecords; tRecords++){
+                for(int paths = 0; paths < nextNumbemOfFiles && tRecords < totalRecords; paths++){
+                    for(int records = 0; records < currentNumberOfFiles*b && tRecords < totalRecords; records++){
+                        int quantity[] = new int[currentNumberOfFiles];
+                        for(int i = 0; i < currentNumberOfFiles; i++){
+                            quantity[i] = 0;
+                        }
+                        int smallerId = 0;
+                        try (RandomAccessFile tempFile = new RandomAccessFile(fileName1 + 1, "rw")) {
+                            tempFile.seek(positionTempFile[1] + 5);//5 = byte flag + register size;
+                            smallerId = tempFile.readInt();
+                        } catch (Exception e) {
+                                e.printStackTrace();
+                        }
+                        int smallestidPath = 1;
+                        for(int i = 2; i <= currentNumberOfFiles; i++){
+                            int id = 0;
+                            if(positionTempFile[i] < b){
+                                try (RandomAccessFile tempFile = new RandomAccessFile(fileName1 + i, "rw")) {
+                                    if(tempFile.getFilePointer() < tempFile.length()){
+                                        tempFile.seek(positionTempFile[i] + 5);//5 = byte flag + register size;
+                                        id = tempFile.readInt();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                if(id < smallerId){
+                                    smallerId = id;
+                                    smallestidPath = i;
+                                }
+                            }
+                        }
+                        Film film = null;
+                        try (RandomAccessFile tempFile = new RandomAccessFile(fileName1 + smallestidPath, "rw")) {
+                                tempFile.seek(positionTempFile[smallestidPath] + 5);//5 = byte flag + register size;
+                                film = ReadFilm(tempFile);
+                                positionTempFile[smallestidPath] = tempFile.getFilePointer();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } try (RandomAccessFile tempFile = new RandomAccessFile(fileName2 + (records+1), "rw")) {
+                            tempFile.seek(positionTempFile2[nextNumbemOfFiles]);
+                            WriteFilm(tempFile, film);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            Intercalation(nextNumbemOfFiles, currentNumberOfFiles*b, totalRecords, fileName2, fileName1);
         }
     }
 }
