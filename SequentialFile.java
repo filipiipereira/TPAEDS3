@@ -4,10 +4,8 @@
  */
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-
 public class SequentialFile {
     private static String FILE_NAME = "SequentialFile.dat";
 
@@ -190,6 +188,35 @@ public class SequentialFile {
         return response;
     }
 
+    public static void QuickSort(Film[] array, int esq, int dir){
+        int i = esq;
+        int j = dir;
+        Film pivo = array[(i + j)/2];
+        while(i <= j){
+            while(pivo.getId() > array[i].getId()){
+                i++;
+            }
+            while(pivo.getId() < array[j].getId()){
+                j--;
+            }
+            if(i <= j){
+                swap(array, i, j);
+                i++;
+                j--;
+            }
+        }
+        if(esq < j) QuickSort(array, esq, j);
+        if(i < dir) QuickSort(array, i, dir);
+    }
+    public static void swap(Film array[],int a, int b){
+        Film temp = array[b];
+        array[b] = array[a];
+        array[a] = temp;
+    }
+    public static void QuickSort(Film[] array){
+        QuickSort(array, 0, array.length-1);
+    }
+
     public static void ExternalSort(int b, int m){
         //Distribution
         int totalRecords = 0;
@@ -197,14 +224,15 @@ public class SequentialFile {
             int quantityRecords;
             int quantityPaths;
             file.seek(4); //jumping lastId record
-            while(file.getFilePointer() != file.length()){
+            boolean startingFile = true;
+            while(file.getFilePointer() < file.length()){
                 quantityPaths = 0;
-                while(quantityPaths < m && file.getFilePointer() != file.length()){
+                while(quantityPaths < m && file.getFilePointer() < file.length()){
                     Film blockFilm[] = new Film[b];
                     quantityRecords = 0;
-                    while(quantityRecords < b && file.getFilePointer() != file.length()){
+                    while(quantityRecords < b && file.getFilePointer() < file.length()){
                         //reading record
-                        Byte flag = file.readByte();
+                        byte flag = file.readByte();
                         int registerLength = file.readInt(); 
                         long pos = file.getFilePointer();
                         if(flag == '*'){
@@ -217,16 +245,32 @@ public class SequentialFile {
                             totalRecords++;
                         }
                     }
-                    Arrays.sort(blockFilm, Comparator.comparingInt(film -> film.getId()));
                     try (RandomAccessFile tempFile = new RandomAccessFile("TempFile" + (quantityPaths+1), "rw")) {
-                        tempFile.seek(file.length());
-                        for(Film film : blockFilm){
-                            WriteFilm(tempFile, film);
+                        if(file.getFilePointer() >= file.length()){
+                            ArrayList<Film> lastBlockFilm = new ArrayList<>();
+                            for(Film film : blockFilm){
+                                if(film != null){
+                                    lastBlockFilm.add(film);
+                                }
+                            }
+                            lastBlockFilm.sort(Comparator.comparingInt(Film::getId));
+                            for(int i = 0; i < lastBlockFilm.size(); i++){
+                                tempFile.seek(tempFile.length());
+                                WriteFilm(tempFile, lastBlockFilm.get(i));
+                            }
+                        }
+                        else{
+                            QuickSort(blockFilm);
+                            for(int i = 0; i < blockFilm.length; i++){
+                                tempFile.seek(tempFile.length());
+                                WriteFilm(tempFile, blockFilm[i]);
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     quantityPaths++;
+                    startingFile = false;
                 }
             }
         } catch (Exception e) {
@@ -236,67 +280,75 @@ public class SequentialFile {
     }
 
     public static void Intercalation(int currentNumberOfFiles, int b, int totalRecords, String fileName1, String fileName2){
+        System.out.println("Entrei na funcao");
         if(currentNumberOfFiles > 1){
-            int nextNumbemOfFiles = (int)Math.ceil(totalRecords/(currentNumberOfFiles*b));
+            int nextNumberOfFiles = (int)Math.ceil(totalRecords/(currentNumberOfFiles*b)) < currentNumberOfFiles ? (int)Math.ceil(totalRecords/(currentNumberOfFiles*b)) : currentNumberOfFiles;
+            System.out.println("Current number of files:" + currentNumberOfFiles);
             //positionsTempFile
             long positionTempFile[] = new long[currentNumberOfFiles];
             for(int i = 0; i < currentNumberOfFiles; i++){
                 positionTempFile[i] = 0;
             }
             //positionsTempFile2
-            long positionTempFile2[] = new long[nextNumbemOfFiles];
-            for(int i = 0; i < nextNumbemOfFiles; i++){
+            long positionTempFile2[] = new long[nextNumberOfFiles];
+            for(int i = 0; i < nextNumberOfFiles; i++){
                 positionTempFile2[i] = 0;
             }
-            for(int tRecords = 0; tRecords < totalRecords; tRecords++){
-                for(int paths = 0; paths < nextNumbemOfFiles && tRecords < totalRecords; paths++){
+            int tRecords = 0;
+            while(tRecords < totalRecords){
+                System.out.println("quant registros" + tRecords);
+                for(int paths = 0; paths < nextNumberOfFiles && tRecords < totalRecords; paths++){
+                    System.out.println("caminho" + paths);
+                    int quantity[] = new int[currentNumberOfFiles];
+                    for(int i = 0; i < currentNumberOfFiles; i++){
+                        quantity[i] = 0;
+                    }
                     for(int records = 0; records < currentNumberOfFiles*b && tRecords < totalRecords; records++){
-                        int quantity[] = new int[currentNumberOfFiles];
-                        for(int i = 0; i < currentNumberOfFiles; i++){
-                            quantity[i] = 0;
-                        }
-                        int smallerId = 0;
-                        try (RandomAccessFile tempFile = new RandomAccessFile(fileName1 + 1, "rw")) {
-                            tempFile.seek(positionTempFile[1] + 5);//5 = byte flag + register size;
-                            smallerId = tempFile.readInt();
-                        } catch (Exception e) {
-                                e.printStackTrace();
-                        }
-                        int smallestidPath = 1;
-                        for(int i = 2; i <= currentNumberOfFiles; i++){
-                            int id = 0;
-                            if(positionTempFile[i] < b){
-                                try (RandomAccessFile tempFile = new RandomAccessFile(fileName1 + i, "rw")) {
-                                    if(tempFile.getFilePointer() < tempFile.length()){
-                                        tempFile.seek(positionTempFile[i] + 5);//5 = byte flag + register size;
-                                        id = tempFile.readInt();
+                        int smallerId = Integer.MAX_VALUE;
+                        int smallestidPath = -1;
+                        for (int i = 0; i < currentNumberOfFiles && tRecords < totalRecords; i++) {
+                            if (quantity[i] < b) {
+                                try (RandomAccessFile tempFile = new RandomAccessFile(fileName1 + (i + 1), "rw")) {
+                                    if (positionTempFile[i] < tempFile.length()) {  //
+                                        tempFile.seek(positionTempFile[i] + 5);
+                                        int id = tempFile.readInt();
+                                        if (id < smallerId) {
+                                            smallerId = id;
+                                            smallestidPath = i;
+                                        }
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                if(id < smallerId){
-                                    smallerId = id;
-                                    smallestidPath = i;
-                                }
                             }
                         }
+                        System.out.println("posicao menor id: " + smallestidPath);
                         Film film = null;
-                        try (RandomAccessFile tempFile = new RandomAccessFile(fileName1 + smallestidPath, "rw")) {
+                        if (smallestidPath != -1) {
+                            try (RandomAccessFile tempFile = new RandomAccessFile(fileName1 + (smallestidPath+1), "rw")) {
                                 tempFile.seek(positionTempFile[smallestidPath] + 5);//5 = byte flag + register size;
                                 film = ReadFilm(tempFile);
-                                positionTempFile[smallestidPath] = tempFile.getFilePointer();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } try (RandomAccessFile tempFile = new RandomAccessFile(fileName2 + (records+1), "rw")) {
-                            tempFile.seek(positionTempFile2[nextNumbemOfFiles]);
-                            WriteFilm(tempFile, film);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                                positionTempFile[smallestidPath] += 5 + film.registerByteSize();
+                                quantity[smallestidPath]++;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
+                        if(film != null){
+                            try (RandomAccessFile tempFile = new RandomAccessFile(fileName2 + (paths+1), "rw")) {
+                                tempFile.seek(positionTempFile2[paths]);
+                                WriteFilm(tempFile, film);
+                                tRecords++;
+                                positionTempFile2[paths] += 5 + film.registerByteSize(); 
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        System.out.println("records: " + records);
                     }
                 }
             }
-            Intercalation(nextNumbemOfFiles, currentNumberOfFiles*b, totalRecords, fileName2, fileName1);
+            Intercalation(nextNumberOfFiles, currentNumberOfFiles*b, totalRecords, fileName2, fileName1);
         }
     }
 }
