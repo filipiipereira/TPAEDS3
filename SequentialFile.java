@@ -315,19 +315,20 @@ public class SequentialFile {
         int numerosDeArquivos = m;
         int quantidadeRegistrosPorBloco = b;
         int numeroDaIntercalacao = 0;
+
         while(numerosDeArquivos > 1){
             
             //controla os nomes dos arquivos(par ou impar)
             numeroDaIntercalacao++;
-            String arquivosAtuais;
-            String arquivosProximos;
+            String nomeArquivosAtuais;
+            String nomeArquivosProximos;
             if(numeroDaIntercalacao % 2 == 1){
-                arquivosAtuais = "TempFile";
-                arquivosProximos = "TempFileAux";
+                nomeArquivosAtuais = "TempFile";
+                nomeArquivosProximos = "TempFileAux";
             } 
             else{
-                arquivosAtuais = "TempFileAux";
-                arquivosProximos = "TempFile";
+                nomeArquivosAtuais = "TempFileAux";
+                nomeArquivosProximos = "TempFile";
             }
 
             //proximo numero de arquivos calculo
@@ -342,6 +343,26 @@ public class SequentialFile {
             else{
                 proximoNumeroDeArquivos = calculo + 1;
             }
+
+            RandomAccessFile[] arquivosAtuais = new RandomAccessFile[numerosDeArquivos];
+            RandomAccessFile[] arquivosProximos = new RandomAccessFile[proximoNumeroDeArquivos];
+
+            // Abrir todos os arquivos atuais
+            for (int i = 0; i < numerosDeArquivos; i++) {
+                try{
+                    arquivosAtuais[i] = new RandomAccessFile(nomeArquivosAtuais + (i +1), "rw");    
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+            for (int i = 0; i < proximoNumeroDeArquivos; i++) {
+                try{
+                    arquivosProximos[i] = new RandomAccessFile(nomeArquivosProximos + (i + 1), "rw");   
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+
             //iniciailizdo vetores que guardam os ponteiro dos arquivos
             long posicoesAtual[] = new long[numerosDeArquivos];
             for(int i = 0; i < numerosDeArquivos; i++){
@@ -376,7 +397,8 @@ public class SequentialFile {
                         int menorId = Integer.MAX_VALUE;
                         int ArquivoMenorId = -1;
                         for (int i = 0; i < numerosDeArquivos; i++) {
-                            try (RandomAccessFile arquivoAtual = new RandomAccessFile(arquivosAtuais + (i + 1), "rw")) {
+                            try{
+                                RandomAccessFile arquivoAtual = arquivosAtuais[i];
                                 arquivoAtual.seek(posicoesAtual[i] + 5);
                                 //condicoes para leitura, o arquivo nao ter lido o bloco inteiro e o arquivo nao tiver acabado
                                 if (quantidadeDeLeiturasPorArquivoAtual[i] < quantidadeRegistrosPorBloco && arquivoAtual.getFilePointer() < arquivoAtual.length() && totaisRegistrosLidos < registrosTotais){
@@ -393,7 +415,8 @@ public class SequentialFile {
                         //ler o Moviee de menor id e marcar a posicao do arquivo
                         Movie Moviee = null;
                         if(ArquivoMenorId != -1){
-                            try (RandomAccessFile arquivoAtual = new RandomAccessFile(arquivosAtuais + (ArquivoMenorId+1), "rw")) {
+                            try{
+                                RandomAccessFile arquivoAtual = arquivosAtuais[ArquivoMenorId];
                                 arquivoAtual.seek(posicoesAtual[ArquivoMenorId] + 5);//5 = byte flag + register size;
                                 if(arquivoAtual.getFilePointer() < arquivoAtual.length()){
                                     Moviee = ReadMovie(arquivoAtual);
@@ -407,7 +430,8 @@ public class SequentialFile {
                         //escrever o Moviee no arquivo proximo na posicao quantidade caminhos proximos
 
                         if(Moviee != null){
-                            try (RandomAccessFile arquivoProximo = new RandomAccessFile(arquivosProximos + (quantidadeCaminhosProximo+1), "rw")) {
+                            try{
+                                RandomAccessFile arquivoProximo = arquivosProximos[quantidadeCaminhosProximo];
                                 arquivoProximo.seek(posicoesProximo[quantidadeCaminhosProximo]);
                                 WriteMovie(arquivoProximo, Moviee);
                                 posicoesProximo[quantidadeCaminhosProximo] += 5 + Moviee.registerByteSize(); 
@@ -426,6 +450,22 @@ public class SequentialFile {
             if(quantidadeRegistrosPorBloco * numerosDeArquivos >= registrosTotais) quantidadeRegistrosPorBloco = registrosTotais;
             else quantidadeRegistrosPorBloco *= numerosDeArquivos;
             numerosDeArquivos = proximoNumeroDeArquivos;
+
+            // Fechar todos os arquivos no final
+            for (RandomAccessFile arquivo : arquivosAtuais) {
+                try{
+                    arquivo.close();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+            for (RandomAccessFile arquivo : arquivosProximos) {
+                try{
+                    arquivo.close();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
         String arquivoOrdenado;
         if(numeroDaIntercalacao % 2 == 1){

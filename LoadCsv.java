@@ -9,20 +9,20 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Classe responsável por carregar dados de um arquivo CSV e armazená-los como objetos do tipo Film.
+ * Classe responsável por carregar dados de um arquivo CSV e armazená-los como objetos do tipo Movie.
  */
 public class LoadCsv {
     
     /**
      * Nome do arquivo CSV a ser carregado.
      */
-    private static String CSV_NAME = "filmsDataSet.csv";
+    private static String CSV_NAME = "moviesDataSet.csv";
     
     /**
      * Método para carregar os dados do arquivo CSV e inseri-los em um arquivo sequencial.
      * 
      * O método faz a leitura linha por linha do arquivo, processa os dados, converte tipos quando necessário
-     * e cria objetos da classe Film, os quais são inseridos em um arquivo sequencial.
+     * e cria objetos da classe Movie, os quais são inseridos em um arquivo sequencial.
      */
     public static void LoadFromCsv() {
         String linha;
@@ -74,9 +74,9 @@ public class LoadCsv {
                 String genre = values[4];
                 List<String> financingCompanies = new ArrayList<>(Arrays.asList(values[5].split(",")));
                 
-                // Cria um objeto Film e o insere no arquivo sequencial
-                Film film = new Film(0, name, epochDate, budget, boxOffice, financingCompanies, genre);
-                sequentialFile.Insert(film);
+                // Cria um objeto Movie e o insere no arquivo sequencial
+                Movie movie = new Movie(0, name, epochDate, budget, boxOffice, financingCompanies, genre);
+                sequentialFile.Insert(movie);
                 
                 // Lê a próxima linha
                 linha = br.readLine();
