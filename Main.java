@@ -12,19 +12,16 @@ public class Main {
     public static void main(String[] args) {
         int option;
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("");
-        System.out.println("FILIPAO VOCE É O CARAAAAA, VOCE É FODAAAAAAA S2 SALVE DO JULIADA");
         
         do {
             System.out.println("\nMenu: ");
             System.out.println("0) End program");
-            System.out.println("1) Load films from Csv");
-            System.out.println("2) Insert new film");
-            System.out.println("3) Update film");
-            System.out.println("4) Delete film");
+            System.out.println("1) Load movies from Csv");
+            System.out.println("2) Insert new movie");
+            System.out.println("3) Update movie");
+            System.out.println("4) Delete movie");
             System.out.println("5) Show data from a movie");
-            System.out.println("6) Sort");
+            System.out.println("6) Sort File");
             System.out.println("\nChoose an option: ");
             
             option = scanner.nextInt(); 
@@ -55,14 +52,14 @@ public class Main {
                         System.out.println("Error in delete");
                     break;
                 case 5: 
-                    Film film = Controller.Get(scanner);
-                    if(film == null) 
-                        System.out.println("Film not found");
+                    Movie movie = Controller.Get(scanner);
+                    if(movie == null) 
+                        System.out.println("movie not found");
                     else 
-                        film.toStr();
+                        movie.toStr();
                     break;
                 case 6: 
-                    SequentialFile.ExternalSort(200, 5);
+                    Controller.Sort(scanner);
                     break;
                 default:
                     System.out.println("Invalid option. Please try again.");

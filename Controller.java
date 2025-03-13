@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Classe Controller responsável por gerenciar a interação com o usuário e manipular objetos da classe Film.
+ * Classe Controller responsável por gerenciar a interação com o usuário e manipular objetos da classe movie.
  */
 public class Controller {
     
     /**
-     * Método responsável por capturar os dados de um filme a partir da entrada do usuário.
+     * Método responsável por capturar os dados de um moviee a partir da entrada do usuário.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
-     * @return Objeto Film preenchido com os dados informados pelo usuário.
+     * @return Objeto movie preenchido com os dados informados pelo usuário.
      */
-    public static Film Form(Scanner scanner) {
+    public static Movie Form(Scanner scanner) {
         System.out.print("Name: ");
         scanner.nextLine(); // Limpa o buffer
         String name = scanner.nextLine();
@@ -45,11 +45,11 @@ public class Controller {
             financingCompany = scanner.nextLine();
         }
 
-        return new Film(1, name, epochDate, budget, boxOffice, financingCompanies, genre);
+        return new Movie(1, name, epochDate, budget, boxOffice, financingCompanies, genre);
     }
 
     /**
-     * Método responsável por inserir um novo filme no arquivo sequencial.
+     * Método responsável por inserir um novo moviee no arquivo sequencial.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return true se a inserção foi bem-sucedida, false caso contrário.
@@ -59,7 +59,7 @@ public class Controller {
     }
 
     /**
-     * Método responsável por atualizar um filme existente com base no ID informado.
+     * Método responsável por atualizar um moviee existente com base no ID informado.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return true se a atualização foi bem-sucedida, false caso contrário.
@@ -68,13 +68,13 @@ public class Controller {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         SequentialFile.Get(id).toStr();
-        Film film = Form(scanner);
-        film.setId(id);
-        return SequentialFile.Update(film);
+        Movie movie = Form(scanner);
+        movie.setId(id);
+        return SequentialFile.Update(movie);
     }
 
     /**
-     * Método responsável por deletar um filme com base no ID informado.
+     * Método responsável por deletar um moviee com base no ID informado.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return true se a exclusão foi bem-sucedida, false caso contrário.
@@ -86,14 +86,22 @@ public class Controller {
     }
 
     /**
-     * Método responsável por buscar um filme com base no ID informado.
+     * Método responsável por buscar um moviee com base no ID informado.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
-     * @return Objeto Film correspondente ao ID informado.
+     * @return Objeto movie correspondente ao ID informado.
      */
-    public static Film Get(Scanner scanner) {
+    public static Movie Get(Scanner scanner) {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         return SequentialFile.Get(id);
+    }
+
+    public static void Sort(Scanner scanner){
+        System.out.print("Digite a quantidade de caminhos: ");
+        int m = scanner.nextInt();
+        System.out.print("Digite a quantidade de registros por bloco: ");
+        int b = scanner.nextInt();
+        SequentialFile.ExternalSort(b,m);
     }
 }

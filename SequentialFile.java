@@ -1,5 +1,5 @@
 /**
- * Classe que implementa operações de armazenamento sequencial para objetos do tipo Film.
+ * Classe que implementa operações de armazenamento sequencial para objetos do tipo Movie.
  * As operações incluem inserção, recuperação, atualização e exclusão.
  */
 import java.io.RandomAccessFile;
@@ -8,24 +8,24 @@ import java.util.List;
 public class SequentialFile {
     private static String FILE_NAME = "SequentialFile.dat";
 
-    public static void WriteFilm(RandomAccessFile file, Film film){
+    public static void WriteMovie(RandomAccessFile file, Movie Movie){
         try {
             file.writeByte(0); // flag
-            file.writeInt(film.registerByteSize());
-            file.writeInt(film.getId());
-            file.writeUTF(film.getName());
-            file.writeLong(film.getDate());
-            file.writeInt(film.getBudget());
-            file.writeFloat(film.getBoxOffice());
+            file.writeInt(Movie.registerByteSize());
+            file.writeInt(Movie.getId());
+            file.writeUTF(Movie.getName());
+            file.writeLong(Movie.getDate());
+            file.writeInt(Movie.getBudget());
+            file.writeFloat(Movie.getBoxOffice());
             
             // Escreve o gênero como string de tamanho fixo
-            String genre = film.getGenre();
+            String genre = Movie.getGenre();
             for (int i = 0; i < 10; i++) {
                 file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
             }
             
-            file.writeInt(film.getFinancingCompanies().size());
-            for (String company : film.getFinancingCompanies()) {
+            file.writeInt(Movie.getFinancingCompanies().size());
+            for (String company : Movie.getFinancingCompanies()) {
                 file.writeUTF(company);
             }
         } catch (Exception e) {
@@ -33,8 +33,8 @@ public class SequentialFile {
         }
     }
     
-    public static Film ReadFilm(RandomAccessFile file){
-        Film film = null;
+    public static Movie ReadMovie(RandomAccessFile file){
+        Movie Movie = null;
         try {
             int registerId = file.readInt();
             String registerName = file.readUTF();
@@ -49,20 +49,20 @@ public class SequentialFile {
             for (int i = 0; i < numCompanies; i++) {
                 registerFinancingCompanies.add(file.readUTF());
             }
-            film = new Film(registerId, registerName, registerDate, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
+            Movie = new Movie(registerId, registerName, registerDate, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
             
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return film;
+        return Movie;
     }
 
     /**
-     * Insere um novo filme no arquivo sequencial.
-     * @param film Objeto Film a ser inserido.
+     * Insere um novo Moviee no arquivo sequencial.
+     * @param Movie Objeto Movie a ser inserido.
      * @return true se a inserção for bem-sucedida, false caso contrário.
      */
-    public static boolean Insert(Film film) {
+    public static boolean Insert(Movie Movie) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             int objectId;
@@ -73,11 +73,11 @@ public class SequentialFile {
             } else {
                 objectId = 1;
             }
-            film.setId(objectId);
+            Movie.setId(objectId);
             file.seek(0);
-            file.writeInt(film.getId());
+            file.writeInt(Movie.getId());
             file.seek(file.length());
-            WriteFilm(file, film);
+            WriteMovie(file, Movie);
             response = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,12 +86,12 @@ public class SequentialFile {
     }
 
     /**
-     * Recupera um filme do arquivo sequencial pelo ID.
-     * @param id Identificador do filme.
-     * @return Objeto Film correspondente ou null se não encontrado.
+     * Recupera um Moviee do arquivo sequencial pelo ID.
+     * @param id Identificador do Moviee.
+     * @return Objeto Movie correspondente ou null se não encontrado.
      */
-    public static Film Get(int id) {
-        Film film = null;
+    public static Movie Get(int id) {
+        Movie movie = null;
         boolean find = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
             file.seek(4); // Pula o último ID salvo
@@ -102,9 +102,9 @@ public class SequentialFile {
                 if (flag == '*') {
                     file.seek(pos + registerLength);
                 } else {
-                    Film recordFilm = ReadFilm(file);
-                    if (recordFilm.getId() == id) {
-                        film = recordFilm;
+                    Movie recordMovie = ReadMovie(file);
+                    if (recordMovie.getId() == id) {
+                        movie = recordMovie;
                         find = true;
                     }
                 }
@@ -112,15 +112,15 @@ public class SequentialFile {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return film;
+        return movie;
     }
 
     /**
-     * Atualiza um filme existente no arquivo sequencial.
-     * @param newFilm Novo objeto Film atualizado.
+     * Atualiza um Moviee existente no arquivo sequencial.
+     * @param newMovie Novo objeto Movie atualizado.
      * @return true se a atualização for bem-sucedida, false caso contrário.
      */
-    public static boolean Update(Film newFilm) {
+    public static boolean Update(Movie newMovie) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4);
@@ -130,16 +130,16 @@ public class SequentialFile {
                 int registerSize = file.readInt();
                 if (flag != '*') {
                     int id = file.readInt();
-                    if (id == newFilm.getId()) {
-                        int newSize = newFilm.registerByteSize();
+                    if (id == newMovie.getId()) {
+                        int newSize = newMovie.registerByteSize();
                         if (newSize <= registerSize) {
                             file.seek(pos);
-                            WriteFilm(file, newFilm);
+                            WriteMovie(file, newMovie);
                         } else {
                             file.seek(pos);
                             file.writeByte('*'); // Marcar como excluído
                             file.seek(file.length());
-                            WriteFilm(file, newFilm);
+                            WriteMovie(file, newMovie);
                         }
                         response = true;
                     } else {
@@ -156,8 +156,8 @@ public class SequentialFile {
     }
 
     /**
-     * Exclui um filme do arquivo sequencial pelo ID.
-     * @param id Identificador do filme a ser excluído.
+     * Exclui um Moviee do arquivo sequencial pelo ID.
+     * @param id Identificador do Moviee a ser excluído.
      * @return true se a exclusão for bem-sucedida, false caso contrário.
      */
     public static boolean Delete(int id) {
@@ -187,10 +187,10 @@ public class SequentialFile {
         return response;
     }
 
-    public static void QuickSort(Film[] array, int esq, int dir){
+    public static void QuickSort(Movie[] array, int esq, int dir){
         int i = esq;
         int j = dir;
-        Film pivo = array[(i + j)/2];
+        Movie pivo = array[(i + j)/2];
         while(i <= j){
             while(pivo.getId() > array[i].getId()){
                 i++;
@@ -207,19 +207,19 @@ public class SequentialFile {
         if(esq < j) QuickSort(array, esq, j);
         if(i < dir) QuickSort(array, i, dir);
     }
-    public static void swap(Film array[],int a, int b){
-        Film temp = array[b];
+    public static void swap(Movie array[],int a, int b){
+        Movie temp = array[b];
         array[b] = array[a];
         array[a] = temp;
     }
-    public static void QuickSort(Film[] array){
+    public static void QuickSort(Movie[] array){
         QuickSort(array, 0, array.length-1);
     }
 
-    public static void QuickSort(ArrayList<Film> arrayList, int esq, int dir){
+    public static void QuickSort(ArrayList<Movie> arrayList, int esq, int dir){
         int i = esq;
         int j = dir;
-        Film pivo = arrayList.get((i + j)/2);
+        Movie pivo = arrayList.get((i + j)/2);
         while(i <= j){
             while(pivo.getId() > arrayList.get(i).getId()){
                 i++;
@@ -236,16 +236,20 @@ public class SequentialFile {
         if(esq < j) QuickSort(arrayList, esq, j);
         if(i < dir) QuickSort(arrayList, i, dir);
     }
-    public static void swap(ArrayList<Film> arrayList,int a, int b){
-        Film temp = arrayList.get(b);
+    public static void swap(ArrayList<Movie> arrayList,int a, int b){
+        Movie temp = arrayList.get(b);
         arrayList.set(b, arrayList.get(a));
         arrayList.set(a, temp);
     }
-    public static void QuickSort(ArrayList<Film> arrayList){
+    public static void QuickSort(ArrayList<Movie> arrayList){
         QuickSort(arrayList, 0, arrayList.size()-1);
     }
 
     public static void ExternalSort(int b, int m){
+        Distribution(b, m);
+    }
+
+    public static void Distribution(int b, int m){
         //Distribution
         int totalRecords = 0;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
@@ -256,7 +260,7 @@ public class SequentialFile {
             while(file.getFilePointer() < file.length()){
                 quantityPaths = 0;
                 while(quantityPaths < m && file.getFilePointer() < file.length()){
-                    Film blockFilm[] = new Film[b];
+                    Movie blockMovie[] = new Movie[b];
                     quantityRecords = 0;
                     while(quantityRecords < b && file.getFilePointer() < file.length()){
                         //reading record
@@ -267,31 +271,31 @@ public class SequentialFile {
                             file.seek(pos + registerLength);
                         }
                         else{ 
-                            Film film = ReadFilm(file);
-                            blockFilm[quantityRecords] = film;
+                            Movie Movie = ReadMovie(file);
+                            blockMovie[quantityRecords] = Movie;
                             quantityRecords++;
                             totalRecords++;
                         }
                     }
                     try (RandomAccessFile tempFile = new RandomAccessFile("TempFile" + (quantityPaths+1), "rw")) {
                         if(file.getFilePointer() >= file.length()){
-                            ArrayList<Film> lastBlockFilm = new ArrayList<>();
-                            for(Film film : blockFilm){
-                                if(film != null){
-                                    lastBlockFilm.add(film);
+                            ArrayList<Movie> lastBlockMovie = new ArrayList<>();
+                            for(Movie Movie : blockMovie){
+                                if(Movie != null){
+                                    lastBlockMovie.add(Movie);
                                 }
                             }
-                            QuickSort(lastBlockFilm);
-                            for(int i = 0; i < lastBlockFilm.size(); i++){
+                            QuickSort(lastBlockMovie);
+                            for(int i = 0; i < lastBlockMovie.size(); i++){
                                 tempFile.seek(tempFile.length());
-                                WriteFilm(tempFile, lastBlockFilm.get(i));
+                                WriteMovie(tempFile, lastBlockMovie.get(i));
                             }
                         }
                         else{
-                            QuickSort(blockFilm);
-                            for(int i = 0; i < blockFilm.length; i++){
+                            QuickSort(blockMovie);
+                            for(int i = 0; i < blockMovie.length; i++){
                                 tempFile.seek(tempFile.length());
-                                WriteFilm(tempFile, blockFilm[i]);
+                                WriteMovie(tempFile, blockMovie[i]);
                             }
                         }
                     } catch (Exception e) {
@@ -308,7 +312,6 @@ public class SequentialFile {
     }
 
     public static void Intercalation(int m, int b, int registrosTotais){
-        System.out.println(registrosTotais);
         int numerosDeArquivos = m;
         int quantidadeRegistrosPorBloco = b;
         int numeroDaIntercalacao = 0;
@@ -330,17 +333,15 @@ public class SequentialFile {
             //proximo numero de arquivos calculo
             int proximoNumeroDeArquivos = 0;
             int calculo = (registrosTotais / (quantidadeRegistrosPorBloco * numerosDeArquivos));
-            if(calculo >= numerosDeArquivos){
+            if(calculo > numerosDeArquivos){
                 proximoNumeroDeArquivos = numerosDeArquivos;
             }
             else if((registrosTotais % (quantidadeRegistrosPorBloco * numerosDeArquivos)) == 0){
-                proximoNumeroDeArquivos = (registrosTotais / (quantidadeRegistrosPorBloco * numerosDeArquivos));
+                proximoNumeroDeArquivos = calculo;
             }   
             else{
                 proximoNumeroDeArquivos = calculo + 1;
             }
-            System.out.println("numeros arquivos atuais: " + numerosDeArquivos);
-
             //iniciailizdo vetores que guardam os ponteiro dos arquivos
             long posicoesAtual[] = new long[numerosDeArquivos];
             for(int i = 0; i < numerosDeArquivos; i++){
@@ -359,16 +360,17 @@ public class SequentialFile {
                 int quantidadeCaminhosProximo = 0;                
                 while(quantidadeCaminhosProximo < proximoNumeroDeArquivos && !acabouIntercalacao){
 
+                    //cada arquivo so pode ser lido em blocos
+                    //inicializacao do vetor que controla ate onde pode ser lido
+                    int quantidadeDeLeiturasPorArquivoAtual[] = new int[numerosDeArquivos];
+                    for(int i = 0; i < numerosDeArquivos; i++){
+                        quantidadeDeLeiturasPorArquivoAtual[i] = 0;
+                    }
+
                     //para cada parte da intercalacao le se o numero de registros da secao
                     int registrosLidosPorSecao = 0;
                     while(registrosLidosPorSecao < numerosDeArquivos*quantidadeRegistrosPorBloco  && !acabouIntercalacao){
 
-                        //cada arquivo so pode ser lido em blocos
-                        //inicializacao do vetor que controla ate onde pode ser lido
-                        int quantidadeDeLeiturasPorArquivoAtual[] = new int[numerosDeArquivos];
-                        for(int i = 0; i < numerosDeArquivos; i++){
-                            quantidadeDeLeiturasPorArquivoAtual[i] = 0;
-                        }
 
                         //iniciando as leituras para achar o arquivo que possui o menor id
                         int menorId = Integer.MAX_VALUE;
@@ -377,7 +379,7 @@ public class SequentialFile {
                             try (RandomAccessFile arquivoAtual = new RandomAccessFile(arquivosAtuais + (i + 1), "rw")) {
                                 arquivoAtual.seek(posicoesAtual[i] + 5);
                                 //condicoes para leitura, o arquivo nao ter lido o bloco inteiro e o arquivo nao tiver acabado
-                                if (quantidadeDeLeiturasPorArquivoAtual[i] < quantidadeRegistrosPorBloco && arquivoAtual.getFilePointer() < arquivoAtual.length()){
+                                if (quantidadeDeLeiturasPorArquivoAtual[i] < quantidadeRegistrosPorBloco && arquivoAtual.getFilePointer() < arquivoAtual.length() && totaisRegistrosLidos < registrosTotais){
                                     int id = arquivoAtual.readInt();
                                     if (id < menorId) {
                                         menorId = id;
@@ -388,27 +390,27 @@ public class SequentialFile {
                                 e.printStackTrace();
                             }
                         }
-                        //ler o filme de menor id e marcar a posicao do arquivo
-                        Film filme = null;
+                        //ler o Moviee de menor id e marcar a posicao do arquivo
+                        Movie Moviee = null;
                         if(ArquivoMenorId != -1){
                             try (RandomAccessFile arquivoAtual = new RandomAccessFile(arquivosAtuais + (ArquivoMenorId+1), "rw")) {
                                 arquivoAtual.seek(posicoesAtual[ArquivoMenorId] + 5);//5 = byte flag + register size;
                                 if(arquivoAtual.getFilePointer() < arquivoAtual.length()){
-                                    filme = ReadFilm(arquivoAtual);
-                                    posicoesAtual[ArquivoMenorId] += 5 + filme.registerByteSize();
+                                    Moviee = ReadMovie(arquivoAtual);
+                                    posicoesAtual[ArquivoMenorId] = arquivoAtual.getFilePointer();
                                     quantidadeDeLeiturasPorArquivoAtual[ArquivoMenorId]++;
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
-                        //escrever o filme no arquivo proximo na posicao quantidade caminhos proximos
+                        //escrever o Moviee no arquivo proximo na posicao quantidade caminhos proximos
 
-                        if(filme != null){
+                        if(Moviee != null){
                             try (RandomAccessFile arquivoProximo = new RandomAccessFile(arquivosProximos + (quantidadeCaminhosProximo+1), "rw")) {
                                 arquivoProximo.seek(posicoesProximo[quantidadeCaminhosProximo]);
-                                WriteFilm(arquivoProximo, filme);
-                                posicoesProximo[quantidadeCaminhosProximo] += 5 + filme.registerByteSize(); 
+                                WriteMovie(arquivoProximo, Moviee);
+                                posicoesProximo[quantidadeCaminhosProximo] += 5 + Moviee.registerByteSize(); 
                                 //aumentando um no contador de registros
                                 registrosLidosPorSecao++;   
                                 totaisRegistrosLidos++;
@@ -418,15 +420,20 @@ public class SequentialFile {
                         }
                         else acabouIntercalacao = true;
                     }
-
                     quantidadeCaminhosProximo++;
-                    System.out.println("secao: " + registrosLidosPorSecao);
-                }
+                }  
             }
-            System.out.println("total: " + totaisRegistrosLidos);
-            quantidadeRegistrosPorBloco *= numerosDeArquivos;
+            if(quantidadeRegistrosPorBloco * numerosDeArquivos >= registrosTotais) quantidadeRegistrosPorBloco = registrosTotais;
+            else quantidadeRegistrosPorBloco *= numerosDeArquivos;
             numerosDeArquivos = proximoNumeroDeArquivos;
         }
-        System.out.println("intercalacao: " + numeroDaIntercalacao);
+        String arquivoOrdenado;
+        if(numeroDaIntercalacao % 2 == 1){
+            arquivoOrdenado = "TempFileAux1";
+        }
+        else{
+            arquivoOrdenado = "TempFile";
+        }
+        System.out.println("Arquivo ordenado: " + arquivoOrdenado);
     }
 }

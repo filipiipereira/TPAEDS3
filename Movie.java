@@ -8,7 +8,7 @@ import java.util.List;
  * Representa um filme com atributos como nome, data de lançamento, orçamento,
  * bilheteria global, gênero e empresas financiadoras.
  */
-public class Film {
+public class Movie {
     private int id;
     private String name;
     private long date;
@@ -20,7 +20,7 @@ public class Film {
     /**
      * Construtor padrão que inicializa os atributos com valores padrão.
      */
-    public Film() {
+    public Movie() {
         this.id = -1;
         this.name = null;
         this.date = -1;
@@ -41,7 +41,7 @@ public class Film {
      * @param financingCompanies Lista de empresas financiadoras.
      * @param genre Gênero do filme.
      */
-    public Film(int id, String name, long date, int budget, float boxOffice, List<String> financingCompanies, String genre) {
+    public Movie(int id, String name, long date, int budget, float boxOffice, List<String> financingCompanies, String genre) {
         this.id = id;
         this.name = name;
         this.date = date;
