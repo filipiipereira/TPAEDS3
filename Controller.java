@@ -1,36 +1,73 @@
 import java.time.LocalDate;
 import static java.time.ZoneOffset.UTC;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 /**
- * Classe Controller responsável por gerenciar a interação com o usuário e manipular objetos da classe movie.
+ * Classe Controller responsável por gerenciar a interação com o usuário e manipular objetos da classe Film.
  */
 public class Controller {
     
     /**
-     * Método responsável por capturar os dados de um moviee a partir da entrada do usuário.
+     * Método responsável por capturar os dados de um filme a partir da entrada do usuário.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
-     * @return Objeto movie preenchido com os dados informados pelo usuário.
+     * @return Objeto Film preenchido com os dados informados pelo usuário.
      */
     public static Movie Form(Scanner scanner) {
         System.out.print("Name: ");
         scanner.nextLine(); // Limpa o buffer
         String name = scanner.nextLine();
 
-        System.out.print("Date(yyyy-MM-dd): ");
+        LocalDate date = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(scanner.nextLine(), formatter);
+        boolean controleDataValida = false;
+        while (!controleDataValida) {
+            try {
+                System.out.print("Date (yyyy-MM-dd): ");
+                String dateInput = scanner.nextLine();
+                date = LocalDate.parse(dateInput, formatter);
+                controleDataValida = true;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format! Please enter the correct format (yyyy-MM-dd).");
+            }
+        }
+
         long epochDate = date.atStartOfDay(UTC).toEpochSecond();
 
-        System.out.print("Budget: ");
-        int budget = scanner.nextInt();
+        
+        int budget = 0;
+        boolean controleBudgetValido = false;
 
-        System.out.print("Global box-office: ");
-        float boxOffice = scanner.nextFloat();
+        while (!controleBudgetValido) {
+        try {
+            System.out.print("Budget: ");
+            budget = scanner.nextInt();
+            controleBudgetValido = true; 
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid value! Please enter an integer number for the budget.");
+            scanner.nextLine();
+        }   
+}
+
+
+        float boxOffice = 0.0f;
+        boolean controleBoxOfficeValido = false;
+
+        while (!controleBoxOfficeValido) {
+            try {
+                System.out.print("Global box-office: ");
+                boxOffice = scanner.nextFloat();
+                controleBoxOfficeValido = true; 
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid value! Please enter a valid decimal number for the global box-office.");
+                scanner.nextLine(); 
+            }
+        }
 
         System.out.print("Genre: ");
         scanner.nextLine(); // Limpa o buffer
@@ -39,7 +76,7 @@ public class Controller {
         System.out.print("Financing companies (type '0' to stop): ");
         List<String> financingCompanies = new ArrayList<>();
         String financingCompany = scanner.nextLine();
-        
+
         while (!financingCompany.equals("0")) {
             financingCompanies.add(financingCompany);
             financingCompany = scanner.nextLine();
@@ -49,7 +86,7 @@ public class Controller {
     }
 
     /**
-     * Método responsável por inserir um novo moviee no arquivo sequencial.
+     * Método responsável por inserir um novo filme no arquivo sequencial.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return true se a inserção foi bem-sucedida, false caso contrário.
@@ -59,7 +96,7 @@ public class Controller {
     }
 
     /**
-     * Método responsável por atualizar um moviee existente com base no ID informado.
+     * Método responsável por atualizar um filme existente com base no ID informado.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return true se a atualização foi bem-sucedida, false caso contrário.
@@ -68,13 +105,13 @@ public class Controller {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         SequentialFile.Get(id).toStr();
-        Movie movie = Form(scanner);
-        movie.setId(id);
-        return SequentialFile.Update(movie);
+        Movie film = Form(scanner);
+        film.setId(id);
+        return SequentialFile.Update(film);
     }
 
     /**
-     * Método responsável por deletar um moviee com base no ID informado.
+     * Método responsável por deletar um filme com base no ID informado.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return true se a exclusão foi bem-sucedida, false caso contrário.
@@ -86,22 +123,14 @@ public class Controller {
     }
 
     /**
-     * Método responsável por buscar um moviee com base no ID informado.
+     * Método responsável por buscar um filme com base no ID informado.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
-     * @return Objeto movie correspondente ao ID informado.
+     * @return Objeto Film correspondente ao ID informado.
      */
     public static Movie Get(Scanner scanner) {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         return SequentialFile.Get(id);
-    }
-
-    public static void Sort(Scanner scanner){
-        System.out.print("Digite a quantidade de caminhos: ");
-        int m = scanner.nextInt();
-        System.out.print("Digite a quantidade de registros por bloco: ");
-        int b = scanner.nextInt();
-        SequentialFile.ExternalSort(b,m);
     }
 }
