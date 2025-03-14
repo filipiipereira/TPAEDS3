@@ -18,6 +18,7 @@ public class Controller {
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return Objeto Film preenchido com os dados informados pelo usuário.
      */
+
     public static Movie Form(Scanner scanner) {
         System.out.print("Name: ");
         scanner.nextLine(); // Limpa o buffer

@@ -208,4 +208,8 @@ public class Movie {
             else System.out.print(financingCompanies.get(i) + "\", \"");
         }
     }
+
+    int getReleaseDate() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
