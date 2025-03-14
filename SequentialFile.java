@@ -4,9 +4,13 @@
  */
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 public class SequentialFile {
     private static String FILE_NAME = "SequentialFile.dat";
+
+    private static int numberOfMovies = 0; 
 
     public static void WriteMovie(RandomAccessFile file, Movie Movie){
         try {
@@ -78,6 +82,7 @@ public class SequentialFile {
             file.writeInt(Movie.getId());
             file.seek(file.length());
             WriteMovie(file, Movie);
+            numberOfMovies++;
             response = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -173,6 +178,7 @@ public class SequentialFile {
                     if (readID == id) {
                         file.seek(position);
                         file.writeByte('*');
+                        numberOfMovies--;
                         response = true;
                     } else {
                         file.seek(position + 1 + 4 + registerSize);
@@ -189,16 +195,15 @@ public class SequentialFile {
 
     public static void ExternalSort(int b, int m){
         Distribution(b, m);
+        Intercalation(m, b, numberOfMovies);
     }
 
     public static void Distribution(int b, int m){
         //Distribution
-        int totalRecords = 0;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
             int quantityRecords;
             int quantityPaths;
             file.seek(4); //jumping lastId record
-            boolean startingFile = true;
             while(file.getFilePointer() < file.length()){
                 quantityPaths = 0;
                 while(quantityPaths < m && file.getFilePointer() < file.length()){
@@ -216,7 +221,6 @@ public class SequentialFile {
                             Movie Movie = ReadMovie(file);
                             blockMovie[quantityRecords] = Movie;
                             quantityRecords++;
-                            totalRecords++;
                         }
                     }
                     try (RandomAccessFile tempFile = new RandomAccessFile("TempFile" + (quantityPaths+1), "rw")) {
@@ -227,14 +231,15 @@ public class SequentialFile {
                                     lastBlockMovie.add(Movie);
                                 }
                             }
-                            QuickSort(lastBlockMovie);
+                            Movie[] newBlockMovie = lastBlockMovie.toArray(new Movie[0]);
+                            Arrays.sort(newBlockMovie, Comparator.comparingInt(Movie::getId));
                             for(int i = 0; i < lastBlockMovie.size(); i++){
                                 tempFile.seek(tempFile.length());
                                 WriteMovie(tempFile, lastBlockMovie.get(i));
                             }
                         }
                         else{
-                            QuickSort(blockMovie);
+                            Arrays.sort(blockMovie, Comparator.comparingInt(Movie::getId));
                             for(int i = 0; i < blockMovie.length; i++){
                                 tempFile.seek(tempFile.length());
                                 WriteMovie(tempFile, blockMovie[i]);
@@ -244,13 +249,11 @@ public class SequentialFile {
                         e.printStackTrace();
                     }
                     quantityPaths++;
-                    startingFile = false;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Intercalation(m, b, totalRecords);
     }
 
     public static void Intercalation(int m, int b, int registrosTotais){
