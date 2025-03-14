@@ -113,7 +113,8 @@ public class Sort extends SequentialFile{
             }
 
             //proximo numero de arquivos calculo
-            int nextNumberOfFiles = (int)Math.ceil((double)(numberOfMovies / (numberOfRecordsPerBlock * currentNumberOfFiles)));
+            int nextNumberOfFiles = (int)Math.ceil(((double)numberOfMovies / (numberOfRecordsPerBlock * currentNumberOfFiles)));
+            if(nextNumberOfFiles > currentNumberOfFiles) nextNumberOfFiles = currentNumberOfFiles;
 
             RandomAccessFile[] currentFiles = new RandomAccessFile[currentNumberOfFiles];
             RandomAccessFile[] nextFiles = new RandomAccessFile[nextNumberOfFiles];

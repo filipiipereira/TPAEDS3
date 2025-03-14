@@ -102,6 +102,6 @@ public class Controller {
         int m = scanner.nextInt();
         System.out.print("Digite a quantidade de registros por bloco: ");
         int b = scanner.nextInt();
-        SequentialFile.ExternalSort(b,m);
+        Sort.ExternalSort(b,m);
     }
 }
