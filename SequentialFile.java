@@ -37,6 +37,41 @@ public class SequentialFile {
             e.printStackTrace();
         }
     }
+
+    public static void WriteMovieUpdate(RandomAccessFile file, Movie movie, int registerSize) {
+    try {
+        long startPos = file.getFilePointer(); // Posição inicial do registro
+
+        file.writeByte(0); // flag
+        file.writeInt(registerSize);
+        file.writeInt(movie.getId());
+        file.writeUTF(movie.getName());
+        file.writeLong(movie.getDate());
+        file.writeInt(movie.getBudget());
+        file.writeFloat(movie.getBoxOffice());
+
+        // Escreve o gênero como string de tamanho fixo
+        String genre = movie.getGenre();
+        for (int i = 0; i < 10; i++) {
+            file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
+        }
+
+        file.writeInt(movie.getFinancingCompanies().size());
+        for (String company : movie.getFinancingCompanies()) {
+            file.writeUTF(company);
+        }
+
+        int remainingBytes = registerSize - movie.registerByteSize();
+        
+        // Preenche o espaço restante com espaços (ASCII 32)
+        for (int i = 0; i < remainingBytes; i++) {
+            file.writeByte(' ');
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
     
     public static Movie ReadMovie(RandomAccessFile file){
         Movie Movie = null;
@@ -150,7 +185,7 @@ public class SequentialFile {
      * @param newMovie Novo objeto Movie atualizado.
      * @return true se a atualização for bem-sucedida, false caso contrário.
      */
-    public static boolean Update(Movie newMovie) {
+    public static boolean Update(Movie newMovie, int originalSize) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4);
@@ -164,7 +199,7 @@ public class SequentialFile {
                         int newSize = newMovie.registerByteSize();
                         if (newSize <= registerSize) {
                             file.seek(pos);
-                            WriteMovie(file, newMovie);
+                            WriteMovieUpdate(file,newMovie,originalSize);
                         } else {
                             file.seek(pos);
                             file.writeByte('*'); // Marcar como excluído

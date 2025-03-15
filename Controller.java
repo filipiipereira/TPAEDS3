@@ -106,9 +106,10 @@ public class Controller {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         SequentialFile.Get(id).toStr();
+        int sizeOriginal = SequentialFile.Get(id).registerByteSize();
         Movie film = Form(scanner);
         film.setId(id);
-        return SequentialFile.Update(film);
+        return SequentialFile.Update(film,sizeOriginal);
     }
 
     /**
