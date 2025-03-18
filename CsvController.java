@@ -97,48 +97,4 @@ public class CsvController {
         }
         System.out.println("Load completed");
     }
-
-    public static void LoadToCsv() {
-        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
-            try (BufferedWriter br = new BufferedWriter(new FileWriter(CSV_NAME))) {
-                // Escreve o cabeçalho primeiro
-                br.write("Name,ReleaseDate,Budget,BoxOffice,Genre,FinancingCompanies");
-                br.newLine();
-                
-                file.seek(4); // Pula o cabeçalho do arquivo binário, se tiver
-                int filmesLidos = 0;
-                while (file.getFilePointer() < file.length()) {
-                    file.seek(file.getFilePointer() + 5); // Pula byte + int (suponho que seja seu controle interno)
-
-                    Movie movie = SequentialFile.ReadMovie(file);
-
-                    long timestamp = movie.getDate();
-                    LocalDate data = Instant.ofEpochSecond(timestamp+86400).atZone(ZoneId.systemDefault()).toLocalDate();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-                    // Junta as financing companies numa string separada por vírgula
-                    String financingCompanies = String.join(",", movie.getFinancingCompanies());
-
-                    // Escreve os dados no CSV
-                    br.write(String.format(Locale.US,"%s,%s,%d,%.2f,%s,%s",
-                        movie.getName(),
-                        data.format(formatter),
-                        movie.getBudget(),
-                        movie.getBoxOffice(),
-                        movie.getGenre(),
-                        financingCompanies
-                    ));
-                    br.newLine();
-                    filmesLidos++;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        File file = new File(FILE_NAME);
-        file.delete();
-        System.out.println("CSV updated.");
-    }
 }

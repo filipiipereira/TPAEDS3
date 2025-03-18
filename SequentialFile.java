@@ -38,40 +38,30 @@ public class SequentialFile {
         }
     }
 
-    public static void WriteMovieUpdate(RandomAccessFile file, Movie movie, int registerSize) {
-    try {
-        long startPos = file.getFilePointer(); // Posição inicial do registro
-
-        file.writeByte(0); // flag
-        file.writeInt(registerSize);
-        file.writeInt(movie.getId());
-        file.writeUTF(movie.getName());
-        file.writeLong(movie.getDate());
-        file.writeInt(movie.getBudget());
-        file.writeFloat(movie.getBoxOffice());
-
-        // Escreve o gênero como string de tamanho fixo
-        String genre = movie.getGenre();
-        for (int i = 0; i < 10; i++) {
-            file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
+    public static void WriteMovie(RandomAccessFile file, Movie Movie , int oldSize){
+        try {
+            file.writeByte(0); // flag
+            file.writeInt(oldSize);
+            file.writeInt(Movie.getId());
+            file.writeUTF(Movie.getName());
+            file.writeLong(Movie.getDate());
+            file.writeInt(Movie.getBudget());
+            file.writeFloat(Movie.getBoxOffice());
+            
+            // Escreve o gênero como string de tamanho fixo
+            String genre = Movie.getGenre();
+            for (int i = 0; i < 10; i++) {
+                file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
+            }
+            
+            file.writeInt(Movie.getFinancingCompanies().size());
+            for (String company : Movie.getFinancingCompanies()) {
+                file.writeUTF(company);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        file.writeInt(movie.getFinancingCompanies().size());
-        for (String company : movie.getFinancingCompanies()) {
-            file.writeUTF(company);
-        }
-
-        int remainingBytes = registerSize - movie.registerByteSize();
-        
-        // Preenche o espaço restante com espaços (ASCII 32)
-        for (int i = 0; i < remainingBytes; i++) {
-            file.writeByte(' ');
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-}
     
     public static Movie ReadMovie(RandomAccessFile file){
         Movie Movie = null;
@@ -199,7 +189,7 @@ public class SequentialFile {
                         int newSize = newMovie.registerByteSize();
                         if (newSize <= registerSize) {
                             file.seek(pos);
-                            WriteMovieUpdate(file,newMovie,originalSize);
+                            WriteMovie(file,newMovie, registerSize);
                         } else {
                             file.seek(pos);
                             file.writeByte('*'); // Marcar como excluído

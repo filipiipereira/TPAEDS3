@@ -30,7 +30,6 @@ public class Main {
             
             switch(option) {
                 case 0:
-                    CsvController.LoadToCsv();
                     System.out.println("See you next time!");
                     break;
                 case 1:
