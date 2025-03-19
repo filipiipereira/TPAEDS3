@@ -1,19 +1,13 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import static java.time.ZoneOffset.UTC;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Classe responsável por carregar dados de um arquivo CSV e armazená-los como objetos do tipo Movie.
@@ -32,6 +26,7 @@ public class CsvController {
      * O método faz a leitura linha por linha do arquivo, processa os dados, converte tipos quando necessário
      * e cria objetos da classe Movie, os quais são inseridos em um arquivo sequencial.
      */
+    
      public static void LoadFromCsv() {
         String linha;
         SequentialFile sequentialFile = new SequentialFile();

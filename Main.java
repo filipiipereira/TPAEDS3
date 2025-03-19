@@ -11,6 +11,7 @@ public class Main {
      * 
      * @param args Argumentos da linha de comando (não utilizados).
      */
+    
     public static void main(String[] args) {
         int option;
         Scanner scanner = new Scanner(System.in);
@@ -82,11 +83,13 @@ public class Main {
     }
 
     private static final String FILE_NAME = "SequentialFile.dat";
+
     /**
      * Método para verificar se o arquivo foi carregado.
      * 
      * @return true se o arquivo existir, false caso contrário.
      */
+
     private static boolean isFileLoaded() {
         File file = new File(FILE_NAME);
         return file.exists();

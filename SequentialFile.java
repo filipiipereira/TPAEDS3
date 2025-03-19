@@ -93,6 +93,7 @@ public class SequentialFile {
      * @param Movie Objeto Movie a ser inserido.
      * @return true se a inserção for bem-sucedida, false caso contrário.
      */
+
     public static boolean Insert(Movie Movie, RandomAccessFile file) {
         boolean response = false;
         try{
@@ -122,6 +123,7 @@ public class SequentialFile {
      * @param id Identificador do movie.
      * @return Objeto Movie correspondente ou null se não encontrado.
      */
+
     public static Movie Get(int id) {
         Movie movie = null;
         boolean find = false;
@@ -157,6 +159,7 @@ public class SequentialFile {
      * @param newMovie Novo objeto Movie atualizado.
      * @return true se a atualização for bem-sucedida, false caso contrário.
      */
+
     public static boolean Update(Movie newMovie) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
@@ -197,6 +200,7 @@ public class SequentialFile {
      * @param id Identificador do movie a ser excluído.
      * @return true se a exclusão for bem-sucedida, false caso contrário.
      */
+    
     public static boolean Delete(int id) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
@@ -225,11 +229,25 @@ public class SequentialFile {
         return response;
     }
 
+    /**
+     * Realiza a ordenação externa do arquivo principal.
+     * 
+     * @param b Número de registros por bloco.
+     * @param m Número de caminhos de intercalação.
+     */
+
     public static void ExternalSort(int b, int m){
         Distribution(b, m);
         String orderedFile = Intercalation(m, b);
         UpdateMainFile(orderedFile);
     }
+
+    /**
+     * Distribui os registros do arquivo principal em arquivos temporários ordenados.
+     * 
+     * @param b Número de registros por bloco.
+     * @param m Número de caminhos de intercalação.
+     */
 
     public static void Distribution(int b, int m){
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
@@ -291,8 +309,17 @@ public class SequentialFile {
         }
     }
 
+    /**
+     * Realiza a intercalação dos arquivos temporários até obter o arquivo ordenado final.
+     * 
+     * @param m Número de caminhos de intercalação.
+     * @param b Número de registros por bloco.
+     * @return Nome do arquivo ordenado final.
+     */
+
     private static String FIRST_TEMPFILE_NAME = "a";
     private static String SECOND_TEMPFILE_NAME = "b";
+
     public static String Intercalation(int m, int b){
         int currentNumberOfFiles = m;
         int currentNumberOfRecordsPerBlock = b;
@@ -462,6 +489,13 @@ public class SequentialFile {
         }
         return OrderedFile;
     }
+
+    /**
+     * Atualiza o arquivo principal com os registros ordenados.
+     * 
+     * @param FILE Nome do arquivo ordenado.
+     */
+
     public static void UpdateMainFile(String FILE){
         Movie movie = null;
         File f = new File(FILE_NAME);

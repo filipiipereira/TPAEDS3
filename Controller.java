@@ -39,8 +39,6 @@ public class Controller {
         }
 
         long epochDate = date.atStartOfDay(UTC).toEpochSecond();
-
-        
         int budget = 0;
         boolean controleBudgetValido = false;
 
@@ -54,11 +52,8 @@ public class Controller {
             scanner.nextLine();
         }   
 }
-
-
         float boxOffice = 0.0f;
         boolean controleBoxOfficeValido = false;
-
         while (!controleBoxOfficeValido) {
             try {
                 System.out.print("New global box-office: ");
@@ -69,7 +64,6 @@ public class Controller {
                 scanner.nextLine(); 
             }
         }
-
         System.out.print("New genre: ");
         scanner.nextLine(); // Limpa o buffer
         String genre = scanner.nextLine();
@@ -92,6 +86,7 @@ public class Controller {
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return true se a atualização foi bem-sucedida, false caso contrário.
      */
+
     public static boolean Update(Scanner scanner) {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
@@ -107,6 +102,7 @@ public class Controller {
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return true se a exclusão foi bem-sucedida, false caso contrário.
      */
+
     public static boolean Delete(Scanner scanner) {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
@@ -119,6 +115,7 @@ public class Controller {
      * @param scanner Objeto Scanner para entrada do usuário.
      * @return Objeto Film correspondente ao ID informado.
      */
+
     public static Movie Get(Scanner scanner) {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
