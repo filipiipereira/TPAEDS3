@@ -38,7 +38,7 @@ public class SequentialFile {
         }
     }
 
-    public static void WriteMovie(RandomAccessFile file, Movie Movie , int oldSize){
+    public static void WriteMovieSmallerSizeUpdate(RandomAccessFile file, Movie Movie , int oldSize){
         try {
             file.writeByte(0); // flag
             file.writeInt(oldSize);
@@ -50,6 +50,7 @@ public class SequentialFile {
             
             // Escreve o gênero como string de tamanho fixo
             String genre = Movie.getGenre();
+            System.out.println(genre.length());
             for (int i = 0; i < 10; i++) {
                 file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
             }
@@ -116,30 +117,6 @@ public class SequentialFile {
         return response;
     }
 
-    public static boolean Insert(Movie Movie) {
-        boolean response = false;
-        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
-            int objectId;
-            if (file.length() != 0) {
-                file.seek(0);
-                int lastId = file.readInt();
-                objectId = lastId + 1;
-            } else {
-                objectId = 1;
-            }
-            Movie.setId(objectId);
-            file.seek(0);
-            file.writeInt(Movie.getId());
-            file.seek(file.length());
-            WriteMovie(file, Movie);
-            numberOfMovies++;
-            response = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
-    }
-
     /**
      * Recupera um movie do arquivo sequencial pelo ID.
      * @param id Identificador do movie.
@@ -157,10 +134,15 @@ public class SequentialFile {
                 if (flag == '*') {
                     file.seek(pos + registerLength);
                 } else {
-                    Movie recordMovie = ReadMovie(file);
-                    if (recordMovie.getId() == id) {
+                    int readId = file.readInt();
+                    if (readId == id) {
+                        file.seek(pos);
+                        Movie recordMovie = ReadMovie(file);
                         movie = recordMovie;
                         find = true;
+                    }
+                    else{
+                        file.seek(pos + registerLength);
                     }
                 }
             }
@@ -175,7 +157,7 @@ public class SequentialFile {
      * @param newMovie Novo objeto Movie atualizado.
      * @return true se a atualização for bem-sucedida, false caso contrário.
      */
-    public static boolean Update(Movie newMovie, int originalSize) {
+    public static boolean Update(Movie newMovie) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4);
@@ -189,7 +171,7 @@ public class SequentialFile {
                         int newSize = newMovie.registerByteSize();
                         if (newSize <= registerSize) {
                             file.seek(pos);
-                            WriteMovie(file,newMovie, registerSize);
+                            WriteMovieSmallerSizeUpdate(file, newMovie, registerSize);
                         } else {
                             file.seek(pos);
                             file.writeByte('*'); // Marcar como excluído
@@ -272,6 +254,7 @@ public class SequentialFile {
                             Movie Movie = ReadMovie(file);
                             blockMovie[quantityRecords] = Movie;
                             quantityRecords++;
+                            file.seek(pos + registerLength);
                         }
                     }
                     try (RandomAccessFile tempFile = new RandomAccessFile(FIRST_TEMPFILE_NAME + (quantityPaths+1), "rw")) {

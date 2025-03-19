@@ -20,7 +20,7 @@ public class Controller {
      */
 
     public static Movie Form(Scanner scanner) {
-        System.out.print("Name: ");
+        System.out.print("\nNew name: ");
         scanner.nextLine(); // Limpa o buffer
         String name = scanner.nextLine();
 
@@ -29,7 +29,7 @@ public class Controller {
         boolean controleDataValida = false;
         while (!controleDataValida) {
             try {
-                System.out.print("Date (yyyy-MM-dd): ");
+                System.out.print("New date (yyyy-MM-dd): ");
                 String dateInput = scanner.nextLine();
                 date = LocalDate.parse(dateInput, formatter);
                 controleDataValida = true;
@@ -46,7 +46,7 @@ public class Controller {
 
         while (!controleBudgetValido) {
         try {
-            System.out.print("Budget: ");
+            System.out.print("New budget: ");
             budget = scanner.nextInt();
             controleBudgetValido = true; 
         } catch (InputMismatchException e) {
@@ -61,7 +61,7 @@ public class Controller {
 
         while (!controleBoxOfficeValido) {
             try {
-                System.out.print("Global box-office: ");
+                System.out.print("New global box-office: ");
                 boxOffice = scanner.nextFloat();
                 controleBoxOfficeValido = true; 
             } catch (InputMismatchException e) {
@@ -70,11 +70,11 @@ public class Controller {
             }
         }
 
-        System.out.print("Genre: ");
+        System.out.print("New genre: ");
         scanner.nextLine(); // Limpa o buffer
         String genre = scanner.nextLine();
 
-        System.out.print("Financing companies (type '0' to stop): ");
+        System.out.print("New financing companies (type '0' to stop): ");
         List<String> financingCompanies = new ArrayList<>();
         String financingCompany = scanner.nextLine();
 
@@ -87,16 +87,6 @@ public class Controller {
     }
 
     /**
-     * Método responsável por inserir um novo filme no arquivo sequencial.
-     * 
-     * @param scanner Objeto Scanner para entrada do usuário.
-     * @return true se a inserção foi bem-sucedida, false caso contrário.
-     */
-    public static boolean Insert(Scanner scanner) {
-        return SequentialFile.Insert(Form(scanner));
-    }
-
-    /**
      * Método responsável por atualizar um filme existente com base no ID informado.
      * 
      * @param scanner Objeto Scanner para entrada do usuário.
@@ -106,10 +96,9 @@ public class Controller {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         SequentialFile.Get(id).toStr();
-        int sizeOriginal = SequentialFile.Get(id).registerByteSize();
         Movie film = Form(scanner);
         film.setId(id);
-        return SequentialFile.Update(film,sizeOriginal);
+        return SequentialFile.Update(film);
     }
 
     /**
