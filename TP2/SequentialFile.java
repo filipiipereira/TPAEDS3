@@ -101,8 +101,8 @@ public class SequentialFile {
      * @return true se a inserção for bem-sucedida, false caso contrário.
      */
 
-    public static boolean Insert(Movie Movie, RandomAccessFile file) {
-        boolean response = false;
+    public static long InsertMovieFromCSV(Movie Movie, RandomAccessFile file) {
+        long position = 0;
         try{
             int objectId;
             if (file.length() != 0) {
@@ -116,13 +116,13 @@ public class SequentialFile {
             file.seek(0);
             file.writeInt(Movie.getId());
             file.seek(file.length());
+            position = file.getFilePointer();
             WriteMovie(file, Movie);
             numberOfMovies++;
-            response = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return response;
+        return position;
     }
 
     /**
