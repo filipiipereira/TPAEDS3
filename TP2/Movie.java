@@ -1,6 +1,4 @@
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -8,10 +6,11 @@ import java.util.List;
  * Representa um filme com atributos como nome, data de lançamento, orçamento,
  * bilheteria global, gênero e empresas financiadoras.
  */
+
 public class Movie {
     private int id;
     private String name;
-    private long date;
+    private LocalDate date;
     private int budget;
     private float boxOffice;
     private String genre;
@@ -20,10 +19,11 @@ public class Movie {
     /**
      * Construtor padrão que inicializa os atributos com valores padrão.
      */
+
     public Movie() {
         this.id = -1;
         this.name = null;
-        this.date = -1;
+        this.date = null;
         this.budget = -1;
         this.boxOffice = -1;
         this.financingCompanies = null;
@@ -41,7 +41,8 @@ public class Movie {
      * @param financingCompanies Lista de empresas financiadoras.
      * @param genre Gênero do filme.
      */
-    public Movie(int id, String name, long date, int budget, float boxOffice, List<String> financingCompanies, String genre) {
+
+    public Movie(int id, String name, LocalDate date, int budget, float boxOffice, List<String> financingCompanies, String genre) {
         this.id = id;
         this.name = name;
         this.date = date;
@@ -86,7 +87,7 @@ public class Movie {
     /**
      * @return A data de lançamento do filme em formato timestamp.
      */
-    public long getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
@@ -95,13 +96,15 @@ public class Movie {
      * 
      * @param date Nova data de lançamento em formato timestamp.
      */
-    public void setDate(long date) {
+
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
     /**
      * @return O orçamento do filme.
      */
+
     public int getBudget() {
         return budget;
     }
@@ -111,6 +114,7 @@ public class Movie {
      * 
      * @param budget Novo orçamento do filme.
      */
+
     public void setBudget(int budget) {
         this.budget = budget;
     }
@@ -118,6 +122,7 @@ public class Movie {
     /**
      * @return A bilheteria global do filme.
      */
+
     public float getBoxOffice() {
         return boxOffice;
     }
@@ -127,6 +132,7 @@ public class Movie {
      * 
      * @param boxOffice Nova bilheteria global do filme.
      */
+    
     public void setBoxOffice(float boxOffice) {
         this.boxOffice = boxOffice;
     }
@@ -134,6 +140,7 @@ public class Movie {
     /**
      * @return A lista de empresas financiadoras.
      */
+
     public List<String> getFinancingCompanies() {
         return financingCompanies;
     }
@@ -143,6 +150,7 @@ public class Movie {
      * 
      * @param financingCompanies Nova lista de empresas financiadoras.
      */
+
     public void setFinancingCompanies(List<String> financingCompanies) {
         this.financingCompanies = financingCompanies;
     }
@@ -150,6 +158,7 @@ public class Movie {
     /**
      * @return O gênero do filme.
      */
+
     public String getGenre() {
         return genre;
     }
@@ -159,6 +168,7 @@ public class Movie {
      * 
      * @param genre Novo gênero do filme.
      */
+
     public void setGenre(String genre) {
         this.genre = genre;
     }
@@ -168,6 +178,7 @@ public class Movie {
      * 
      * @return O tamanho do registro em bytes.
      */
+
     public int registerByteSize(){
         int size = 0;
         size += 4; // id
@@ -185,24 +196,15 @@ public class Movie {
     }
 
     /**
-     * Formata um timestamp para uma string no formato dd/MM/yyyy.
-     * 
-     * @param timestamp Timestamp a ser formatado.
-     * @return Data formatada como string.
-     */
-    public String dateFormater(long timestamp) {
-        LocalDate data = Instant.ofEpochSecond(timestamp+86400).atZone(ZoneId.systemDefault()).toLocalDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return data.format(formatter);
-    }
-
-    /**
      * Exibe as informações do filme formatadas no console.
      */
+
     public void toStr(){
-        System.out.print("\nFILM: \nName: \"" + name + "\"; \nRelease Date: " + dateFormater(date) +
-            "; \nBudget: " + budget + "$; \nGlobal Box-Office: " + boxOffice + "$; \nGenre: " + genre +
-            "; \nFinancing companies: ");
+        String stringDate;
+        if(date.toEpochDay() == 0) stringDate = "Data não registrada";
+        else stringDate = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        System.out.print("\nFILM: \nName: \"" + name + "\"; \nRelease Date: " + stringDate + "; \nBudget: " + budget + "$; \nGlobal Box-Office: " + boxOffice + "$; \nGenre: " + genre +
+        "; \nFinancing companies: ");
         for(int i = 0; i < financingCompanies.size(); i++){
             if(i == financingCompanies.size() - 1) System.out.println(financingCompanies.get(i));
             else System.out.print(financingCompanies.get(i) + "\", \"");
