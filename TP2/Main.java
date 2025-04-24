@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.Scanner;
 
 public class Main {
-
     /**
      * Método principal que exibe o menu e gerencia as opções do usuário.
      * 
@@ -94,4 +93,5 @@ public class Main {
         File file = new File(FILE_NAME);
         return file.exists();
     }
+
 }

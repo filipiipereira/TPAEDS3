@@ -17,7 +17,7 @@ public class CsvController {
      */
     private static final String CSV_NAME = "moviesDataSet.csv";
     private static final String FILE_NAME = "SequentialFile.dat";
-    private static final String INDEXFILE_NAME = "IndexFile.dat";
+    private static final String BTREE_NAME = "tree.dat";
     
     /**
      * Método para carregar os dados do arquivo CSV e inseri-los em um arquivo sequencial.
@@ -31,19 +31,15 @@ public class CsvController {
         SequentialFile sequentialFile = new SequentialFile();
         System.out.println("Loading...");
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")){
-            try(RandomAccessFile indexFile = new RandomAccessFile(INDEXFILE_NAME, "rw")){
-                try (BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))) {
-                    br.readLine(); // Ignora o cabeçalho
+            ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
+            try (BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))) {
+                br.readLine(); // Ignora o cabeçalho
+                line = br.readLine();
+                while (line != null) {
+                    Movie movie = readMovieFromCSV(line);
+                    long pos = sequentialFile.InsertMovieFromCSV(movie, file);
+                    bTree.create(new ParIntLong(movie.getId(), pos));
                     line = br.readLine();
-                    while (line != null) {
-                        Movie movie = readMovieFromCSV(line);
-                        long pos = sequentialFile.InsertMovieFromCSV(movie, file);
-                        //escreve no btree
-                        // Lê a próxima line
-                        line = br.readLine();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 public class SequentialFile {
     private static String FILE_NAME = "SequentialFile.dat";
+    private static final String BTREE_NAME = "tree.dat";
 
     private static int numberOfMovies = 0; 
 
@@ -133,27 +134,19 @@ public class SequentialFile {
 
     public static Movie Get(int id) {
         Movie movie = null;
-        boolean find = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
-            file.seek(4); // Pula o último ID salvo
-            while (file.getFilePointer() < file.length() && !find) {
+            ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
+            ArrayList<ParIntLong> lista = bTree.read(new ParIntLong(id, -1));
+            long pos;
+            try {
+                pos = lista.get(0).getNum2();
+                    file.seek(pos); // Pula o último ID salvo
                 Byte flag = file.readByte();
                 int registerLength = file.readInt();
-                long pos = file.getFilePointer();
-                if (flag == '*') {
-                    file.seek(pos + registerLength);
-                } else {
-                    int readId = file.readInt();
-                    if (readId == id) {
-                        file.seek(pos);
-                        Movie recordMovie = ReadMovie(file);
-                        movie = recordMovie;
-                        find = true;
-                    }
-                    else{
-                        file.seek(pos + registerLength);
-                    }
+                if (flag != '*') {
+                    movie = ReadMovie(file);
                 }
+            } catch (Exception e) {
             }
         } catch (Exception e) {
             e.printStackTrace();
