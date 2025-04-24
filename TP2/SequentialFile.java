@@ -89,7 +89,6 @@ public class SequentialFile {
                 registerFinancingCompanies.add(file.readUTF());
             }
             Movie = new Movie(registerId, registerName, date, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,18 +134,12 @@ public class SequentialFile {
     public static Movie Get(int id) {
         Movie movie = null;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
-            ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
-            ArrayList<ParIntLong> lista = bTree.read(new ParIntLong(id, -1));
-            long pos;
-            try {
-                pos = lista.get(0).getNum2();
-                    file.seek(pos); // Pula o último ID salvo
-                Byte flag = file.readByte();
-                int registerLength = file.readInt();
-                if (flag != '*') {
-                    movie = ReadMovie(file);
-                }
-            } catch (Exception e) {
+            long pos = IndexController.getPos(id);
+            file.seek(pos); // Pula o último ID salvo
+            Byte flag = file.readByte();
+            int registerLength = file.readInt();
+            if (flag != '*') {
+                movie = ReadMovie(file);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -163,31 +156,31 @@ public class SequentialFile {
     public static boolean Update(Movie newMovie) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
-            file.seek(4);
-            while (file.getFilePointer() < file.length() && !response) {
-                long pos = file.getFilePointer();
-                byte flag = file.readByte();
-                int registerSize = file.readInt();
+            ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
+            ArrayList<ParIntLong> lista = bTree.read(new ParIntLong(newMovie.getId(), -1));
+            long pos;
+            try {
+                pos = lista.get(0).getNum2();
+                file.seek(pos); // Pula o último ID salvo
+                Byte flag = file.readByte();
+                int registerLength = file.readInt();
                 if (flag != '*') {
-                    int id = file.readInt();
-                    if (id == newMovie.getId()) {
                         int newSize = newMovie.registerByteSize();
-                        if (newSize <= registerSize) {
+                        if (newSize <= registerLength) {
                             file.seek(pos);
-                            WriteMovieSmallerSizeUpdate(file, newMovie, registerSize);
+                            WriteMovieSmallerSizeUpdate(file, newMovie, registerLength);
                         } else {
                             file.seek(pos);
                             file.writeByte('*'); // Marcar como excluído
                             file.seek(file.length());
+                            long newPos = file.getFilePointer();
                             WriteMovie(file, newMovie);
+                            IndexController.Update(newPos, newMovie.getId());
                         }
                         response = true;
-                    } else {
-                        file.seek(pos + 5 + registerSize); //register size does not count flag byte and registter size bytes(+5)
-                    }
-                } else {
-                    file.seek(pos + 5 + registerSize); //register size does not count flag byte and registter size bytes(+5)
+                       
                 }
+            } catch (Exception e) {
             }
         } catch (Exception e) {
             e.printStackTrace();

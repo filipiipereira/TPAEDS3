@@ -13,8 +13,8 @@
  */
 
 import java.io.*;
-import java.util.ArrayList;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 
 // Esta versão da árvore funciona apenas como um conjunto de par de chaves.
 // A primeira chave pode repetir na árvore, mas não o par de chaves, 
