@@ -77,6 +77,20 @@ public class Controller {
         return new Movie(1, name, date, budget, boxOffice, financingCompanies, genre);
     }
 
+    public static int MenuIndex(){
+        Scanner scanner = new Scanner(System.in);
+        int index;
+        do { 
+            System.out.println("\nMenu Index: ");
+            System.out.println("1) Btree");
+            System.out.println("2) Extended Hash");
+            System.out.println("3) Inverted List");
+            index = scanner.nextInt();
+            if(index < 1 || index > 3) System.out.println("Opção Inválida!");
+        } while (index < 1 || index > 3);
+        return index;
+    }
+
     /**
      * Método responsável por atualizar um filme existente com base no ID informado.
      * 
@@ -84,15 +98,14 @@ public class Controller {
      * @return true se a atualização foi bem-sucedida, false caso contrário.
      */
 
-    public static boolean Update(Scanner scanner, int index) {
-        boolean flag = false;
+    public static boolean Update(Scanner scanner) {
+        int index = MenuIndex();
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         SequentialFile.Get(id, index).toStr();
-        Movie film = Form(scanner);
-        film.setId(id);
-        flag = SequentialFile.Update(film, index);
-        //SequentialFile.Get(film.getId(),index).toStr();
+        Movie movie = Form(scanner);
+        movie.setId(id);
+        boolean flag = SequentialFile.Update(movie, index);
         return flag;
     }
 
@@ -104,9 +117,10 @@ public class Controller {
      */
 
     public static boolean Delete(Scanner scanner) {
+        int index = MenuIndex();
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
-        return SequentialFile.Delete(id);
+        return SequentialFile.Delete(id, index);
     }
 
     /**
@@ -116,16 +130,10 @@ public class Controller {
      * @return Objeto Film correspondente ao ID informado.
      */
 
-    public static Movie Get(Scanner scanner, int index) {
+    public static Movie Get(Scanner scanner) {
+        int index = MenuIndex();
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         return SequentialFile.Get(id, index);
-    }
-    public static void Sort(Scanner scanner){
-        System.out.print("Digite a quantidade de caminhos: ");
-        int m = scanner.nextInt();
-        System.out.print("Digite a quantidade de registros por bloco: ");
-        int b = scanner.nextInt();
-        SequentialFile.ExternalSort(b,m);
     }
 }

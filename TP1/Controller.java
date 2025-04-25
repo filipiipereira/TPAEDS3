@@ -91,9 +91,9 @@ public class Controller {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         SequentialFile.Get(id).toStr();
-        Movie film = Form(scanner);
-        film.setId(id);
-        return SequentialFile.Update(film);
+        Movie movie = Form(scanner);
+        movie.setId(id);
+        return SequentialFile.Update(movie);
     }
 
     /**
@@ -120,13 +120,5 @@ public class Controller {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         return SequentialFile.Get(id);
-    }
-
-    public static void Sort(Scanner scanner){
-        System.out.print("Digite a quantidade de caminhos: ");
-        int m = scanner.nextInt();
-        System.out.print("Digite a quantidade de registros por bloco: ");
-        int b = scanner.nextInt();
-        SequentialFile.ExternalSort(b,m);
     }
 }
