@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,7 +19,9 @@ public class CsvController {
     private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
-    
+    private static final String DICIONARY_LIST_NAME = "dicionaryList.dat";
+    private static final String BLOCOS_LIST_NAME = "blocosList.dat";
+
     /**
      * Método para carregar os dados do arquivo CSV e inseri-los em um arquivo sequencial.
      * 
@@ -45,15 +46,15 @@ public class CsvController {
                     IndexController.Create(movie.getId(), pos, bTree, he);
                     line = br.readLine();
                 }
-                //he.print(); 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("Load completed");
     }
+
     public static Movie readMovieFromCSV(String line){
         // Divide a line respeitando valores entre aspas
         String[] originalValues = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");

@@ -59,7 +59,7 @@ public class SequentialFile {
             
             // Escreve o gênero como string de tamanho fixo
             String genre = Movie.getGenre();
-            System.out.println(genre.length());
+            //System.out.println(genre.length());
             for (int i = 0; i < 10; i++) {
                 file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
             }
@@ -136,8 +136,8 @@ public class SequentialFile {
     public static Movie Get(int id, int index) {
         Movie movie = null;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
-            long pos = IndexController.GetPos(id,index);
-            file.seek(pos); // Pula o último ID salvo
+            long pos = IndexController.GetPos(id, index);
+            file.seek(pos);
             Byte flag = file.readByte();
             int registerLength = file.readInt();
             if (flag != '*') {
@@ -177,7 +177,8 @@ public class SequentialFile {
                             file.seek(file.length());
                             long newPos = file.getFilePointer();
                             WriteMovie(file, newMovie);
-                            IndexController.Update(newPos, newMovie.getId(), index);
+                            IndexController.Update(pos,newMovie.getId());
+                            
                         }
                         response = true;
                 }
