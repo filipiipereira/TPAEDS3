@@ -7,7 +7,17 @@ public class IndexController{
     private static final String BUCKET_HASH = "hashBuckets.dat";
     private static final String INVERTEDLIST_NAME = "lista.dat";
     private static int index; 
-    public static long getPos(int id, int index){
+
+    public static void Create(int id, long pos, ArvoreBMais bTree, HashExtensivel he){
+        try {
+            he.create(new ParIntLongHash(id, pos)); //create hash
+            bTree.create(new ParIntLong(id, pos)); //create btree
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static long GetPos(int id, int index){
         long pos = 0;
         switch(index) {
             case 1:

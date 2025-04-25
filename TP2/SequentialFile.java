@@ -136,8 +136,8 @@ public class SequentialFile {
     public static Movie Get(int id, int index) {
         Movie movie = null;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
-            long pos = IndexController.getPos(id,index);
-            file.seek(pos); // Pula o último ID salvo
+            long pos = IndexController.GetPos(id, index);
+            file.seek(pos);
             Byte flag = file.readByte();
             int registerLength = file.readInt();
             if (flag != '*') {
@@ -162,7 +162,7 @@ public class SequentialFile {
             ArrayList<ParIntLong> lista = bTree.read(new ParIntLong(newMovie.getId(), -1));
             long pos;
             try {
-                pos = IndexController.getPos(newMovie.getId(),index);
+                pos = IndexController.GetPos(newMovie.getId(),index);
                 file.seek(pos); // Pula o último ID salvo
                 Byte flag = file.readByte();
                 int registerLength = file.readInt();
@@ -202,8 +202,8 @@ public class SequentialFile {
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4);
             while (file.getFilePointer() < file.length() && !response) {
-                long posBTree = IndexController.getPos(id,1);
-                long posHash = IndexController.getPos(id,2);
+                long posBTree = IndexController.GetPos(id,1);
+                long posHash = IndexController.GetPos(id,2);
                 //long posList = IndexController.getPos(id,3);
                 byte flag = file.readByte();
                 int registerSize = file.readInt();

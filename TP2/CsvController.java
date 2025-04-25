@@ -29,38 +29,31 @@ public class CsvController {
      * e cria objetos da classe Movie, os quais são inseridos em um arquivo sequencial.
      */
     
-    public static void LoadFromCsv() {
-    String line;
-    SequentialFile sequentialFile = new SequentialFile();
-    System.out.println("Loading...");
-    try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
-        ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
-        HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH, BUCKET_HASH);
-        ListaInvertida lista = new ListaInvertida(10, DICIONARY_LIST_NAME, BLOCOS_LIST_NAME);
-        List<Movie> filmes = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))) {
-            br.readLine(); // Ignora o cabeçalho
-            line = br.readLine();
-            while (line != null) {
-                Movie movie = readMovieFromCSV(line);
-                long pos = sequentialFile.InsertMovieFromCSV(movie, file);
-                he.create(new ParIntLongHash(movie.getId(), pos)); //cria hash  
-                bTree.create(new ParIntLong(movie.getId(), pos)); //cria btree      
-                filmes.add(movie);
+     public static void LoadFromCsv() {
+        String line;
+        SequentialFile sequentialFile = new SequentialFile();
+        System.out.println("Loading...");
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")){
+            ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
+            HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
+            BUCKET_HASH);
+            try (BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))) {
+                br.readLine(); // Ignora o cabeçalho
                 line = br.readLine();
+                while (line != null) {
+                    Movie movie = readMovieFromCSV(line);
+                    long pos = sequentialFile.InsertMovieFromCSV(movie, file);
+                    IndexController.Create(movie.getId(), pos, bTree, he);
+                    line = br.readLine();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-    } catch (Exception e) {
-        e.printStackTrace();
+        System.out.println("Load completed");
     }
-    
-    System.out.println("Load completed");
-}
 
     public static Movie readMovieFromCSV(String line){
         // Divide a line respeitando valores entre aspas
