@@ -85,5 +85,38 @@ public class IndexController{
         } catch (Exception e) {
         }
     }
-    
+
+    public static boolean Delete(int id,int index) {
+        boolean deletado = false;
+            switch(index) {
+            case 1:
+               //deletado = BtreeDelete(id); IMPLEMENTAR
+                break;
+            case 2:
+                deletado = ExtendedHashDelete(id);
+                break;
+            case 3:
+               // deletado = InvertedListDelete(id);
+               break;
+            default:
+                System.out.println("Index inválido!");
+                break;
+        }
+        return deletado;
+    }
+
+    //public static boolean BtreeDelete(int id ){} IMPLEMENTAR
+
+    public static boolean ExtendedHashDelete(int id) {
+        boolean deletado = false;
+        try {
+            HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
+        BUCKET_HASH);
+           deletado = he.delete(id);
+        } catch (Exception e) {
+        }
+        return deletado;
+    }
+
+    //public static boolean InvertedListDelete(int id){} IMPLEMENTAR
 }

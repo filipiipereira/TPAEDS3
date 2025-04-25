@@ -197,24 +197,33 @@ public class SequentialFile {
     
     public static boolean Delete(int id) {
         boolean response = false;
+        boolean DeleteIndex = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             file.seek(4);
             while (file.getFilePointer() < file.length() && !response) {
-                long position = file.getFilePointer();
+                long posBTree = IndexController.getPos(id,1);
+                long posHash = IndexController.getPos(id,2);
+                //long posList = IndexController.getPos(id,3);
                 byte flag = file.readByte();
                 int registerSize = file.readInt();
                 if (flag == 0) {
                     int readID = file.readInt();
                     if (readID == id) {
-                        file.seek(position);
+                        file.seek(posHash);
                         file.writeByte('*');
                         numberOfMovies--;
                         response = true;
                     } else {
-                        file.seek(position + 1 + 4 + registerSize);
+                        file.seek(posHash + 1 + 4 + registerSize);
                     }
+                    if(IndexController.Delete(id,1)) System.out.println("Deletado Btree!");
+                    else System.out.println("Erro no delete BTree!");
+                    if(IndexController.Delete(id, 2)) System.out.println("Deletado Hash!");
+                    else System.out.println("Erro no delete Hash!");
+                    if(IndexController.Delete(id, 3)) System.out.println("Deletado Lista Invertida!");
+                    else System.out.println("Erro no delete Lista Invertida!");
                 } else {
-                    file.seek(position + 1 + 4 + registerSize);
+                    file.seek(posHash + 1 + 4 + registerSize);
                 }
             }
         } catch (Exception e) {
