@@ -6,7 +6,6 @@ public class IndexController{
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
     private static final String INVERTEDLIST_NAME = "lista.dat";
-    private static int index; 
 
     public static void Create(int id, long pos, ArvoreBMais bTree, HashExtensivel he){
         try {
@@ -29,9 +28,6 @@ public class IndexController{
             case 3:
                // pos = InvertedListGet(id);
                break;
-            default:
-                System.out.println("Index inválido!");
-                break;
         }
         return pos;
     }
@@ -46,22 +42,22 @@ public class IndexController{
         return pos;
     }
 
-    public static long ExtendedHashGet(int id) { //ok
+    public static long ExtendedHashGet(int id) { 
         long pos = -1;
         try {
-        HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
-        BUCKET_HASH);
-        ParIntLongHash par = he.read(ParIntLongHash.hash(id));
-        pos = par.getPos();
+            HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
+            BUCKET_HASH);
+            ParIntLongHash par = he.read(ParIntLongHash.hash(id));
+            pos = par.getPos();
         } catch (Exception e) {
         }
         return pos;
 }
 
     public static void Update(long newPos, int id){
-                BtreeUpdate(newPos, id); //ok
-                ExtendedHashUpdate(newPos,id); //ok
-                //InvertedList(newPos,id){}
+        BtreeUpdate(newPos, id); 
+        ExtendedHashUpdate(newPos,id);
+        //InvertedList(newPos,id){}
     }
 
     public static void BtreeUpdate(long newPos, int id){
@@ -84,34 +80,28 @@ public class IndexController{
         }
     }
 
-    public static boolean Delete(int id,int index) {
+    public static boolean Delete(int id) {
+        return BtreeDelete(id) && ExtendedHashDelete(id);
+    }
+
+    public static boolean BtreeDelete(int id){
         boolean deletado = false;
-            switch(index) {
-            case 1:
-               //deletado = BtreeDelete(id); IMPLEMENTAR
-                break;
-            case 2:
-                deletado = ExtendedHashDelete(id);
-                break;
-            case 3:
-               // deletado = InvertedListDelete(id);
-               break;
-            default:
-                System.out.println("Index inválido!");
-                break;
+        try {
+            HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH, BUCKET_HASH);
+            deletado = he.delete(id);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return deletado;
     }
 
-    //public static boolean BtreeDelete(int id ){} IMPLEMENTAR
-
     public static boolean ExtendedHashDelete(int id) {
         boolean deletado = false;
         try {
-            HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
-        BUCKET_HASH);
+            HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH, BUCKET_HASH);
            deletado = he.delete(id);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return deletado;
     }
