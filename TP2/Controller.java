@@ -118,7 +118,6 @@ public class Controller {
         int id = scanner.nextInt();
         return SequentialFile.Get(id);
     }
-
     public static void Sort(Scanner scanner){
         System.out.print("Digite a quantidade de caminhos: ");
         int m = scanner.nextInt();

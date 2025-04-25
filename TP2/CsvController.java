@@ -18,6 +18,8 @@ public class CsvController {
     private static final String CSV_NAME = "moviesDataSet.csv";
     private static final String FILE_NAME = "SequentialFile.dat";
     private static final String BTREE_NAME = "tree.dat";
+    private static final String DIRECTORY_HASH = "hashDirectory.dat";
+    private static final String BUCKET_HASH = "hashBuckets.dat";
     
     /**
      * Método para carregar os dados do arquivo CSV e inseri-los em um arquivo sequencial.
@@ -32,15 +34,19 @@ public class CsvController {
         System.out.println("Loading...");
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")){
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
+            HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
+            BUCKET_HASH);
             try (BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))) {
                 br.readLine(); // Ignora o cabeçalho
                 line = br.readLine();
                 while (line != null) {
                     Movie movie = readMovieFromCSV(line);
                     long pos = sequentialFile.InsertMovieFromCSV(movie, file);
+                    he.create(new ParIntLongHash(movie.getId(), pos));
                     bTree.create(new ParIntLong(movie.getId(), pos));
                     line = br.readLine();
                 }
+                //he.print(); 
             } catch (IOException e) {
                 e.printStackTrace();
             }

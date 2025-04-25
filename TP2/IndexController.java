@@ -3,12 +3,14 @@ import java.util.ArrayList;
 
 public class IndexController{
     private static final String BTREE_NAME = "arvore.dat";
-    private static final String HASH_NAME = "hash.dat";
+    private static final String DIRECTORY_HASH = "hashDirectory.dat";
+    private static final String BUCKET_HASH = "hashBuckets.dat";
     private static final String INVERTEDLIST_NAME = "lista.dat";
     private static int index; //implementar
     public static long getPos(int id){
         long pos = 0;
         if(index == 1) pos = BtreeGet(id);
+        else if(index == 2) pos = ExtendedHashGet(id);
         return pos;
     }
     public static long BtreeGet(int id){
@@ -21,8 +23,22 @@ public class IndexController{
         }
         return pos;
     }
+
+    public static long ExtendedHashGet(int id) {
+        long pos = -1;
+        try {
+        HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
+        BUCKET_HASH);
+        ParIntLongHash par = he.read(ParIntLongHash.hash(id));
+        pos = par.getPos();
+        } catch (Exception e) {
+        }
+        return pos;
+}
+
     public static void Update(long newPos, int id){
         if(index == 1)BtreeUpdate(newPos, id);
+        else if(index == 2) ExtendedHashUpdate(newPos, id);
     }
     public static void BtreeUpdate(long newPos, int id){
         try {
@@ -32,6 +48,10 @@ public class IndexController{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void ExtendedHashUpdate(long newPos, int id) {
+        
     }
     
 }

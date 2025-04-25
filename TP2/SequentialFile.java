@@ -12,6 +12,8 @@ import java.util.List;
 public class SequentialFile {
     private static String FILE_NAME = "SequentialFile.dat";
     private static final String BTREE_NAME = "tree.dat";
+    private static final String DIRECTORY_HASH = "hashDirectory.dat";
+    private static final String BUCKET_HASH = "hashBuckets.dat";
 
     private static int numberOfMovies = 0; 
 
@@ -187,7 +189,7 @@ public class SequentialFile {
         }
         return response;
     }
-
+    
     /**
      * Exclui um movie do arquivo sequencial pelo ID.
      * @param id Identificador do movie a ser excluído.
