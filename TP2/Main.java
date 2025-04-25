@@ -13,6 +13,7 @@ public class Main {
     
     public static void main(String[] args) {
         int option;
+        int index = 0;
         Scanner scanner = new Scanner(System.in);
         
         do {
@@ -39,10 +40,24 @@ public class Main {
                         System.out.println("Error: File not loaded. Please load it first.");
                         break;
                     }
-                    if (Controller.Update(scanner)) 
-                        System.out.println("Updated successfully");
-                    else 
-                        System.out.println("Error in update");
+                    System.out.println("\nMenu UPDATE: ");
+                    System.out.println("0) Back to main menu");
+                    System.out.println("1) Btree");
+                    System.out.println("2) Extended Hash");
+                    System.out.println("3) Inverted List");
+                    index = scanner.nextInt();
+                        if(index == 0) {
+                            break;
+                        }
+                        else if(index >=1 && index <=3) {
+                            if(Controller.Update(scanner, index))
+                            System.out.println("Updated successfully");
+                            else 
+                            System.out.println("Error in update");
+                        } 
+                        else{
+                            System.out.println("Opção Inválida!!");
+                        }
                     break;
                 case 3:
                     if (!isFileLoaded()) {
@@ -59,11 +74,25 @@ public class Main {
                         System.out.println("Error: File not loaded. Please load it first.");
                         break;
                     }
-                    Movie movie = Controller.Get(scanner);
-                    if (movie == null) 
-                        System.out.println("Movie not found");
-                    else 
-                        movie.toStr();
+                    System.out.println("\nMenu GET: ");
+                    System.out.println("0) Back to main menu");
+                    System.out.println("1) Btree");
+                    System.out.println("2) Extended Hash");
+                    System.out.println("3) Inverted List");
+                    index = scanner.nextInt();
+                    if(index == 0) {
+                        break;
+                    }
+                    else if(index >=1 && index <=3) {
+                        Movie movie = Controller.Get(scanner, index);
+                            if (movie == null) 
+                                System.out.println("Movie not found");
+                            else 
+                                movie.toStr();
+                            }
+                    else {
+                        System.out.println("Opção Inválida!");
+                    }
                     break;
                 case 5:
                     if (!isFileLoaded()) {

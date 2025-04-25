@@ -6,14 +6,26 @@ public class IndexController{
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
     private static final String INVERTEDLIST_NAME = "lista.dat";
-    private static int index; //implementar
-    public static long getPos(int id){
+    private static int index; 
+    public static long getPos(int id, int index){
         long pos = 0;
-        if(index == 1) pos = BtreeGet(id);
-        else if(index == 2) pos = ExtendedHashGet(id);
+        switch(index) {
+            case 1:
+                pos = BtreeGet(id);
+                break;
+            case 2:
+                pos = ExtendedHashGet(id);
+                break;
+            case 3:
+               // pos = InvertedListGet(id);
+               break;
+            default:
+                System.out.println("Index inválido!");
+                break;
+        }
         return pos;
     }
-    public static long BtreeGet(int id){
+    public static long BtreeGet(int id){ //nao ta funcionando ainda
         long pos = 0;
         try {
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
@@ -24,7 +36,7 @@ public class IndexController{
         return pos;
     }
 
-    public static long ExtendedHashGet(int id) {
+    public static long ExtendedHashGet(int id) { //ok
         long pos = -1;
         try {
         HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
@@ -36,10 +48,24 @@ public class IndexController{
         return pos;
 }
 
-    public static void Update(long newPos, int id){
-        if(index == 1)BtreeUpdate(newPos, id);
-        else if(index == 2) ExtendedHashUpdate(newPos, id);
+    public static void Update(long newPos, int id, int index){
+
+        switch(index) {
+            case 1:
+                BtreeUpdate(newPos, id); //nao sei
+                break;
+            case 2:
+                ExtendedHashUpdate(newPos,id); //ok
+                break;
+            case 3:
+                //InvertedList(newPos,id);
+                break;
+            default:
+                System.out.println("Opção Inválida!!");
+                break;
+        }
     }
+
     public static void BtreeUpdate(long newPos, int id){
         try {
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
@@ -51,7 +77,13 @@ public class IndexController{
     }
 
     public static void ExtendedHashUpdate(long newPos, int id) {
-        
+        try {
+            HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
+        BUCKET_HASH);
+            he.delete(id);
+            he.create(new ParIntLongHash(id,newPos));
+        } catch (Exception e) {
+        }
     }
     
 }

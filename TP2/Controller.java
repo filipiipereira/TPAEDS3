@@ -84,13 +84,16 @@ public class Controller {
      * @return true se a atualização foi bem-sucedida, false caso contrário.
      */
 
-    public static boolean Update(Scanner scanner) {
+    public static boolean Update(Scanner scanner, int index) {
+        boolean flag = false;
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
-        SequentialFile.Get(id).toStr();
+        SequentialFile.Get(id, index).toStr();
         Movie film = Form(scanner);
         film.setId(id);
-        return SequentialFile.Update(film);
+        flag = SequentialFile.Update(film, index);
+        //SequentialFile.Get(film.getId(),index).toStr();
+        return flag;
     }
 
     /**
@@ -113,10 +116,10 @@ public class Controller {
      * @return Objeto Film correspondente ao ID informado.
      */
 
-    public static Movie Get(Scanner scanner) {
+    public static Movie Get(Scanner scanner, int index) {
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
-        return SequentialFile.Get(id);
+        return SequentialFile.Get(id, index);
     }
     public static void Sort(Scanner scanner){
         System.out.print("Digite a quantidade de caminhos: ");

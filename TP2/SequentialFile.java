@@ -133,10 +133,10 @@ public class SequentialFile {
      * @return Objeto Movie correspondente ou null se não encontrado.
      */
 
-    public static Movie Get(int id) {
+    public static Movie Get(int id, int index) {
         Movie movie = null;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
-            long pos = IndexController.getPos(id);
+            long pos = IndexController.getPos(id,index);
             file.seek(pos); // Pula o último ID salvo
             Byte flag = file.readByte();
             int registerLength = file.readInt();
@@ -155,14 +155,14 @@ public class SequentialFile {
      * @return true se a atualização for bem-sucedida, false caso contrário.
      */
 
-    public static boolean Update(Movie newMovie) {
+    public static boolean Update(Movie newMovie, int index) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
             ArrayList<ParIntLong> lista = bTree.read(new ParIntLong(newMovie.getId(), -1));
             long pos;
             try {
-                pos = lista.get(0).getNum2();
+                pos = IndexController.getPos(newMovie.getId(),index);
                 file.seek(pos); // Pula o último ID salvo
                 Byte flag = file.readByte();
                 int registerLength = file.readInt();
@@ -177,10 +177,9 @@ public class SequentialFile {
                             file.seek(file.length());
                             long newPos = file.getFilePointer();
                             WriteMovie(file, newMovie);
-                            IndexController.Update(newPos, newMovie.getId());
+                            IndexController.Update(newPos, newMovie.getId(), index);
                         }
                         response = true;
-                       
                 }
             } catch (Exception e) {
             }
