@@ -25,7 +25,7 @@ public class IndexController{
         }
         return pos;
     }
-    public static long BtreeGet(int id){ //nao ta funcionando ainda
+    public static long BtreeGet(int id){ 
         long pos = 0;
         try {
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
@@ -48,22 +48,10 @@ public class IndexController{
         return pos;
 }
 
-    public static void Update(long newPos, int id, int index){
-
-        switch(index) {
-            case 1:
+    public static void Update(long newPos, int id){
                 BtreeUpdate(newPos, id); //nao sei
-                break;
-            case 2:
                 ExtendedHashUpdate(newPos,id); //ok
-                break;
-            case 3:
-                //InvertedList(newPos,id);
-                break;
-            default:
-                System.out.println("Opção Inválida!!");
-                break;
-        }
+                //InvertedList(newPos,id){}
     }
 
     public static void BtreeUpdate(long newPos, int id){
