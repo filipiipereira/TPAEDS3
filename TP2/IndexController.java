@@ -2,7 +2,7 @@
 import java.util.ArrayList;
 
 public class IndexController{
-    private static final String BTREE_NAME = "arvore.dat";
+    private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
     private static final String INVERTEDLIST_NAME = "lista.dat";
@@ -25,7 +25,7 @@ public class IndexController{
         }
         return pos;
     }
-    public static long BtreeGet(int id){ 
+    public static long BtreeGet(int id){ //ok
         long pos = 0;
         try {
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
@@ -49,7 +49,7 @@ public class IndexController{
 }
 
     public static void Update(long newPos, int id){
-                BtreeUpdate(newPos, id); //nao sei
+                BtreeUpdate(newPos, id); //ok
                 ExtendedHashUpdate(newPos,id); //ok
                 //InvertedList(newPos,id){}
     }
