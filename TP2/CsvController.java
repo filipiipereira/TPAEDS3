@@ -42,8 +42,7 @@ public class CsvController {
                 while (line != null) {
                     Movie movie = readMovieFromCSV(line);
                     long pos = sequentialFile.InsertMovieFromCSV(movie, file);
-                    he.create(new ParIntLongHash(movie.getId(), pos)); //create hash
-                    bTree.create(new ParIntLong(movie.getId(), pos)); //create btree
+                    IndexController.Create(movie.getId(), pos, bTree, he);
                     line = br.readLine();
                 }
                 //he.print(); 

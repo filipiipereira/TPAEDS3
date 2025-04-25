@@ -57,7 +57,7 @@ public class ParIntLongHash implements RegistroHashExtensivel<ParIntLongHash> {
   @Override
   public int hashCode() {
     return Integer.hashCode(id); // ou simplesmente: return id;
-}
+  }
 
   public short size() {
     return this.TAMANHO;
@@ -90,6 +90,6 @@ public class ParIntLongHash implements RegistroHashExtensivel<ParIntLongHash> {
 
   public static int hash(int id) {
     return Math.abs(id); // simples e válido
-}
+  }
 
 }

@@ -40,6 +40,9 @@ public class ParIntLong implements RegistroArvoreBMais<ParIntLong> {
   }
 
   @Override
+  public int hashCode() {
+    return Integer.hashCode(this.num1); // ou simplesmente: return id;
+  }
   public ParIntLong clone() {
     return new ParIntLong(this.num1, this.num2);
   }
