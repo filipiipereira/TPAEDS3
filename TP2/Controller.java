@@ -124,10 +124,47 @@ public class Controller {
             flag = SequentialFile.Update(movie, index);
         }
         else{
+            Movie[] lista;
             int option = MenuLista();
+            scanner.nextLine(); //cleaning buffer
             System.out.print("Digite a palavra: ");
             String palavra = scanner.nextLine();
-            SequentialFile.GetLista(palavra, "", option);
+            if(option == 3) {
+                System.out.print("Digite a segunda palavra: ");
+                String genre = scanner.nextLine();
+                lista = SequentialFile.GetLista(palavra, genre, option);
+            } else {
+                lista = SequentialFile.GetLista(palavra, "",option);
+            }
+            if(lista.length == 0) System.out.println("Nenhum filme encontrado");
+            else if(lista.length == 1){
+                lista[0].toStr();
+                Movie movie = Form(scanner);
+                movie.setId(lista[0].getId());
+                flag = SequentialFile.Update(movie, index);
+            }
+            else{
+                for(Movie m : lista){
+                    m.toStr();
+                }
+                System.out.println("Você escolheu uma palavra utilizada em vários filmes!\nEscolha um dos ID's presente no resultado");
+                int id = scanner.nextInt();
+                boolean find = false;
+                int filmeSelecionado = 0;
+                for(int i = 0; i < lista.length; i++){
+                    if(lista[i].getId() == id){
+                        find = true;
+                        filmeSelecionado = i;
+                    }
+                }
+                if(find){
+                    System.out.println("Filme selecionado:");
+                    lista[filmeSelecionado].toStr();
+                    Movie movie = Form(scanner);
+                    movie.setId(lista[filmeSelecionado].getId());
+                    flag = SequentialFile.Update(movie, index);
+                }
+            }
         }
         return flag;
     }
@@ -169,7 +206,7 @@ public class Controller {
             System.out.print("Digite a palavra: ");
             String palavra = scanner.nextLine();
             if(option == 3) {
-                System.out.println("Digite a segunda palavra: ");
+                System.out.print("Digite a segunda palavra: ");
                 String genre = scanner.nextLine();
                 lista = SequentialFile.GetLista(palavra, genre, option);
             } else {

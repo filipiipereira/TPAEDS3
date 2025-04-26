@@ -150,7 +150,6 @@ public class SequentialFile {
         Movie[] movies = null;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
             ElementoLista[] lista = IndexController.GetPosLista(palavra,palavra2, option);
-            System.out.println("Tamanho lista de elementos: " + lista.length);
             movies = new Movie[lista.length];
             for(int i = 0; i < lista.length; i++){
                 file.seek(lista[i].getposition());
@@ -175,7 +174,16 @@ public class SequentialFile {
     public static boolean Update(Movie newMovie, int index) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
-            long pos = IndexController.GetPos(newMovie.getId(), index);
+            long pos; 
+            Movie oldMovie = null;
+            if(index == 3){
+                pos = IndexController.GetPos(newMovie.getId(), 2); 
+                file.seek(pos);
+                oldMovie = ReadMovie(file);
+            }
+            else{
+                pos = IndexController.GetPos(newMovie.getId(), index);//usa a arvore ou hash dependendo da escolha
+            }
             file.seek(pos); 
             Byte flag = file.readByte();
             int registerLength = file.readInt();
@@ -190,7 +198,8 @@ public class SequentialFile {
                     file.seek(file.length());
                     long newPos = file.getFilePointer();
                     WriteMovie(file, newMovie);
-                    IndexController.Update(newPos,newMovie.getId());
+                    IndexController.Update(newPos,newMovie.getId());//hash e arvore
+                    IndexController.InvertedListUpdate(oldMovie, newMovie, newPos);
                 }
                 response = true;
             }

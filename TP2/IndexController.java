@@ -60,7 +60,6 @@ public class IndexController{
                 ElementoLista[] elementosGenre = listaGenre.read(palavra2.toLowerCase().trim());
                 elementos = Intersection(elementosNome, elementosGenre);
             }
-            System.out.println("Tamanho lista de elementos: " + elementos.length);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,7 +123,6 @@ public class IndexController{
     public static void Update(long newPos, int id){
         BtreeUpdate(newPos, id); 
         ExtendedHashUpdate(newPos,id);
-        //InvertedList(newPos,id){}
     }
 
     public static void BtreeUpdate(long newPos, int id){
@@ -146,6 +144,30 @@ public class IndexController{
         } catch (Exception e) {
         }
     }
+    public static void InvertedListUpdate(Movie oldMovie, Movie newMovie, long pos){
+        try {
+            ListaInvertida listaGenre = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSGENRE_LIST_NAME);
+            ListaInvertida listaNome = new ListaInvertida(4, DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
+            String[] wordsOfOldName = oldMovie.getName().split(" ");
+            for(String word : wordsOfOldName) if(word.length() > 3){
+                String wordSemCaracter = filtraLetras(word);
+                if(!wordSemCaracter.equals(""))
+                listaNome.delete(wordSemCaracter.toLowerCase().trim(), oldMovie.getId());
+            }    
+            listaGenre.delete(oldMovie.getGenre().toLowerCase(), oldMovie.getId());
+            String[] wordsOfName = newMovie.getName().split(" ");
+            for(String word : wordsOfName) if(word.length() > 3){
+                String wordSemCaracter = filtraLetras(word);
+                if(!wordSemCaracter.equals(""))
+                listaNome.create(wordSemCaracter.toLowerCase().trim(), new ElementoLista(newMovie.getId(), pos));
+            }
+            listaGenre.create(newMovie.getGenre().toLowerCase(), new ElementoLista(newMovie.getId(), pos));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static boolean Delete(int id) {
         return BtreeDelete(id) && ExtendedHashDelete(id);
