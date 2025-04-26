@@ -89,7 +89,6 @@ public class SequentialFile {
             }
             Movie = new Movie(registerId, registerName, date, registerBudget, registerBoxOffice, registerFinancingCompanies, registerGenre);
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return Movie;
     }
@@ -141,7 +140,6 @@ public class SequentialFile {
                 movie = ReadMovie(file);
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return movie;
     }
@@ -179,6 +177,8 @@ public class SequentialFile {
             if(index == 3){
                 pos = IndexController.GetPos(newMovie.getId(), 2); 
                 file.seek(pos);
+                Byte flag = file.readByte();
+                int registerLength = file.readInt();
                 oldMovie = ReadMovie(file);
             }
             else{
@@ -192,6 +192,7 @@ public class SequentialFile {
                 if (newSize <= registerLength) {
                     file.seek(pos);
                     WriteMovieSmallerSizeUpdate(file, newMovie, registerLength);
+                    IndexController.InvertedListUpdate(oldMovie, newMovie, pos);
                 } else {
                     file.seek(pos);
                     file.writeByte('*'); // Marcar como excluído
@@ -218,15 +219,27 @@ public class SequentialFile {
     public static boolean Delete(int id, int index) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
-            long pos = IndexController.GetPos(id, index);
+            Movie deletedMovie = null;
+            long pos;
+            if(index == 3){
+                pos = IndexController.GetPos(id, 2); 
+                file.seek(pos);
+                Byte flag = file.readByte();
+                int registerLength = file.readInt();
+                deletedMovie = ReadMovie(file);
+            }
+            else{
+                pos = IndexController.GetPos(id, index); //usa a arvore ou hash dependendo da escolha
+            }
+
+            file.seek(pos);
             byte flag = file.readByte();
             int registerSize = file.readInt();
             if (flag == 0) {
                 file.seek(pos);
                 file.writeByte('*');
                 numberOfMovies--;
-                response = true;
-                IndexController.Delete(id);
+                response =  IndexController.Delete(id) && IndexController.InvertedListDelete(id, deletedMovie);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -19,7 +19,7 @@ public class Main {
         do {
             System.out.println("\nMenu: ");
             System.out.println("0) End program");
-            System.out.println("1) Load movies from Csv");
+            System.out.println("1) Load movies from Csv --> Arquivos já carregados devido a demora para carregar Lista Invertida");
             System.out.println("2) Update movie");
             System.out.println("3) Delete movie");
             System.out.println("4) Show data from a movie");

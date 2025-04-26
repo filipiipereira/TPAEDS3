@@ -102,8 +102,11 @@ public class IndexController{
         try {
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
             ArrayList<ParIntLong> lista = bTree.read(new ParIntLong(id, -1));
-            pos = lista.get(0).getNum2();
+            if(!lista.isEmpty()) {
+                pos = lista.get(0).getNum2();
+            }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return pos;
     }
@@ -142,6 +145,7 @@ public class IndexController{
             he.delete(id);
             he.create(new ParIntLongHash(id,newPos));
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     public static void InvertedListUpdate(Movie oldMovie, Movie newMovie, long pos){
@@ -151,8 +155,11 @@ public class IndexController{
             String[] wordsOfOldName = oldMovie.getName().split(" ");
             for(String word : wordsOfOldName) if(word.length() > 3){
                 String wordSemCaracter = filtraLetras(word);
-                if(!wordSemCaracter.equals(""))
-                listaNome.delete(wordSemCaracter.toLowerCase().trim(), oldMovie.getId());
+                if(!wordSemCaracter.equals("")){
+                    System.out.println("Nome: " + wordSemCaracter.toLowerCase().trim() + " ID: " + oldMovie.getId());
+                    listaNome.delete(wordSemCaracter.toLowerCase().trim(), oldMovie.getId());
+                }
+                
             }    
             listaGenre.delete(oldMovie.getGenre().toLowerCase(), oldMovie.getId());
             String[] wordsOfName = newMovie.getName().split(" ");
@@ -176,8 +183,8 @@ public class IndexController{
     public static boolean BtreeDelete(int id){
         boolean deletado = false;
         try {
-            HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH, BUCKET_HASH);
-            deletado = he.delete(id);
+            ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
+            deletado = bTree.delete(new ParIntLong(id,-1));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -195,7 +202,26 @@ public class IndexController{
         return deletado;
     }
 
-    //public static boolean InvertedListDelete(int id){} IMPLEMENTAR
+    public static boolean InvertedListDelete(int id, Movie deletedMovie){
+        boolean deletado = false;
+        try {  
+            ListaInvertida listaGenre = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSGENRE_LIST_NAME);
+            ListaInvertida listaNome = new ListaInvertida(4, DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
+            String[] wordsOfOldName = deletedMovie.getName().split(" ");
+            for(String word : wordsOfOldName) if(word.length() > 3){
+                String wordSemCaracter = filtraLetras(word);
+                if(!wordSemCaracter.equals("")){
+                    System.out.println("Nome: " + wordSemCaracter.toLowerCase().trim() + " ID: " + id);
+                    listaNome.delete(wordSemCaracter.toLowerCase().trim(), id);
+                }
+            }    
+            listaGenre.delete(deletedMovie.getGenre().toLowerCase(), id);
+            deletado = true;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return deletado;
+    }
 
     public static String filtraLetras(String texto) {
     StringBuilder resultado = new StringBuilder();

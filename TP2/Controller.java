@@ -178,9 +178,47 @@ public class Controller {
 
     public static boolean Delete(Scanner scanner) {
         int index = MenuIndex();
-        System.out.println("Which ID: ");
-        int id = scanner.nextInt();
-        return SequentialFile.Delete(id, index);
+        boolean flag = false;
+        if(index == 1 | index == 2){
+            System.out.println("Which ID: ");
+            int id = scanner.nextInt();
+            flag = SequentialFile.Delete(id, index);
+        }
+        else{
+            Movie[] lista;
+            int option = MenuLista();
+            scanner.nextLine(); //cleaning buffer
+            System.out.print("Digite a palavra: ");
+            String palavra = scanner.nextLine();
+            if(option == 3) {
+                System.out.print("Digite a segunda palavra: ");
+                String genre = scanner.nextLine();
+                lista = SequentialFile.GetLista(palavra, genre, option);
+            } else {
+                lista = SequentialFile.GetLista(palavra, "",option);
+            }
+            if(lista.length == 0) System.out.println("Nenhum filme encontrado");
+            else if(lista.length == 1){
+                flag = SequentialFile.Delete(lista[0].getId(), index);
+            }
+            else{
+                for(Movie m : lista){
+                    m.toStr();
+                }
+                System.out.println("Você escolheu uma palavra utilizada em vários filmes!\nEscolha um dos ID's presente no resultado");
+                int id = scanner.nextInt();
+                boolean find = false;
+                for(int i = 0; i < lista.length; i++){
+                    if(lista[i].getId() == id){
+                        find = true;
+                    }
+                }
+                if(find){
+                    flag = SequentialFile.Delete(id, index);
+                }
+            }
+        }
+        return flag;
     }
 
     /**
