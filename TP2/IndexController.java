@@ -38,7 +38,7 @@ public class IndexController{
         ListaInvertida lista;
         ElementoLista[] elementos = null;
         try {
-            if(option == 1) lista = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSNAME_LIST_NAME);
+            if(option == 1) lista = new ListaInvertida(4, DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
             else lista = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSGENRE_LIST_NAME);
             elementos = lista.read(palavra.toLowerCase().trim());
             System.out.println("Tamanho lista de elementos: " + elementos.length);

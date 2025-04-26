@@ -42,7 +42,7 @@ public class ListaInvertida {
       quantidadeMaxima = (short) qtdmax;
       elementos = new ElementoLista[quantidadeMaxima];
       proximo = -1;
-      bytesPorBloco = (short) (2 + (4+8) * quantidadeMaxima + 12);  // 4 do INT e 4 do FLOAT
+      bytesPorBloco = (short) (2 + (4+8) * quantidadeMaxima + 8);  // 4 do INT e 4 do FLOAT
     }
 
     public byte[] toByteArray() throws IOException {
@@ -223,8 +223,9 @@ public class ListaInvertida {
     while (arqDicionario.getFilePointer() != arqDicionario.length()) {
       chave = arqDicionario.readUTF();
       endereco = arqDicionario.readLong();
-      if (chave.compareTo(c) == 0 && !jaExiste) {
+      if (chave.compareTo(c) == 0) {
         jaExiste = true;
+        break;
       }
     }
 
