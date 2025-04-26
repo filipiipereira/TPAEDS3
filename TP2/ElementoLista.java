@@ -1,11 +1,11 @@
 public class ElementoLista implements Comparable<ElementoLista>, Cloneable {
     
     private int id;
-    private float frequencia;
+    private long position;
 
-    public ElementoLista(int i, float f) {
+    public ElementoLista(int i, long position) {
         this.id = i;
-       this.frequencia = f;
+        this.position = position;
     }
 
     public int getId() {
@@ -16,12 +16,12 @@ public class ElementoLista implements Comparable<ElementoLista>, Cloneable {
         this.id = id;
     }
 
-    public float getFrequencia() {
-        return frequencia;
+    public long getposition() {
+        return position;
     }
 
-    public void setFrequencia(float frequencia) {
-        this.frequencia = frequencia;
+    public void setposition(long position) {
+        this.position = position;
     }
 
     @Override

@@ -42,7 +42,7 @@ public class ListaInvertida {
       quantidadeMaxima = (short) qtdmax;
       elementos = new ElementoLista[quantidadeMaxima];
       proximo = -1;
-      bytesPorBloco = (short) (2 + (4+4) * quantidadeMaxima + 8);  // 4 do INT e 4 do FLOAT
+      bytesPorBloco = (short) (2 + (4+8) * quantidadeMaxima + 12);  // 4 do INT e 4 do FLOAT
     }
 
     public byte[] toByteArray() throws IOException {
@@ -52,12 +52,12 @@ public class ListaInvertida {
       int i = 0;
       while (i < quantidade) {
         dos.writeInt(elementos[i].getId());
-        dos.writeFloat(elementos[i].getFrequencia());
+        dos.writeLong(elementos[i].getposition());
         i++;
       }
       while (i < quantidadeMaxima) {
         dos.writeInt(-1);
-        dos.writeFloat(-1);
+        dos.writeLong(-1);
         i++;
       }
       dos.writeLong(proximo);
@@ -70,7 +70,7 @@ public class ListaInvertida {
       quantidade = dis.readShort();
       int i = 0;
       while (i < quantidadeMaxima) {
-        elementos[i] = new ElementoLista(dis.readInt(), dis.readFloat());
+        elementos[i] = new ElementoLista(dis.readInt(), dis.readLong());
         i++;
       }
       proximo = dis.readLong();
