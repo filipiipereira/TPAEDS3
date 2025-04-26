@@ -19,8 +19,10 @@ public class CsvController {
     private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
-    private static final String DICIONARY_LIST_NAME = "dicionaryList.dat";
-    private static final String BLOCOS_LIST_NAME = "blocosList.dat";
+    private static final String DICIONARYNAME_LIST_NAME = "dicionaryListName.dat";
+    private static final String BLOCOSNAME_LIST_NAME = "blocosListName.dat";
+    private static final String DICIONARYGENRE_LIST_NAME = "dicionaryGenre.dat";
+    private static final String BLOCOSGENRE_LIST_NAME = "blocosListGenre.dat";
 
     /**
      * Método para carregar os dados do arquivo CSV e inseri-los em um arquivo sequencial.
@@ -37,13 +39,15 @@ public class CsvController {
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
             HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
             BUCKET_HASH);
+            ListaInvertida listName = new ListaInvertida(4, DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
+            ListaInvertida listGenre = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSGENRE_LIST_NAME);
             try (BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))) {
                 br.readLine(); // Ignora o cabeçalho
                 line = br.readLine();
                 while (line != null) {
                     Movie movie = readMovieFromCSV(line);
                     long pos = sequentialFile.InsertMovieFromCSV(movie, file);
-                    IndexController.Create(movie.getId(), pos, bTree, he);
+                    IndexController.Create(movie, pos, bTree, he, listName, listGenre);
                     line = br.readLine();
                 }
             } catch (Exception e) {

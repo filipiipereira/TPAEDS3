@@ -57,9 +57,7 @@ public class Main {
                         System.out.println("Error: File not loaded. Please load it first.");
                         break;
                     }
-                    Movie movie = Controller.Get(scanner);
-                    if (movie == null) System.out.println("Movie not found");
-                    else movie.toStr();
+                    Controller.Get(scanner);
                     break;
                 default:
                     System.out.println("Invalid option. Please try again.");

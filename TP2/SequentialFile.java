@@ -146,6 +146,26 @@ public class SequentialFile {
         return movie;
     }
 
+     public static Movie[] GetLista(String palavra, int option) {
+        Movie[] movies = null;
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
+            ElementoLista[] lista = IndexController.GetPosLista(palavra, option);
+            System.out.println("Tamanho lista de elementos: " + lista.length);
+            movies = new Movie[lista.length];
+            for(int i = 0; i < lista.length; i++){
+                file.seek(lista[i].getposition());
+                Byte flag = file.readByte();
+                int registerLength = file.readInt();
+                if (flag != '*') {
+                    movies[i] = ReadMovie(file);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+
     /**
      * Atualiza um movie existente no arquivo sequencial.
      * @param newMovie Novo objeto Movie atualizado.

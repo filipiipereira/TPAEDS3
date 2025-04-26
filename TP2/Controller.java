@@ -90,6 +90,20 @@ public class Controller {
         } while (index < 1 || index > 3);
         return index;
     }
+    public static int MenuLista(){
+        Scanner scanner = new Scanner(System.in);
+        int option;
+        do { 
+            System.out.println("\nMenu Lista ");
+            System.out.println("1) Pesquisar por nome");
+            System.out.println("2) Pesquisar por gênero");
+            System.out.println("3) Pesquisar por nome e gênero");
+            option = scanner.nextInt();
+            if(option < 1 || option > 3) System.out.println("Opção Inválida!");
+        } while (option < 1 || option > 3);
+        return option;
+    }
+
 
     /**
      * Método responsável por atualizar um filme existente com base no ID informado.
@@ -100,12 +114,21 @@ public class Controller {
 
     public static boolean Update(Scanner scanner) {
         int index = MenuIndex();
-        System.out.println("Which ID: ");
-        int id = scanner.nextInt();
-        SequentialFile.Get(id, index).toStr();
-        Movie movie = Form(scanner);
-        movie.setId(id);
-        boolean flag = SequentialFile.Update(movie, index);
+        boolean flag = false;
+        if(index == 1 | index == 2){
+            System.out.println("Which ID: ");
+            int id = scanner.nextInt();
+            SequentialFile.Get(id, index).toStr();
+            Movie movie = Form(scanner);
+            movie.setId(id);
+            flag = SequentialFile.Update(movie, index);
+        }
+        else{
+            int option = MenuLista();
+            System.out.print("Digite a palavra: ");
+            String palavra = scanner.nextLine();
+            SequentialFile.GetLista(palavra, option);
+        }
         return flag;
     }
 
@@ -130,10 +153,25 @@ public class Controller {
      * @return Objeto Film correspondente ao ID informado.
      */
 
-    public static Movie Get(Scanner scanner) {
+    public static void Get(Scanner scanner) {
         int index = MenuIndex();
-        System.out.println("Which ID: ");
-        int id = scanner.nextInt();
-        return SequentialFile.Get(id, index);
+        if(index == 1 | index == 2){
+            System.out.println("Which ID: ");
+            int id = scanner.nextInt();
+            Movie movie = SequentialFile.Get(id, index);
+            if(movie == null) System.out.println("Movie not found!");
+            else movie.toStr();
+        }
+        else{
+            int option = MenuLista();
+            scanner.nextLine(); //cleaning buffer
+            System.out.print("Digite a palavra: ");
+            String palavra = scanner.nextLine();
+            Movie[] lista = SequentialFile.GetLista(palavra, option);
+            System.out.println("Tamanho lista de filmes: " + lista.length);
+            for(Movie m : lista){
+                m.toStr();
+            }
+        }
     }
 }

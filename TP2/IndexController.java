@@ -5,12 +5,18 @@ public class IndexController{
     private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
-    private static final String INVERTEDLIST_NAME = "lista.dat";
+    private static final String DICIONARYNAME_LIST_NAME = "dicionaryListName.dat";
+    private static final String BLOCOSNAME_LIST_NAME = "blocosListName.dat";
+    private static final String DICIONARYGENRE_LIST_NAME = "dicionaryGenre.dat";
+    private static final String BLOCOSGENRE_LIST_NAME = "blocosListGenre.dat";
 
-    public static void Create(int id, long pos, ArvoreBMais bTree, HashExtensivel he){
+    public static void Create(Movie movie, long pos, ArvoreBMais bTree, HashExtensivel he, ListaInvertida listName, ListaInvertida listGenre){
         try {
-            he.create(new ParIntLongHash(id, pos)); //create hash
-            bTree.create(new ParIntLong(id, pos)); //create btree
+            he.create(new ParIntLongHash(movie.getId(), pos)); //create hash
+            bTree.create(new ParIntLong(movie.getId(), pos)); //create btree
+            String[] wordsOfName = movie.getName().split(" ");
+            for(String word : wordsOfName) if(word.length() > 3) listName.create(word.toLowerCase().trim(), new ElementoLista(movie.getId(), pos));
+            listGenre.create(movie.getGenre().toLowerCase(), new ElementoLista(movie.getId(), pos));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -25,11 +31,21 @@ public class IndexController{
             case 2:
                 pos = ExtendedHashGet(id);
                 break;
-            case 3:
-               // pos = InvertedListGet(id);
-               break;
         }
         return pos;
+    }
+    public static ElementoLista[] GetPosLista(String palavra, int option){
+        ListaInvertida lista;
+        ElementoLista[] elementos = null;
+        try {
+            if(option == 1) lista = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSNAME_LIST_NAME);
+            else lista = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSGENRE_LIST_NAME);
+            elementos = lista.read(palavra.toLowerCase().trim());
+            System.out.println("Tamanho lista de elementos: " + elementos.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return elementos;
     }
     public static long BtreeGet(int id){ 
         long pos = 0;

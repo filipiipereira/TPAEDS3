@@ -203,7 +203,7 @@ public class Movie {
         String stringDate;
         if(date.toEpochDay() == 0) stringDate = "Data não registrada";
         else stringDate = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        System.out.print("\nFILM: \nName: \"" + name + "\"; \nRelease Date: " + stringDate + "; \nBudget: " + budget + "$; \nGlobal Box-Office: " + boxOffice + "$; \nGenre: " + genre +
+        System.out.print("\nFILM: \nID: "+ id + "\nName: \"" + name + "\"; \nRelease Date: " + stringDate + "; \nBudget: " + budget + "$; \nGlobal Box-Office: " + boxOffice + "$; \nGenre: " + genre +
         "; \nFinancing companies: ");
         for(int i = 0; i < financingCompanies.size(); i++){
             if(i == financingCompanies.size() - 1) System.out.println(financingCompanies.get(i));
