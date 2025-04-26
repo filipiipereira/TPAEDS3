@@ -127,7 +127,7 @@ public class Controller {
             int option = MenuLista();
             System.out.print("Digite a palavra: ");
             String palavra = scanner.nextLine();
-            SequentialFile.GetLista(palavra, option);
+            SequentialFile.GetLista(palavra, "", option);
         }
         return flag;
     }
@@ -163,11 +163,19 @@ public class Controller {
             else movie.toStr();
         }
         else{
+            Movie[] lista;
             int option = MenuLista();
             scanner.nextLine(); //cleaning buffer
             System.out.print("Digite a palavra: ");
             String palavra = scanner.nextLine();
-            Movie[] lista = SequentialFile.GetLista(palavra, option);
+            if(option == 3) {
+                System.out.println("Digite a segunda palavra: ");
+                String genre = scanner.nextLine();
+                lista = SequentialFile.GetLista(palavra, genre, option);
+            } else {
+                lista = SequentialFile.GetLista(palavra, "",option);
+            }
+            
             System.out.println("Tamanho lista de filmes: " + lista.length);
             for(Movie m : lista){
                 m.toStr();

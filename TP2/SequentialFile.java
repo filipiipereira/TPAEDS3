@@ -146,10 +146,10 @@ public class SequentialFile {
         return movie;
     }
 
-     public static Movie[] GetLista(String palavra, int option) {
+     public static Movie[] GetLista(String palavra, String palavra2, int option) {
         Movie[] movies = null;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
-            ElementoLista[] lista = IndexController.GetPosLista(palavra, option);
+            ElementoLista[] lista = IndexController.GetPosLista(palavra,palavra2, option);
             System.out.println("Tamanho lista de elementos: " + lista.length);
             movies = new Movie[lista.length];
             for(int i = 0; i < lista.length; i++){

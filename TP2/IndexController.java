@@ -15,7 +15,12 @@ public class IndexController{
             he.create(new ParIntLongHash(movie.getId(), pos)); //create hash
             bTree.create(new ParIntLong(movie.getId(), pos)); //create btree
             String[] wordsOfName = movie.getName().split(" ");
-            for(String word : wordsOfName) if(word.length() > 3) listName.create(word.toLowerCase().trim(), new ElementoLista(movie.getId(), pos));
+            for(String word : wordsOfName) if(word.length() > 3){
+                String wordSemCaracter = filtraLetras(word);
+                if(!wordSemCaracter.equals(""))
+                listName.create(wordSemCaracter.toLowerCase().trim(), new ElementoLista(movie.getId(), pos));
+            }
+             
             listGenre.create(movie.getGenre().toLowerCase(), new ElementoLista(movie.getId(), pos));
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,19 +39,65 @@ public class IndexController{
         }
         return pos;
     }
-    public static ElementoLista[] GetPosLista(String palavra, int option){
-        ListaInvertida lista;
+
+    public static ElementoLista[] GetPosLista(String palavra1,String palavra2, int option){
+        ListaInvertida listaNome = null;
+        ListaInvertida listaGenre = null;
         ElementoLista[] elementos = null;
         try {
-            if(option == 1) lista = new ListaInvertida(4, DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
-            else lista = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSGENRE_LIST_NAME);
-            elementos = lista.read(palavra.toLowerCase().trim());
+            if(option == 1){
+                listaNome = new ListaInvertida(4, DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
+                elementos = listaNome.read(palavra1.toLowerCase().trim());
+            }
+            else if(option == 2){
+                listaGenre = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSGENRE_LIST_NAME);
+                elementos = listaGenre.read(palavra1.toLowerCase().trim());
+            }
+            else{
+                listaGenre = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSGENRE_LIST_NAME);
+                listaNome = new ListaInvertida(4, DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
+                ElementoLista[] elementosNome = listaNome.read(palavra1.toLowerCase().trim());
+                ElementoLista[] elementosGenre = listaGenre.read(palavra2.toLowerCase().trim());
+                elementos = Intersection(elementosNome, elementosGenre);
+            }
             System.out.println("Tamanho lista de elementos: " + elementos.length);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return elementos;
     }
+    public static ElementoLista[] Intersection(ElementoLista[] elementosNome, ElementoLista[] elementosGenre){
+        ElementoLista[] maior;
+        ElementoLista[] menor;
+        if(elementosNome.length > elementosGenre.length){
+            maior = elementosNome;
+            menor = elementosGenre;
+        }
+        else{
+            maior = elementosGenre;
+            menor = elementosNome;
+        }
+        ElementoLista[] elementos = new ElementoLista[menor.length];
+        int quantidade = 0;
+        int i = 0;
+        int j = 0;
+        while(i < maior.length && j < menor.length){
+            if(maior[i].getId() == menor[j].getId()){
+                elementos[quantidade] = maior[i];
+                quantidade++;
+                i++;
+                j++;
+            }
+            else if(maior[i].getId() < menor[j].getId()) i++;
+            else j++;
+        }
+        ElementoLista[] returnElementos = new ElementoLista[quantidade];
+        for(int k = 0; k < quantidade; k++){
+            returnElementos[k] = elementos[k];
+        }
+        return returnElementos;
+    }
+
     public static long BtreeGet(int id){ 
         long pos = 0;
         try {
@@ -123,4 +174,16 @@ public class IndexController{
     }
 
     //public static boolean InvertedListDelete(int id){} IMPLEMENTAR
+
+    public static String filtraLetras(String texto) {
+    StringBuilder resultado = new StringBuilder();
+
+    for (int i = 0; i < texto.length(); i++) {
+        char c = texto.charAt(i);
+        if (Character.isLetter(c)) {
+            resultado.append(c);
+        }
+    }
+        return resultado.toString();
+    }
 }
