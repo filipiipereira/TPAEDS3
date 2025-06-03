@@ -17,7 +17,8 @@ public class SequentialFile {
     private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
-    private static final String COMPRESSED_HUFFMAN = "SequentialFileHuffManCompressao.dat";
+    private static final String COMPRESSED_HUFFMAN = "SequentialFileHuffManCompress.dat";
+    private static final String COMPRESSED_LZW = "SequentialFileLZWCompress";
 
     private static int numberOfMovies = 0; 
 
@@ -255,7 +256,6 @@ public class SequentialFile {
     }
 
     public static void CompressHuffman() {
-        long inicio = System.currentTimeMillis();
         try {
         RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
         int length = (int) raf.length();
@@ -283,15 +283,9 @@ public class SequentialFile {
     } catch (Exception e) {
         e.printStackTrace();
     }
-    long fim = System.currentTimeMillis();
-
-    long resultadoMilli = (fim - inicio);
-    long resultadoSeg = (fim-inicio) / 1000;
-    System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSeg + " segundos" + " ou " + resultadoMilli + " milissegundos");
 }
 
 public static void DecompressHuffman() {
-    long inicio = System.currentTimeMillis();
     try {
         FileInputStream fis = new FileInputStream(COMPRESSED_HUFFMAN);
         ObjectInputStream ois = new ObjectInputStream(fis);
@@ -341,15 +335,72 @@ public static void DecompressHuffman() {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        long fim = System.currentTimeMillis();
-
-        long resultadoMilli = (fim - inicio);
-        long resultadoSeg = (fim-inicio) / 1000;
-
-        System.out.println("Tempo de Execução da Descompressão Huffman: " + resultadoSeg + " segundos" +" ou "+ resultadoMilli + " milissegundos");
 }
 
-    public static void compararCompress() {
+    public static void CompressLZW() {
+        try {
+        RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
+
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
+
+        byte[] arqCodificado = LZW.codifica(arrayBytes);
+        int lengthCompress = (int) arqCodificado.length;
+
+    
+        FileOutputStream fos = new FileOutputStream(COMPRESSED_LZW);
+        fos.write(arqCodificado);
+        fos.close();
+
+
+        System.out.printf("Tamanho arquivo original: %d\n", lengthOriginal);
+        System.out.printf("Tamanho arquivo comprimido: %d\n", lengthCompress);
+        float taxaCompressao = (float) lengthCompress / lengthOriginal;
+        System.out.printf("Taxa de Compressão: %.3f\n",  taxaCompressao);
+        float fatorCompressao = (float) lengthOriginal / lengthCompress;
+        System.out.printf("Fator de Compressão: %.3f\n", fatorCompressao);
+        double ganho = 100 * Math.log((float) lengthOriginal / lengthCompress);
+        System.out.printf("Ganho de Compresão: %.3f\n", ganho);
+        float percentualReducao = 100 * ( (float) 1 - taxaCompressao);
+        System.out.printf("Percentual de Compressão: %.3f%%\n ",percentualReducao);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+    public static void DecompressLZW() {
+        try {
+            FileInputStream fis = new FileInputStream(COMPRESSED_LZW);
+            
+            byte[] arqComprimido = fis.readAllBytes();
+
+            byte[] arqDecodificado = LZW.decodifica(arqComprimido);
+
+            FileOutputStream fos = new FileOutputStream(FILE_NAME);
+
+            fos.write(arqDecodificado);
+
+            fis.close();
+            fos.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void compararAlgoritmo(long resultadoHuff, long resultadoLZW) {
+        try {
+            RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+            int lengthOriginal = (int) raf.length();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
     }
 }

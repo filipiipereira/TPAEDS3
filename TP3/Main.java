@@ -65,7 +65,7 @@ public class Main {
                     Controller.Compress();
                     break;
                 case 6:
-                    Controller.Decompress();
+                    Controller.Decompress(scanner);
                     break;
                 default:
                     System.out.println("Invalid option. Please try again.");

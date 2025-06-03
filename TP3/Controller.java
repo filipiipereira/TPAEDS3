@@ -263,12 +263,33 @@ public class Controller {
         long inicioHuffman = System.currentTimeMillis(); 
         SequentialFile.CompressHuffman();
         long finalHuffman = System.currentTimeMillis();
+        long resultadoMilliHuff = finalHuffman - inicioHuffman;
+        long resultadoSegHuff = (finalHuffman - inicioHuffman) / 1000;
+        System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSegHuff + " segundos" + " ou " + resultadoMilliHuff + " milissegundos");
         long inicioLZW = System.currentTimeMillis();
-        //SequentialFile.CompressLZW();
+        SequentialFile.CompressLZW();
         long finalLZW = System.currentTimeMillis();
+        long resultadoLZWMilli = finalLZW - inicioLZW;
+        long resultadoLZWSeg = (finalLZW - inicioLZW) / 1000;
+        System.out.println("Tempo de Execução da Compressão LZW: " + resultadoLZWSeg + " segundos" + " ou " + resultadoLZWMilli + " milissegundos");
+        
+        SequentialFile.compararAlgoritmo(resultadoMilliHuff,resultadoLZWMilli);
     }
 
-    public static void Decompress() {
-        SequentialFile.DecompressHuffman();
+    public static void Decompress(Scanner scanner) {
+        System.out.println("Quer descoprimir por qual algoritmo?");
+        System.out.println("1) HuffMan");
+        System.out.println("2) LZW");
+        int option = scanner.nextInt();
+
+        switch(option) {
+            case 1:
+                SequentialFile.DecompressHuffman();
+                break;
+            case 2:
+                SequentialFile.DecompressLZW();
+                break;
+        }
+        
     }
 }
