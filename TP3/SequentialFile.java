@@ -17,7 +17,7 @@ public class SequentialFile {
     private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
-    private static final String COMPRESSED_HUFFMAN = "SequentialFileHuffManCompressao";
+    private static final String COMPRESSED_HUFFMAN = "SequentialFileHuffManCompressao.dat";
 
     private static int numberOfMovies = 0; 
 
@@ -255,7 +255,8 @@ public class SequentialFile {
     }
 
     public static void CompressHuffman() {
-    try {
+        long inicio = System.currentTimeMillis();
+        try {
         RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
         int length = (int) raf.length();
         byte[] arrayBytes = new byte[length];
@@ -282,9 +283,15 @@ public class SequentialFile {
     } catch (Exception e) {
         e.printStackTrace();
     }
+    long fim = System.currentTimeMillis();
+
+    long resultadoMilli = (fim - inicio);
+    long resultadoSeg = (fim-inicio) / 1000;
+    System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSeg + " segundos" + " ou " + resultadoMilli + " milissegundos");
 }
 
-public static void DescompressHuffman() {
+public static void DecompressHuffman() {
+    long inicio = System.currentTimeMillis();
     try {
         FileInputStream fis = new FileInputStream(COMPRESSED_HUFFMAN);
         ObjectInputStream ois = new ObjectInputStream(fis);
@@ -334,7 +341,15 @@ public static void DescompressHuffman() {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
-    
+        long fim = System.currentTimeMillis();
+
+        long resultadoMilli = (fim - inicio);
+        long resultadoSeg = (fim-inicio) / 1000;
+
+        System.out.println("Tempo de Execução da Descompressão Huffman: " + resultadoSeg + " segundos" +" ou "+ resultadoMilli + " milissegundos");
 }
+
+    public static void compararCompress() {
+        
+    }
 }

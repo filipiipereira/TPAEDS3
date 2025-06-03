@@ -260,10 +260,15 @@ public class Controller {
     }
 
     public static void Compress() {
+        long inicioHuffman = System.currentTimeMillis(); 
         SequentialFile.CompressHuffman();
+        long finalHuffman = System.currentTimeMillis();
+        long inicioLZW = System.currentTimeMillis();
+        //SequentialFile.CompressLZW();
+        long finalLZW = System.currentTimeMillis();
     }
 
-    public static void Descompress() {
-        SequentialFile.DescompressHuffman();
+    public static void Decompress() {
+        SequentialFile.DecompressHuffman();
     }
 }

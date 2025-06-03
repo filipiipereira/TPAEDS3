@@ -24,7 +24,7 @@ public class Main {
             System.out.println("3) Delete movie");
             System.out.println("4) Show data from a movie");
             System.out.println("5) Compress");
-            System.out.println("6) Descompress");
+            System.out.println("6) Decompress");
             System.out.println("\nChoose an option: ");
             
             option = scanner.nextInt(); 
@@ -65,7 +65,7 @@ public class Main {
                     Controller.Compress();
                     break;
                 case 6:
-                    Controller.Descompress();
+                    Controller.Decompress();
                     break;
                 default:
                     System.out.println("Invalid option. Please try again.");
