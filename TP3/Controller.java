@@ -1,4 +1,3 @@
-import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -261,35 +260,40 @@ public class Controller {
 
     public static void Compress() {
         long inicioHuffman = System.currentTimeMillis(); 
-        SequentialFile.CompressHuffman();
+        if(SequentialFile.CompressHuffman()) System.out.println("Compressão Huffman OK");
+        else System.out.println("Compressão Huffman ERRO");
         long finalHuffman = System.currentTimeMillis();
         long resultadoMilliHuff = finalHuffman - inicioHuffman;
-        long resultadoSegHuff = (finalHuffman - inicioHuffman) / 1000;
-        System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSegHuff + " segundos" + " ou " + resultadoMilliHuff + " milissegundos");
         long inicioLZW = System.currentTimeMillis();
-        SequentialFile.CompressLZW();
+        if(SequentialFile.CompressLZW()) System.out.println("Compressão LZW OK");
+        else System.out.println("Compressao LZW ERRO");
+        System.out.println("");
         long finalLZW = System.currentTimeMillis();
         long resultadoLZWMilli = finalLZW - inicioLZW;
-        long resultadoLZWSeg = (finalLZW - inicioLZW) / 1000;
-        System.out.println("Tempo de Execução da Compressão LZW: " + resultadoLZWSeg + " segundos" + " ou " + resultadoLZWMilli + " milissegundos");
-        
-        SequentialFile.compararAlgoritmo(resultadoMilliHuff,resultadoLZWMilli);
+        SequentialFile.compararAlgoritmoCompressao(resultadoMilliHuff,resultadoLZWMilli);
     }
 
     public static void Decompress(Scanner scanner) {
-        System.out.println("Quer descoprimir por qual algoritmo?");
-        System.out.println("1) HuffMan");
-        System.out.println("2) LZW");
-        int option = scanner.nextInt();
+        int option;
+        long inicioDescompressao;
+        long fimDescompressao;
+        long resultadoDesc;
+        do { 
+            System.out.println("Quer descoprimir por qual algoritmo?");
+            System.out.println("1) HuffMan");
+            System.out.println("2) LZW");
+            option = scanner.nextInt();
 
-        switch(option) {
-            case 1:
-                SequentialFile.DecompressHuffman();
-                break;
-            case 2:
-                SequentialFile.DecompressLZW();
-                break;
-        }
-        
+            switch(option) {
+                case 1:
+                    SequentialFile.DecompressHuffman();
+                    break;
+                case 2:
+                    SequentialFile.DecompressLZW();
+                    break;
+                default:
+                    System.out.println("Opção Inválida, escolha uma correta!");
+            }
+        } while (option != 2 && option != 1);
     }
 }
