@@ -3,25 +3,25 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 
 class HuffmanNode implements Comparable<HuffmanNode> {
-    byte b;
+    Byte b; // Pode ser null para nós internos
     int frequencia;
     HuffmanNode esquerdo, direito;
 
-    public HuffmanNode(byte b, int f) {
+    public HuffmanNode(Byte b, int frequencia) {
         this.b = b;
-        this.frequencia = f;
-        esquerdo = direito = null;
+        this.frequencia = frequencia;
     }
 
     @Override
-    public int compareTo(HuffmanNode o) {
-        return this.frequencia - o.frequencia;
+    public int compareTo(HuffmanNode outro) {
+        return Integer.compare(this.frequencia, outro.frequencia);
     }
 }
 
+
 public class Huffman {
 
-    public static HashMap<Byte, String> codifica(byte[] sequencia) {
+    public static HashMap<Byte, String> geraCodigos(byte[] sequencia) {
         HashMap<Byte, Integer> mapaDeFrequencias = new HashMap<>();
         for (byte c : sequencia) {
             mapaDeFrequencias.put(c, mapaDeFrequencias.getOrDefault(c, 0) + 1);
@@ -36,7 +36,7 @@ public class Huffman {
             HuffmanNode esquerdo = pq.poll();
             HuffmanNode direito = pq.poll();
 
-            HuffmanNode pai = new HuffmanNode((byte)0, esquerdo.frequencia + direito.frequencia);
+            HuffmanNode pai = new HuffmanNode(null, esquerdo.frequencia + direito.frequencia);
             pai.esquerdo = esquerdo;
             pai.direito = direito;
 
@@ -46,16 +46,13 @@ public class Huffman {
         HuffmanNode raiz = pq.poll();
         HashMap<Byte, String> codigos = new HashMap<>();
         constroiCodigos(raiz, "", codigos);
-
         return codigos;
     }
 
     private static void constroiCodigos(HuffmanNode no, String codigo, HashMap<Byte, String> codigos) {
-        if (no == null) {
-            return;
-        }
+        if (no == null) return;
 
-        if (no.b != 0) {
+        if (no.esquerdo == null && no.direito == null && no.b != null) {
             codigos.put(no.b, codigo);
         }
 
@@ -63,7 +60,26 @@ public class Huffman {
         constroiCodigos(no.direito, codigo + "1", codigos);
     }
 
-    // Versão buscando na tabela de códigos.
+    public static byte[] codifica(byte[] sequencia, HashMap<Byte, String> codigos) {
+        VetorDeBits sequenciaCodificada = new VetorDeBits();
+        int i = 0;
+        for (byte b : sequencia) {
+            String codigo = codigos.get(b);
+            if (codigo == null) {
+                throw new RuntimeException("Código não encontrado para byte: " + b);
+            }
+            for (char c : codigo.toCharArray()) {
+                if (c == '0') {
+                    sequenciaCodificada.clear(i++);
+                } else {
+                    sequenciaCodificada.set(i++);
+                }
+            }
+        }
+        return sequenciaCodificada.toByteArray();
+    }
+
+      // Versão buscando na tabela de códigos.
     public static byte[] decodifica(String sequenciaCodificada, HashMap<Byte, String> codigos) {
         ByteArrayOutputStream sequenciaDecodificada = new ByteArrayOutputStream();
         StringBuilder codigoAtual = new StringBuilder();
@@ -85,7 +101,7 @@ public class Huffman {
         String frase = "O sabiá não sabia que o sábio sabia que o sabiá não sabia assobiar.";
         System.out.println("Frase original: " + frase);
 
-        HashMap<Byte, String> codigos = codifica(frase.getBytes());
+        HashMap<Byte, String> codigos = geraCodigos(frase.getBytes());
         System.out.println("Códigos: " + codigos);
 
         // Codificação
@@ -106,6 +122,6 @@ public class Huffman {
 
         // Decodificação
         VetorDeBits sequenciaCodificada2 = new VetorDeBits(vb);
-        System.out.println("\nFrase decodificada: " + (new String(decodifica(sequenciaCodificada2.toString(), codigos))));
+      //  System.out.println("\nFrase decodificada: " + (new String(decodifica(sequenciaCodificada2.toString(), codigos))));
     }
 }

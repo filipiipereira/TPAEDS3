@@ -1,3 +1,4 @@
+import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -256,5 +257,13 @@ public class Controller {
                 m.toStr();
             }
         }
+    }
+
+    public static void Compress() {
+        SequentialFile.CompressHuffman();
+    }
+
+    public static void Descompress() {
+        SequentialFile.Decodific();
     }
 }

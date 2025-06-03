@@ -2,15 +2,21 @@
  * Classe que implementa operações de armazenamento sequencial para objetos do tipo Movie.
  * As operações incluem inserção, recuperação, atualização e exclusão.
  */
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 public class SequentialFile {
     private static String FILE_NAME = "SequentialFile.dat";
     private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
+    private static final String COMPRESSED_HUFFMAN = "SequentialFileHuffManCompressao";
 
     private static int numberOfMovies = 0; 
 
@@ -246,4 +252,81 @@ public class SequentialFile {
         }
         return response;
     }
+
+    public static void CompressHuffman() {
+    try {
+        RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+        int length = (int) raf.length();
+        byte[] arrayBytes = new byte[length];
+
+        for (int i = 0; i < length; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
+
+        HashMap<Byte, String> codigos = Huffman.geraCodigos(arrayBytes);
+
+        byte[] vb = Huffman.codifica(arrayBytes, codigos);
+
+        //System.out.println(vb);
+        FileOutputStream fos = new FileOutputStream(COMPRESSED_HUFFMAN);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        
+        oos.writeObject(codigos); // salva o dicionário
+        oos.writeInt(vb.length); // número de bits válidos em vb
+        oos.write(vb); // dados comprimidos
+
+        oos.close();
+        raf.close();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+public static void Decodific() {
+    try {
+        FileInputStream fis = new FileInputStream(COMPRESSED_HUFFMAN);
+        ObjectInputStream ois = new ObjectInputStream(fis);
+
+        HashMap<Byte, String> codigos = (HashMap<Byte, String>) ois.readObject();
+        int total = ois.readInt();
+        byte[] vb = new byte[total];
+        for(int i=0;i<total;i++) {
+            vb[i] = ois.readByte();
+        }
+
+        VetorDeBits sequenciaCodificada = new VetorDeBits(vb);
+        String arquivoComprimido = sequenciaCodificada.toString();
+
+        byte[] descomprimido = Huffman.decodifica(arquivoComprimido, codigos);
+        
+        FileOutputStream fos = new FileOutputStream("teste");
+        ObjectOutputStream os = new ObjectOutputStream(fos);
+
+        os.write(descomprimido);
+
+        os.close();
+        ois.close();
+        fis.close();
+
+        FileInputStream b = new FileInputStream("teste");
+        ObjectInputStream array1 = new ObjectInputStream(b);
+
+        FileInputStream c = new FileInputStream("teste");
+        OcjectInputStream array3 = new ObjectInputStream(c);
+
+        byte[] array = new byte[total];
+        byte[] array2 = new byte[total];
+
+        for(int i=0;i<total;i++) {
+            array[i] = array1.readByte();
+            array2[i] = array3.readByte(); 
+        }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+    
+}
 }
