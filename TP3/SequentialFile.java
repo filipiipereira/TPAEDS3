@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 public class SequentialFile {
@@ -283,7 +284,7 @@ public class SequentialFile {
     }
 }
 
-public static void Decodific() {
+public static void DescompressHuffman() {
     try {
         FileInputStream fis = new FileInputStream(COMPRESSED_HUFFMAN);
         ObjectInputStream ois = new ObjectInputStream(fis);
@@ -300,28 +301,35 @@ public static void Decodific() {
 
         byte[] descomprimido = Huffman.decodifica(arquivoComprimido, codigos);
         
-        FileOutputStream fos = new FileOutputStream("teste");
-        ObjectOutputStream os = new ObjectOutputStream(fos);
+        FileOutputStream fos = new FileOutputStream(FILE_NAME);
 
-        os.write(descomprimido);
+        fos.write(descomprimido);
 
-        os.close();
         ois.close();
         fis.close();
+        fos.close();
 
-        FileInputStream b = new FileInputStream("teste");
-        ObjectInputStream array1 = new ObjectInputStream(b);
+        /*FileInputStream b = new FileInputStream("teste");
 
-        FileInputStream c = new FileInputStream("teste");
-        OcjectInputStream array3 = new ObjectInputStream(c);
+        RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+        int length = (int) raf.length();
+        byte[] array2 = new byte[length];
+
+        for (int i = 0; i < length; i++) {
+            array2[i] = raf.readByte();
+        }
 
         byte[] array = new byte[total];
-        byte[] array2 = new byte[total];
 
-        for(int i=0;i<total;i++) {
-            array[i] = array1.readByte();
-            array2[i] = array3.readByte(); 
-        }
+    
+        array = b.readAllBytes();
+        
+
+        if (Arrays.equals(array, array2)) {
+            System.out.println("Os arquivos são IGUAIS.");
+        } else {
+            System.out.println("Os arquivos são DIFERENTES.");
+        } */
 
         } catch (Exception e) {
             e.printStackTrace();

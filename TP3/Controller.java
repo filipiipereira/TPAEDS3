@@ -264,6 +264,6 @@ public class Controller {
     }
 
     public static void Descompress() {
-        SequentialFile.Decodific();
+        SequentialFile.DescompressHuffman();
     }
 }

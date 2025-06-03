@@ -96,32 +96,4 @@ public class Huffman {
         }
         return sequenciaDecodificada.toByteArray();
     }
-
-    public static void main(String[] args) {
-        String frase = "O sabiá não sabia que o sábio sabia que o sabiá não sabia assobiar.";
-        System.out.println("Frase original: " + frase);
-
-        HashMap<Byte, String> codigos = geraCodigos(frase.getBytes());
-        System.out.println("Códigos: " + codigos);
-
-        // Codificação
-        VetorDeBits sequenciaCodificada = new VetorDeBits();
-        int i = 0;
-        for (byte b : frase.getBytes()) {
-            String codigo = codigos.get(b);
-            for(char c : codigo.toCharArray()) {
-                if(c=='0')
-                    sequenciaCodificada.clear(i++);
-                else
-                    sequenciaCodificada.set(i++);            }
-        }
-        byte[] vb = sequenciaCodificada.toByteArray();
-        System.out.println("\n"+sequenciaCodificada);
-        System.out.println("Tamanho original: "+frase.getBytes().length+" bytes");
-        System.out.println("Tamanho compactado: "+vb.length+" bytes");
-
-        // Decodificação
-        VetorDeBits sequenciaCodificada2 = new VetorDeBits(vb);
-      //  System.out.println("\nFrase decodificada: " + (new String(decodifica(sequenciaCodificada2.toString(), codigos))));
-    }
 }

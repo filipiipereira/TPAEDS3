@@ -24,6 +24,7 @@ public class Main {
             System.out.println("3) Delete movie");
             System.out.println("4) Show data from a movie");
             System.out.println("5) Compress");
+            System.out.println("6) Descompress");
             System.out.println("\nChoose an option: ");
             
             option = scanner.nextInt(); 
