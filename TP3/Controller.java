@@ -10,7 +10,9 @@ import java.util.Scanner;
  * Classe Controller responsável por gerenciar a interação com o usuário e manipular objetos da classe Film.
  */
 public class Controller {
-    
+    private static final String COMPRESSED_HUFFMAN_PREFIX = "SequentialFileHuffManCompress_v";
+    private static final String COMPRESSED_SUFFIX = ".dat";
+    private static final String COMPRESSED_LZW_PREFIX = "SequentialFileLZWCompress_v";
     /**
      * Método responsável por capturar os dados de um filme a partir da entrada do usuário.
      * 
@@ -260,40 +262,37 @@ public class Controller {
 
     public static void Compress() {
         long inicioHuffman = System.currentTimeMillis(); 
-        if(SequentialFile.CompressHuffman()) System.out.println("Compressão Huffman OK");
+        String nomeArquivoHuff = SequentialFile.CompressHuffman();
+        if(nomeArquivoHuff != null) System.out.println("Compressão Huffman OK");
         else System.out.println("Compressão Huffman ERRO");
         long finalHuffman = System.currentTimeMillis();
         long resultadoMilliHuff = finalHuffman - inicioHuffman;
         long inicioLZW = System.currentTimeMillis();
-        if(SequentialFile.CompressLZW()) System.out.println("Compressão LZW OK");
+        String nomeArquivoLZW = SequentialFile.CompressLZW();
+        if(nomeArquivoLZW != null) System.out.println("Compressão LZW OK");
         else System.out.println("Compressao LZW ERRO");
         System.out.println("");
         long finalLZW = System.currentTimeMillis();
         long resultadoLZWMilli = finalLZW - inicioLZW;
-        SequentialFile.compararAlgoritmoCompressao(resultadoMilliHuff,resultadoLZWMilli);
+        SequentialFile.compararAlgoritmoCompressao(nomeArquivoHuff,nomeArquivoLZW,resultadoMilliHuff,resultadoLZWMilli);
     }
 
     public static void Decompress(Scanner scanner) {
-        int option;
-        long inicioDescompressao;
-        long fimDescompressao;
-        long resultadoDesc;
-        do { 
-            System.out.println("Quer descoprimir por qual algoritmo?");
-            System.out.println("1) HuffMan");
-            System.out.println("2) LZW");
-            option = scanner.nextInt();
+        int versao;
+            System.out.println("Por qual versão deseja descomprimir? Existem " + SequentialFile.contarVersoes(COMPRESSED_LZW_PREFIX, COMPRESSED_SUFFIX) + " versões: ");
+            versao = scanner.nextInt();
 
-            switch(option) {
-                case 1:
-                    SequentialFile.DecompressHuffman();
-                    break;
-                case 2:
-                    SequentialFile.DecompressLZW();
-                    break;
-                default:
-                    System.out.println("Opção Inválida, escolha uma correta!");
-            }
-        } while (option != 2 && option != 1);
+                String nomeArquivoLZW = COMPRESSED_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
+                String nomeArquivoHuff = COMPRESSED_HUFFMAN_PREFIX + versao + COMPRESSED_SUFFIX;
+                long inicioHuffman = System.currentTimeMillis(); 
+                SequentialFile.DecompressHuffman(nomeArquivoHuff); 
+                long finalHuffman = System.currentTimeMillis();
+                long resultadoMilliHuff = finalHuffman - inicioHuffman;
+                long inicioLZW = System.currentTimeMillis();
+                SequentialFile.DecompressLZW(nomeArquivoLZW);
+                long finalLZW = System.currentTimeMillis();
+                long resultadoLZWMilli = finalLZW - inicioLZW;
+                SequentialFile.compararAlgoritmoDescompressao(resultadoMilliHuff, resultadoLZWMilli);
+            
     }
 }

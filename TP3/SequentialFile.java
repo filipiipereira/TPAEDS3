@@ -18,8 +18,10 @@ public class SequentialFile {
     private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
-    private static final String COMPRESSED_HUFFMAN = "SequentialFileHuffManCompress.dat";
-    private static final String COMPRESSED_LZW = "SequentialFileLZWCompress.dat";
+    private static final String COMPRESSED_HUFFMAN_PREFIX = "SequentialFileHuffManCompress_v";
+    private static final String COMPRESSED_SUFFIX = ".dat";
+    private static final String COMPRESSED_LZW_PREFIX = "SequentialFileLZWCompress_v";
+
 
     private static int numberOfMovies = 0; 
 
@@ -256,8 +258,8 @@ public class SequentialFile {
         return response;
     }
 
-    public static boolean CompressHuffman() {
-        boolean comprimido = false;
+    public static String CompressHuffman() {
+        String nomeArquivo = null;
         try {
         RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
         int lengthOriginal = (int) raf.length();
@@ -271,29 +273,27 @@ public class SequentialFile {
 
         byte[] vb = Huffman.codifica(arrayBytes, codigos);
         //System.out.println(vb);
-
-        FileOutputStream fos = new FileOutputStream(COMPRESSED_HUFFMAN);
+        int versao = contarVersoes(COMPRESSED_HUFFMAN_PREFIX, COMPRESSED_SUFFIX);
+        nomeArquivo = COMPRESSED_HUFFMAN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        FileOutputStream fos = new FileOutputStream(nomeArquivo);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
 
         oos.writeObject(codigos); // salva o dicionário
         oos.writeInt(vb.length); // número de bits válidos em vb
         oos.write(vb); // dados comprimidos
-        comprimido = true;
         oos.close();
         raf.close();
         
     } catch (Exception e) {
         e.printStackTrace();
-        comprimido = false;
     }
 
-    return comprimido;
+    return nomeArquivo;
 }
 
-public static void DecompressHuffman() {
+public static void DecompressHuffman(String nomeArquivo) {
     try {
-        long inicio = System.currentTimeMillis();
-        FileInputStream fis = new FileInputStream(COMPRESSED_HUFFMAN);
+        FileInputStream fis = new FileInputStream(nomeArquivo);
         ObjectInputStream ois = new ObjectInputStream(fis);
 
         HashMap<Byte, String> codigos = (HashMap<Byte, String>) ois.readObject();
@@ -316,20 +316,13 @@ public static void DecompressHuffman() {
         fis.close();
         fos.close();
 
-        long fim = System.currentTimeMillis();
-            long resultado = fim - inicio;
-            System.out.println("=====> DESCOMPRESSÃO <=====");
-            long resultadoSeg = (resultado) / 1000;
-            System.out.println("Tempo de Execução da descompressão Huffman: " + resultadoSeg + " segundo(s)" + " ou " + resultado + " milissegundo(s)");
-            System.out.println("");
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 }
 
-    public static boolean CompressLZW() {
-        boolean comprimido = false;
+    public static String CompressLZW() {
+        String nomeArquivo = null;
         try {
         RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
         int lengthOriginal = (int) raf.length();
@@ -341,23 +334,22 @@ public static void DecompressHuffman() {
 
         byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-        FileOutputStream fos = new FileOutputStream(COMPRESSED_LZW);
+        int versao = contarVersoes(COMPRESSED_LZW_PREFIX, COMPRESSED_SUFFIX);
+        nomeArquivo = COMPRESSED_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+
+        FileOutputStream fos = new FileOutputStream(nomeArquivo);
         fos.write(arqCodificado);
         fos.close();
-
-        File file = new File(COMPRESSED_LZW);
-        if(file.length() == arqCodificado.length) comprimido = true;
         
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return comprimido;
+        return nomeArquivo;
     }
 
-    public static void DecompressLZW() {
+    public static void DecompressLZW(String nomeArquivo) {
         try {  
-            long inicio = System.currentTimeMillis();
-            FileInputStream fis = new FileInputStream(COMPRESSED_LZW);
+            FileInputStream fis = new FileInputStream(nomeArquivo);
             
             byte[] arqComprimido = fis.readAllBytes();
 
@@ -369,12 +361,6 @@ public static void DecompressHuffman() {
 
             fis.close();
             fos.close();
-            long fim = System.currentTimeMillis();
-            long resultado = fim - inicio;
-            System.out.println("=====> DESCOMPRESSÃO <=====");
-            long resultadoSeg = (resultado) / 1000;
-            System.out.println("Tempo de Execução da descompressão LZW: " + resultadoSeg + " segundo(s)" + " ou " + resultado + " milissegundo(s)");
-            System.out.println("");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -382,14 +368,14 @@ public static void DecompressHuffman() {
     }
 
 
-    public static void compararAlgoritmoCompressao(long resultadoHuff, long resultadoLZW) {
+    public static void compararAlgoritmoCompressao(String nomeArquivoHuff, String nomeArquivoLZW, long resultadoHuff, long resultadoLZW) {
         try {
             RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
             int lengthOriginal = (int) raf.length();
             raf.close();
-            File fileLZW = new File(COMPRESSED_LZW);
+            File fileLZW = new File(nomeArquivoLZW);
             int lengthCompressLZW = (int) fileLZW.length();
-            File fileHuff = new File(COMPRESSED_HUFFMAN);
+            File fileHuff = new File(nomeArquivoHuff);
             int lengthCompressHuff = (int) fileHuff.length();
 
 
@@ -440,4 +426,40 @@ public static void DecompressHuffman() {
         }
         
     }
+
+
+    public static void compararAlgoritmoDescompressao(long resultadoHuff, long resultadoLZW) {
+        try { 
+        System.out.println("=====> DESCOMPRESSÃO HUFFMAN <=====");
+        long resultadoSegHuff = (resultadoHuff) / 1000;
+        System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSegHuff + " segundo(s)" + " ou " + resultadoHuff + " milissegundo(s)");
+        System.out.println("");
+        System.out.println("=====> DESCOMPRESSÃO LZW <=====");
+        long resultadoLZWSeg = (resultadoLZW) / 1000;
+        System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoLZWSeg + " segundo(s)" + " ou " + resultadoLZW + " milissegundo(s)");
+        System.out.println("");
+        System.out.println("=====> RESUMO TEMPO DE EXECUÇÃO <=====");
+        if(resultadoHuff < resultadoLZW) System.out.println("Nesse caso o tempo de execução do Huffman foi mais eficiente.");
+        else if(resultadoLZW < resultadoHuff)  System.out.println("Nesse caso o tempo de execução do LZW foi mais eficiente.");
+        else System.out.println("Nesse caso o tempo de execução entre os algoritmos foi exatamente o mesmo.");
+        System.out.println("");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+    public static int contarVersoes(String prefixo, String sufixo) {
+    File pasta = new File(".");
+    File[] arquivos = pasta.listFiles();
+    int contador = 0;
+    if (arquivos != null) {
+        for (File f : arquivos) {
+            if (f.getName().startsWith(prefixo) && f.getName().endsWith(sufixo)) {
+                contador++;
+            }
+        }
+    }
+    return contador;
+}
 }
