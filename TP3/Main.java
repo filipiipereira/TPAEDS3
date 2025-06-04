@@ -10,7 +10,8 @@ public class Main {
      * 
      * @param args Argumentos da linha de comando (não utilizados).
      */
-    
+    private static final String FILE_NAME = "SequentialFile.dat";
+
     public static void main(String[] args) {
         int option;
         int index = 0;
@@ -75,8 +76,6 @@ public class Main {
         
         scanner.close();
     }
-
-    private static final String FILE_NAME = "SequentialFile.dat";
 
     /**
      * Método para verificar se o arquivo foi carregado.

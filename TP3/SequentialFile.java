@@ -1,3 +1,4 @@
+
 /**
  * Classe que implementa operações de armazenamento sequencial para objetos do tipo Movie.
  * As operações incluem inserção, recuperação, atualização e exclusão.
@@ -9,39 +10,39 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 public class SequentialFile {
+
     private static String FILE_NAME = "SequentialFile.dat";
     private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
     private static final String COMPRESSED_HUFFMAN = "SequentialFileHuffManCompressao.dat";
 
-    private static int numberOfMovies = 0; 
+    private static int numberOfMovies = 0;
 
-    public static void WriteMovie(RandomAccessFile file, Movie Movie){
+    public static void WriteMovie(RandomAccessFile file, Movie Movie) {
         try {
             file.writeByte(0); // flag
             file.writeInt(Movie.registerByteSize());
             file.writeInt(Movie.getId());
             file.writeUTF(Movie.getName());
-            if(Movie.getDate() != null){
+            if (Movie.getDate() != null) {
                 file.writeLong(Movie.getDate().toEpochDay());
-            }
-            else{
+            } else {
                 file.writeLong(0);
             }
             file.writeInt(Movie.getBudget());
             file.writeFloat(Movie.getBoxOffice());
-            
+
             // Escreve o gênero como string de tamanho fixo
             String genre = Movie.getGenre();
             for (int i = 0; i < 10; i++) {
                 file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
             }
-            
+
             file.writeInt(Movie.getFinancingCompanies().size());
             for (String company : Movie.getFinancingCompanies()) {
                 file.writeUTF(company);
@@ -51,7 +52,7 @@ public class SequentialFile {
         }
     }
 
-    public static void WriteMovieSmallerSizeUpdate(RandomAccessFile file, Movie Movie , int oldSize){
+    public static void WriteMovieSmallerSizeUpdate(RandomAccessFile file, Movie Movie, int oldSize) {
         try {
             file.writeByte(0); // flag
             file.writeInt(oldSize);
@@ -60,14 +61,14 @@ public class SequentialFile {
             file.writeLong(Movie.getDate().toEpochDay());
             file.writeInt(Movie.getBudget());
             file.writeFloat(Movie.getBoxOffice());
-            
+
             // Escreve o gênero como string de tamanho fixo
             String genre = Movie.getGenre();
             //System.out.println(genre.length());
             for (int i = 0; i < 10; i++) {
                 file.writeByte(i < genre.length() ? genre.charAt(i) : ' ');
             }
-            
+
             file.writeInt(Movie.getFinancingCompanies().size());
             for (String company : Movie.getFinancingCompanies()) {
                 file.writeUTF(company);
@@ -76,8 +77,8 @@ public class SequentialFile {
             e.printStackTrace();
         }
     }
-    
-    public static Movie ReadMovie(RandomAccessFile file){
+
+    public static Movie ReadMovie(RandomAccessFile file) {
         Movie Movie = null;
         try {
             int registerId = file.readInt();
@@ -102,13 +103,13 @@ public class SequentialFile {
 
     /**
      * Insere um novo movie no arquivo sequencial.
+     *
      * @param Movie Objeto Movie a ser inserido.
      * @return true se a inserção for bem-sucedida, false caso contrário.
      */
-
     public static long InsertMovieFromCSV(Movie Movie, RandomAccessFile file) {
         long position = 0;
-        try{
+        try {
             int objectId;
             if (file.length() != 0) {
                 file.seek(0);
@@ -132,10 +133,10 @@ public class SequentialFile {
 
     /**
      * Recupera um movie do arquivo sequencial pelo ID.
+     *
      * @param id Identificador do movie.
      * @return Objeto Movie correspondente ou null se não encontrado.
      */
-
     public static Movie Get(int id, int index) {
         Movie movie = null;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
@@ -151,12 +152,12 @@ public class SequentialFile {
         return movie;
     }
 
-     public static Movie[] GetLista(String palavra, String palavra2, int option) {
+    public static Movie[] GetLista(String palavra, String palavra2, int option) {
         Movie[] movies = null;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
-            ElementoLista[] lista = IndexController.GetPosLista(palavra,palavra2, option);
+            ElementoLista[] lista = IndexController.GetPosLista(palavra, palavra2, option);
             movies = new Movie[lista.length];
-            for(int i = 0; i < lista.length; i++){
+            for (int i = 0; i < lista.length; i++) {
                 file.seek(lista[i].getposition());
                 Byte flag = file.readByte();
                 int registerLength = file.readInt();
@@ -172,26 +173,25 @@ public class SequentialFile {
 
     /**
      * Atualiza um movie existente no arquivo sequencial.
+     *
      * @param newMovie Novo objeto Movie atualizado.
      * @return true se a atualização for bem-sucedida, false caso contrário.
      */
-
     public static boolean Update(Movie newMovie, int index) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
-            long pos; 
+            long pos;
             Movie oldMovie = null;
-            if(index == 3){
-                pos = IndexController.GetPos(newMovie.getId(), 2); 
+            if (index == 3) {
+                pos = IndexController.GetPos(newMovie.getId(), 2);
                 file.seek(pos);
                 Byte flag = file.readByte();
                 int registerLength = file.readInt();
                 oldMovie = ReadMovie(file);
-            }
-            else{
+            } else {
                 pos = IndexController.GetPos(newMovie.getId(), index);//usa a arvore ou hash dependendo da escolha
             }
-            file.seek(pos); 
+            file.seek(pos);
             Byte flag = file.readByte();
             int registerLength = file.readInt();
             if (flag != '*') {
@@ -206,7 +206,7 @@ public class SequentialFile {
                     file.seek(file.length());
                     long newPos = file.getFilePointer();
                     WriteMovie(file, newMovie);
-                    IndexController.Update(newPos,newMovie.getId());//hash e arvore
+                    IndexController.Update(newPos, newMovie.getId());//hash e arvore
                     IndexController.InvertedListUpdate(oldMovie, newMovie, newPos);
                 }
                 response = true;
@@ -216,26 +216,25 @@ public class SequentialFile {
         }
         return response;
     }
-    
+
     /**
      * Exclui um movie do arquivo sequencial pelo ID.
+     *
      * @param id Identificador do movie a ser excluído.
      * @return true se a exclusão for bem-sucedida, false caso contrário.
      */
-    
     public static boolean Delete(int id, int index) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             Movie deletedMovie = null;
             long pos;
-            if(index == 3){
-                pos = IndexController.GetPos(id, 2); 
+            if (index == 3) {
+                pos = IndexController.GetPos(id, 2);
                 file.seek(pos);
                 Byte flag = file.readByte();
                 int registerLength = file.readInt();
                 deletedMovie = ReadMovie(file);
-            }
-            else{
+            } else {
                 pos = IndexController.GetPos(id, index); //usa a arvore ou hash dependendo da escolha
             }
 
@@ -246,7 +245,7 @@ public class SequentialFile {
                 file.seek(pos);
                 file.writeByte('*');
                 numberOfMovies--;
-                response =  IndexController.Delete(id) && IndexController.InvertedListDelete(id, deletedMovie);
+                response = IndexController.Delete(id) && IndexController.InvertedListDelete(id, deletedMovie);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -257,66 +256,66 @@ public class SequentialFile {
     public static void CompressHuffman() {
         long inicio = System.currentTimeMillis();
         try {
-        RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
-        int length = (int) raf.length();
-        byte[] arrayBytes = new byte[length];
+            RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+            int length = (int) raf.length();
+            byte[] arrayBytes = new byte[length];
 
-        for (int i = 0; i < length; i++) {
-            arrayBytes[i] = raf.readByte();
+            for (int i = 0; i < length; i++) {
+                arrayBytes[i] = raf.readByte();
+            }
+
+            HashMap<Byte, String> codigos = Huffman.geraCodigos(arrayBytes);
+
+            byte[] vb = Huffman.codifica(arrayBytes, codigos);
+
+            //System.out.println(vb);
+            FileOutputStream fos = new FileOutputStream(COMPRESSED_HUFFMAN);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(codigos); // salva o dicionário
+            oos.writeInt(vb.length); // número de bits válidos em vb
+            oos.write(vb); // dados comprimidos
+
+            oos.close();
+            raf.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        long fim = System.currentTimeMillis();
 
-        HashMap<Byte, String> codigos = Huffman.geraCodigos(arrayBytes);
-
-        byte[] vb = Huffman.codifica(arrayBytes, codigos);
-
-        //System.out.println(vb);
-        FileOutputStream fos = new FileOutputStream(COMPRESSED_HUFFMAN);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        
-        oos.writeObject(codigos); // salva o dicionário
-        oos.writeInt(vb.length); // número de bits válidos em vb
-        oos.write(vb); // dados comprimidos
-
-        oos.close();
-        raf.close();
-
-    } catch (Exception e) {
-        e.printStackTrace();
+        long resultadoMilli = (fim - inicio);
+        long resultadoSeg = (fim - inicio) / 1000;
+        System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSeg + " segundos" + " ou " + resultadoMilli + " milissegundos");
     }
-    long fim = System.currentTimeMillis();
 
-    long resultadoMilli = (fim - inicio);
-    long resultadoSeg = (fim-inicio) / 1000;
-    System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSeg + " segundos" + " ou " + resultadoMilli + " milissegundos");
-}
+    public static void DecompressHuffman() {
+        long inicio = System.currentTimeMillis();
+        try {
+            FileInputStream fis = new FileInputStream(COMPRESSED_HUFFMAN);
+            ObjectInputStream ois = new ObjectInputStream(fis);
 
-public static void DecompressHuffman() {
-    long inicio = System.currentTimeMillis();
-    try {
-        FileInputStream fis = new FileInputStream(COMPRESSED_HUFFMAN);
-        ObjectInputStream ois = new ObjectInputStream(fis);
+            HashMap<Byte, String> codigos = (HashMap<Byte, String>) ois.readObject();
+            int total = ois.readInt();
+            byte[] vb = new byte[total];
+            for (int i = 0; i < total; i++) {
+                vb[i] = ois.readByte();
+            }
 
-        HashMap<Byte, String> codigos = (HashMap<Byte, String>) ois.readObject();
-        int total = ois.readInt();
-        byte[] vb = new byte[total];
-        for(int i=0;i<total;i++) {
-            vb[i] = ois.readByte();
-        }
+            VetorDeBits sequenciaCodificada = new VetorDeBits(vb);
+            String arquivoComprimido = sequenciaCodificada.toString();
 
-        VetorDeBits sequenciaCodificada = new VetorDeBits(vb);
-        String arquivoComprimido = sequenciaCodificada.toString();
+            byte[] descomprimido = Huffman.decodifica(arquivoComprimido, codigos);
 
-        byte[] descomprimido = Huffman.decodifica(arquivoComprimido, codigos);
-        
-        FileOutputStream fos = new FileOutputStream(FILE_NAME);
+            FileOutputStream fos = new FileOutputStream(FILE_NAME);
 
-        fos.write(descomprimido);
+            fos.write(descomprimido);
 
-        ois.close();
-        fis.close();
-        fos.close();
+            ois.close();
+            fis.close();
+            fos.close();
 
-        /*FileInputStream b = new FileInputStream("teste");
+            /*FileInputStream b = new FileInputStream("teste");
 
         RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
         int length = (int) raf.length();
@@ -337,19 +336,18 @@ public static void DecompressHuffman() {
         } else {
             System.out.println("Os arquivos são DIFERENTES.");
         } */
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         long fim = System.currentTimeMillis();
 
         long resultadoMilli = (fim - inicio);
-        long resultadoSeg = (fim-inicio) / 1000;
+        long resultadoSeg = (fim - inicio) / 1000;
 
-        System.out.println("Tempo de Execução da Descompressão Huffman: " + resultadoSeg + " segundos" +" ou "+ resultadoMilli + " milissegundos");
-}
+        System.out.println("Tempo de Execução da Descompressão Huffman: " + resultadoSeg + " segundos" + " ou " + resultadoMilli + " milissegundos");
+    }
 
     public static void compararCompress() {
-        
+
     }
 }
