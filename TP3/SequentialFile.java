@@ -464,7 +464,7 @@ public static void DecompressHuffman(String nomeArquivo) {
     return contador;
 }
 
-    public static void KMP(String padrao) {
+    public static void Match(String padrao, int escolha) {
         StringBuilder texto = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
@@ -479,7 +479,7 @@ public static void DecompressHuffman(String nomeArquivo) {
         }
 
        // System.out.println(texto.toString());
-
-        KMP.procuraPadrao(texto.toString(), padrao);
+        if(escolha == 1) KMP.procuraPadrao(texto.toString(), padrao);
+        else BoyerMoore.searchPattern(texto.toString(), padrao);
     }
 }

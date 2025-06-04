@@ -296,9 +296,18 @@ public class Controller {
             
     }
 
-    public static void KMP(Scanner scanner) {
+    public static void Match(Scanner scanner) {
         System.out.print("Digite o padrão a ser buscado: ");
+        scanner.nextLine();
         String padrao = scanner.nextLine(); // remove espaços e quebras
-        SequentialFile.KMP(padrao);
+        int escolha;
+        boolean flag;
+        do{
+            System.out.print("\n1) KMP\n2)Boyer Moore\nDigite o algoritmo a ser executado: ");
+            escolha = scanner.nextInt();
+            flag = escolha != 1 && escolha != 2;
+            if(flag) System.out.println("Opção inválida!");
+        }while(flag);
+        SequentialFile.Match(padrao, escolha);
     }
 }

@@ -26,7 +26,7 @@ public class Main {
             System.out.println("4) Show data from a movie");
             System.out.println("5) Compress");
             System.out.println("6) Decompress");
-            System.out.println("7) Casamento de Padrões(KMP)");
+            System.out.println("7) Casamento de Padrões");
             System.out.println("\nChoose an option: ");
             
             option = scanner.nextInt(); 
@@ -70,8 +70,7 @@ public class Main {
                     Controller.Decompress(scanner);
                     break;
                 case 7:
-                    scanner.nextLine(); //limpar buffer
-                    Controller.KMP(scanner);
+                    Controller.Match(scanner);
                     break;
                 default:
                     System.out.println("Invalid option. Please try again.");

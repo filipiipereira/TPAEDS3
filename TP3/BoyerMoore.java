@@ -13,70 +13,83 @@ public class BoyerMoore{
 
     public static int[] createArray(String padrao) {
         int m = padrao.length();
-        int[] sufixoBom = new int[m];
-        int[] borda = new int[m + 1];
-
-        // Inicializa as variáveis
-        int i = m;
-        int j = m + 1;
-        borda[i] = j;
-
-        // Etapa 1: Construir a tabela de borda
-        while (i > 0) {
-            while (j <= m && padrao.charAt(i - 1) != padrao.charAt(j - 1)) {
-                if (sufixoBom[j] == 0) {
-                    sufixoBom[j] = j - i;
-                }
-                j = borda[j];
-            }
-            i--;
-            j--;
-            borda[i] = j;
+        int[] sb = new int[m];
+        int[] z = new int[m];
+        
+        // Computa o Z-array do padrão reverso
+        String padraoReverso = new StringBuilder(padrao).reverse().toString();
+        computeZArray(padraoReverso, z);
+        
+        for (int j = 0; j < m; j++) {
+            sb[j] = m; // valor padrão
         }
 
-        // Etapa 2: Preencher os deslocamentos finais
-        j = borda[0];
-        for (i = 0; i <= m; i++) {
-            if (sufixoBom[i] == 0) {
-                sufixoBom[i] = j;
-            }
-            if (i == j) {
-                j = borda[j];
+        for (int i = m - 1; i >= 0; i--) {
+            int j = m - z[i];
+            if (j < m) {
+                sb[j] = i;
             }
         }
 
-        // Ajustar vetor para ter apenas m posições (descartar posição extra)
-        int[] resultado = new int[m];
-        System.arraycopy(sufixoBom, 1, resultado, 0, m);
-
-        return resultado;
+        return sb;
     }
+
+    // Função auxiliar para calcular o Z-array (usada no sufixo bom)
+    private static void computeZArray(String s, int[] z) {
+        int n = s.length();
+        int l = 0, r = 0;
+        z[0] = n;
+        for (int i = 1; i < n; i++) {
+            if (i > r) {
+                l = r = i;
+                while (r < n && s.charAt(r - l) == s.charAt(r)) {
+                    r++;
+                }
+                z[i] = r - l;
+                r--;
+            } else {
+                int k = i - l;
+                if (z[k] < r - i + 1) {
+                    z[i] = z[k];
+                } else {
+                    l = i;
+                    while (r < n && s.charAt(r - l) == s.charAt(r)) {
+                        r++;
+                    }
+                    z[i] = r - l;
+                    r--;
+                }
+            }
+        }
+    }
+
     public static void searchPattern(String texto, String padrao){
         HashMap<Character, Integer> hash_cr = createHash(padrao);
-        int array_sb[] = createArray(padrao);
+        int[] array_sb = createArray(padrao);
         int m = padrao.length();
         int n = texto.length();
         int i = m - 1;
 
         while(i < n){
-            int k = i;
             int j = m - 1;
+            int k = i;
 
-            // Comparar da direita pra esquerda
             while(j >= 0 && texto.charAt(k) == padrao.charAt(j)){
                 k--;
                 j--;
             }
 
             if(j < 0){
-                System.out.println("Padrão encontrado na posição: " + (k + 1));
-                i += array_sb[0]; // usar o deslocamento do sufixo bom da posição 0
+                System.out.println("Posição: " + (k + 1));
+                // Move para a próxima possível ocorrência
+                i += m; // ou i += 1 se quiser achar todas
             } else {
-                char caracterRuim = texto.charAt(k);
-                int pos = hash_cr.containsKey(caracterRuim) ? hash_cr.get(caracterRuim) : -1;
-                int deslocamentoCR = Math.max(1, j - pos); // deslocamento do caractere ruim
-                int deslocamentoSB = array_sb[j];          // deslocamento do sufixo bom
-                i += Math.max(deslocamentoCR, deslocamentoSB);
+                char c = texto.charAt(k);
+                int crShift = hash_cr.containsKey(c) ? m - 1 - hash_cr.get(c) : m;
+                int sbShift = array_sb[j];
+                int shift = Math.max(crShift, sbShift);
+                if (shift <= 0) shift = 1; // segurança contra loop infinito
+                i += shift;
             }
         }
     }
