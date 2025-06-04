@@ -2,9 +2,11 @@
  * Classe que implementa operações de armazenamento sequencial para objetos do tipo Movie.
  * As operações incluem inserção, recuperação, atualização e exclusão.
  */
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
@@ -12,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class SequentialFile {
     private static String FILE_NAME = "SequentialFile.dat";
@@ -462,4 +465,23 @@ public static void DecompressHuffman(String nomeArquivo) {
     }
     return contador;
 }
+
+    public static void KMP(String padrao) {
+        StringBuilder texto = new StringBuilder();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                texto.append(linha).append("\n");
+            }
+            br.close();
+        } catch (Exception e) {
+            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
+            return;
+        }
+
+       // System.out.println(texto.toString());
+
+        KMP.procuraPadrao(texto.toString(), padrao);
+    }
 }

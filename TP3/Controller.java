@@ -295,4 +295,10 @@ public class Controller {
                 SequentialFile.compararAlgoritmoDescompressao(resultadoMilliHuff, resultadoLZWMilli);
             
     }
+
+    public static void KMP(Scanner scanner) {
+        System.out.print("Digite o padrão a ser buscado: ");
+        String padrao = scanner.nextLine(); // remove espaços e quebras
+        SequentialFile.KMP(padrao);
+    }
 }
