@@ -3,8 +3,11 @@
  * Classe que implementa operações de armazenamento sequencial para objetos do tipo Movie.
  * As operações incluem inserção, recuperação, atualização e exclusão.
  */
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
@@ -19,7 +22,10 @@ public class SequentialFile {
     private static final String BTREE_NAME = "tree.dat";
     private static final String DIRECTORY_HASH = "hashDirectory.dat";
     private static final String BUCKET_HASH = "hashBuckets.dat";
-    private static final String COMPRESSED_HUFFMAN = "SequentialFileHuffManCompressao.dat";
+    private static final String COMPRESSED_HUFFMAN_PREFIX = "SequentialFileHuffManCompress_v";
+    private static final String COMPRESSED_SUFFIX = ".dat";
+    private static final String COMPRESSED_LZW_PREFIX = "SequentialFileLZWCompress_v";
+
 
     private static int numberOfMovies = 0;
 
@@ -253,47 +259,43 @@ public class SequentialFile {
         return response;
     }
 
-    public static void CompressHuffman() {
-        long inicio = System.currentTimeMillis();
+    public static String CompressHuffman() {
+        String nomeArquivo = null;
         try {
-            RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
-            int length = (int) raf.length();
-            byte[] arrayBytes = new byte[length];
+        RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-            for (int i = 0; i < length; i++) {
-                arrayBytes[i] = raf.readByte();
-            }
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
 
             HashMap<Byte, String> codigos = Huffman.geraCodigos(arrayBytes);
 
-            byte[] vb = Huffman.codifica(arrayBytes, codigos);
+        byte[] vb = Huffman.codifica(arrayBytes, codigos);
+        //System.out.println(vb);
+        int versao = contarVersoes(COMPRESSED_HUFFMAN_PREFIX, COMPRESSED_SUFFIX);
+        nomeArquivo = COMPRESSED_HUFFMAN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        FileOutputStream fos = new FileOutputStream(nomeArquivo);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-            //System.out.println(vb);
-            FileOutputStream fos = new FileOutputStream(COMPRESSED_HUFFMAN);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(codigos); // salva o dicionário
-            oos.writeInt(vb.length); // número de bits válidos em vb
-            oos.write(vb); // dados comprimidos
-
-            oos.close();
-            raf.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        long fim = System.currentTimeMillis();
-
-        long resultadoMilli = (fim - inicio);
-        long resultadoSeg = (fim - inicio) / 1000;
-        System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSeg + " segundos" + " ou " + resultadoMilli + " milissegundos");
+        oos.writeObject(codigos); // salva o dicionário
+        oos.writeInt(vb.length); // número de bits válidos em vb
+        oos.write(vb); // dados comprimidos
+        oos.close();
+        raf.close();
+        
+    } catch (Exception e) {
+        e.printStackTrace();
     }
 
-    public static void DecompressHuffman() {
-        long inicio = System.currentTimeMillis();
-        try {
-            FileInputStream fis = new FileInputStream(COMPRESSED_HUFFMAN);
-            ObjectInputStream ois = new ObjectInputStream(fis);
+    return nomeArquivo;
+}
+
+public static void DecompressHuffman(String nomeArquivo) {
+    try {
+        FileInputStream fis = new FileInputStream(nomeArquivo);
+        ObjectInputStream ois = new ObjectInputStream(fis);
 
             HashMap<Byte, String> codigos = (HashMap<Byte, String>) ois.readObject();
             int total = ois.readInt();
@@ -315,39 +317,169 @@ public class SequentialFile {
             fis.close();
             fos.close();
 
-            /*FileInputStream b = new FileInputStream("teste");
-
-        RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
-        int length = (int) raf.length();
-        byte[] array2 = new byte[length];
-
-        for (int i = 0; i < length; i++) {
-            array2[i] = raf.readByte();
-        }
-
-        byte[] array = new byte[total];
-
-    
-        array = b.readAllBytes();
-        
-
-        if (Arrays.equals(array, array2)) {
-            System.out.println("Os arquivos são IGUAIS.");
-        } else {
-            System.out.println("Os arquivos são DIFERENTES.");
-        } */
         } catch (Exception e) {
             e.printStackTrace();
         }
-        long fim = System.currentTimeMillis();
+}
 
-        long resultadoMilli = (fim - inicio);
-        long resultadoSeg = (fim - inicio) / 1000;
+    public static String CompressLZW() {
+        String nomeArquivo = null;
+        try {
+        RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-        System.out.println("Tempo de Execução da Descompressão Huffman: " + resultadoSeg + " segundos" + " ou " + resultadoMilli + " milissegundos");
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
+
+        byte[] arqCodificado = LZW.codifica(arrayBytes);
+
+        int versao = contarVersoes(COMPRESSED_LZW_PREFIX, COMPRESSED_SUFFIX);
+        nomeArquivo = COMPRESSED_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+
+        FileOutputStream fos = new FileOutputStream(nomeArquivo);
+        fos.write(arqCodificado);
+        fos.close();
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return nomeArquivo;
     }
 
-    public static void compararCompress() {
+    public static void DecompressLZW(String nomeArquivo) {
+        try {  
+            FileInputStream fis = new FileInputStream(nomeArquivo);
+            
+            byte[] arqComprimido = fis.readAllBytes();
 
+            byte[] arqDecodificado = LZW.decodifica(arqComprimido);
+
+            FileOutputStream fos = new FileOutputStream(FILE_NAME);
+
+            fos.write(arqDecodificado);
+
+            fis.close();
+            fos.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void compararAlgoritmoCompressao(String nomeArquivoHuff, String nomeArquivoLZW, long resultadoHuff, long resultadoLZW) {
+        try {
+            RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+            int lengthOriginal = (int) raf.length();
+            raf.close();
+            File fileLZW = new File(nomeArquivoLZW);
+            int lengthCompressLZW = (int) fileLZW.length();
+            File fileHuff = new File(nomeArquivoHuff);
+            int lengthCompressHuff = (int) fileHuff.length();
+
+
+        System.out.println("=====> COMPRESSÃO HUFFMAN <=====");
+        long resultadoSegHuff = (resultadoHuff) / 1000;
+        System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSegHuff + " segundo(s)" + " ou " + resultadoHuff + " milissegundo(s)");
+        System.out.printf("Tamanho arquivo original: %d\n", lengthOriginal);
+        System.out.printf("Tamanho arquivo comprimido: %d\n", lengthCompressHuff);
+        float taxaCompressaoHuff = (float) lengthCompressHuff / lengthOriginal;
+        System.out.printf("Taxa de Compressão: %.3f\n",  taxaCompressaoHuff);
+        float fatorCompressaoHuff = (float) lengthOriginal / lengthCompressHuff;
+        System.out.printf("Fator de Compressão: %.3f\n", fatorCompressaoHuff);
+        double ganhoHuff = 100 * Math.log((float) lengthOriginal / lengthCompressHuff);
+        System.out.printf("Ganho de Compresão: %.3f\n", ganhoHuff);
+        float percentualReducaoHuff = 100 * ( (float) 1 - taxaCompressaoHuff);
+        System.out.printf("Percentual de Compressão: %.3f%%\n",percentualReducaoHuff);
+        System.out.println("");
+        System.out.println("=====> COMPRESSÃO LZW <=====");
+        long resultadoLZWSeg = (resultadoLZW) / 1000;
+        System.out.println("Tempo de Execução da Compressão LZW: " + resultadoLZWSeg + " segundos" + " ou " + resultadoLZW + " milissegundos");
+        System.out.printf("Tamanho arquivo original: %d\n", lengthOriginal);
+        System.out.printf("Tamanho arquivo comprimido: %d\n", lengthCompressLZW);
+        float taxaCompressaoLZW = (float) lengthCompressLZW / lengthOriginal;
+        System.out.printf("Taxa de Compressão: %.3f\n",  taxaCompressaoLZW);
+        float fatorCompressaoLZW = (float) lengthOriginal / lengthCompressLZW;
+        System.out.printf("Fator de Compressão: %.3f\n", fatorCompressaoLZW);
+        double ganhoLZW = 100 * Math.log((float) lengthOriginal / lengthCompressLZW);
+        System.out.printf("Ganho de Compresão: %.3f\n", ganhoLZW);
+        float percentualReducaoLZW = 100 * ( (float) 1 - taxaCompressaoLZW);
+        System.out.printf("Percentual de Compressão: %.3f%%\n",percentualReducaoLZW);
+        System.out.println("");
+        System.out.println("=====> RESUMO ESPAÇO(quantidade de bytes) <=====");
+        if(lengthCompressHuff < lengthCompressLZW) System.out.println("O algoritmo Huffman foi mais eficiente na questão de espaço nesse caso.");
+        else if(lengthCompressLZW < lengthCompressHuff) System.out.println("O algoritmo LZW foi mais eficiente na questão de espaço nesse caso.");
+        else System.out.println("Os dois algoritmos foram exatamente os mesmos na questão de espaço nesse caso.");
+        System.out.println("");
+        System.out.println("=====> RESUMO PERCENTUAL DE COMPRESSÃO <=====");
+        if(percentualReducaoHuff > percentualReducaoLZW) System.out.println("O percentual de compressão do Huffman nesse caso foi superior.");
+        else if(percentualReducaoLZW > percentualReducaoHuff)  System.out.println("O percentual de compressão do LZW nesse caso foi superior.");
+        else System.out.println("O percentual de compressão entre os algoritmos foi exatamente o mesmo.");
+        System.out.println("");
+        System.out.println("=====> RESUMO TEMPO DE EXECUÇÃO <=====");
+        if(resultadoHuff < resultadoLZW) System.out.println("Nesse caso o tempo de execução do Huffman foi mais eficiente.");
+        else if(resultadoLZW < resultadoHuff)  System.out.println("Nesse caso o tempo de execução do LZW foi mais eficiente.");
+        else System.out.println("Nesse caso o tempo de execução entre os algoritmos foi exatamente o mesmo.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+
+    public static void compararAlgoritmoDescompressao(long resultadoHuff, long resultadoLZW) {
+        try { 
+        System.out.println("=====> DESCOMPRESSÃO HUFFMAN <=====");
+        long resultadoSegHuff = (resultadoHuff) / 1000;
+        System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoSegHuff + " segundo(s)" + " ou " + resultadoHuff + " milissegundo(s)");
+        System.out.println("");
+        System.out.println("=====> DESCOMPRESSÃO LZW <=====");
+        long resultadoLZWSeg = (resultadoLZW) / 1000;
+        System.out.println("Tempo de Execução da Compressão Huffman: " + resultadoLZWSeg + " segundo(s)" + " ou " + resultadoLZW + " milissegundo(s)");
+        System.out.println("");
+        System.out.println("=====> RESUMO TEMPO DE EXECUÇÃO <=====");
+        if(resultadoHuff < resultadoLZW) System.out.println("Nesse caso o tempo de execução do Huffman foi mais eficiente.");
+        else if(resultadoLZW < resultadoHuff)  System.out.println("Nesse caso o tempo de execução do LZW foi mais eficiente.");
+        else System.out.println("Nesse caso o tempo de execução entre os algoritmos foi exatamente o mesmo.");
+        System.out.println("");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+    public static int contarVersoes(String prefixo, String sufixo) {
+    File pasta = new File(".");
+    File[] arquivos = pasta.listFiles();
+    int contador = 0;
+    if (arquivos != null) {
+        for (File f : arquivos) {
+            if (f.getName().startsWith(prefixo) && f.getName().endsWith(sufixo)) {
+                contador++;
+            }
+        }
+    }
+    return contador;
+}
+
+    public static void KMP(String padrao) {
+        StringBuilder texto = new StringBuilder();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                texto.append(linha).append("\n");
+            }
+            br.close();
+        } catch (Exception e) {
+            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
+            return;
+        }
+
+       // System.out.println(texto.toString());
+
+        KMP.procuraPadrao(texto.toString(), padrao);
     }
 }
