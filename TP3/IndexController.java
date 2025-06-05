@@ -211,7 +211,6 @@ public class IndexController{
             for(String word : wordsOfOldName) if(word.length() > 3){
                 String wordSemCaracter = filtraLetras(word);
                 if(!wordSemCaracter.equals("")){
-                    System.out.println("Nome: " + wordSemCaracter.toLowerCase().trim() + " ID: " + id);
                     listaNome.delete(wordSemCaracter.toLowerCase().trim(), id);
                 }
             }    
