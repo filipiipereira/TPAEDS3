@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -126,60 +123,12 @@ public class Controller {
      */
 
     public static boolean Update(Scanner scanner) {
-        int index = MenuIndex();
-        boolean flag = false;
-        if(index == 1 | index == 2){
-            System.out.println("Which ID: ");
-            int id = scanner.nextInt();
-            SequentialFile.Get(id, index).toStr();
-            Movie movie = Form(scanner);
-            movie.setId(id);
-            flag = SequentialFile.Update(movie, index);
-        }
-        else{
-            Movie[] lista;
-            int option = MenuLista();
-            scanner.nextLine(); //cleaning buffer
-            System.out.print("Digite a palavra: ");
-            String palavra = scanner.nextLine();
-            if(option == 3) {
-                System.out.print("Digite a segunda palavra: ");
-                String genre = scanner.nextLine();
-                lista = SequentialFile.GetLista(palavra, genre, option);
-            } else {
-                lista = SequentialFile.GetLista(palavra, "",option);
-            }
-            if(lista.length == 0) System.out.println("Nenhum filme encontrado");
-            else if(lista.length == 1){
-                lista[0].toStr();
-                Movie movie = Form(scanner);
-                movie.setId(lista[0].getId());
-                flag = SequentialFile.Update(movie, index);
-            }
-            else{
-                for(Movie m : lista){
-                    m.toStr();
-                }
-                System.out.println("Você escolheu uma palavra utilizada em vários filmes!\nEscolha um dos ID's presente no resultado");
-                int id = scanner.nextInt();
-                boolean find = false;
-                int filmeSelecionado = 0;
-                for(int i = 0; i < lista.length; i++){
-                    if(lista[i].getId() == id){
-                        find = true;
-                        filmeSelecionado = i;
-                    }
-                }
-                if(find){
-                    System.out.println("Filme selecionado:");
-                    lista[filmeSelecionado].toStr();
-                    Movie movie = Form(scanner);
-                    movie.setId(lista[filmeSelecionado].getId());
-                    flag = SequentialFile.Update(movie, index);
-                }
-            }
-        }
-        return flag;
+        System.out.println("Which ID: ");
+        int id = scanner.nextInt();
+        SequentialFile.Get(id, 2).toStr();
+        Movie movie = Form(scanner);
+        movie.setId(id);
+        return SequentialFile.Update(movie);
     }
 
     /**
@@ -190,47 +139,11 @@ public class Controller {
      */
 
     public static boolean Delete(Scanner scanner) {
-        int index = MenuIndex();
         boolean flag = false;
-        if(index == 1 | index == 2){
-            System.out.println("Which ID: ");
-            int id = scanner.nextInt();
-            flag = SequentialFile.Delete(id, index);
-        }
-        else{
-            Movie[] lista;
-            int option = MenuLista();
-            scanner.nextLine(); //cleaning buffer
-            System.out.print("Digite a palavra: ");
-            String palavra = scanner.nextLine();
-            if(option == 3) {
-                System.out.print("Digite a segunda palavra: ");
-                String genre = scanner.nextLine();
-                lista = SequentialFile.GetLista(palavra, genre, option);
-            } else {
-                lista = SequentialFile.GetLista(palavra, "",option);
-            }
-            if(lista.length == 0) System.out.println("Nenhum filme encontrado");
-            else if(lista.length == 1){
-                flag = SequentialFile.Delete(lista[0].getId(), index);
-            }
-            else{
-                for(Movie m : lista){
-                    m.toStr();
-                }
-                System.out.println("Você escolheu uma palavra utilizada em vários filmes!\nEscolha um dos ID's presente no resultado");
-                int id = scanner.nextInt();
-                boolean find = false;
-                for(int i = 0; i < lista.length; i++){
-                    if(lista[i].getId() == id){
-                        find = true;
-                    }
-                }
-                if(find){
-                    flag = SequentialFile.Delete(id, index);
-                }
-            }
-        }
+       
+        System.out.println("Which ID: ");
+        int id = scanner.nextInt();
+        flag = SequentialFile.Delete(id);
         return flag;
     }
 

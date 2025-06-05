@@ -11,7 +11,6 @@ import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
-import java.net.FileNameMap;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -202,23 +201,15 @@ public class SequentialFile {
      * @param newMovie Novo objeto Movie atualizado.
      * @return true se a atualização for bem-sucedida, false caso contrário.
      */
-    public static boolean Update(Movie newMovie, int index) {
+    public static boolean Update(Movie newMovie) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             long pos;
-            Movie oldMovie = null;
-            if (index == 3) {
-                pos = IndexController.GetPos(newMovie.getId(), 2);
-                file.seek(pos);
-                Byte flag = file.readByte();
-                int registerLength = file.readInt();
-                oldMovie = ReadMovie(file);
-            } else {
-                pos = IndexController.GetPos(newMovie.getId(), index);//usa a arvore ou hash dependendo da escolha
-            }
+            pos = IndexController.GetPos(newMovie.getId(), 2);
             file.seek(pos);
             Byte flag = file.readByte();
             int registerLength = file.readInt();
+            Movie oldMovie = ReadMovie(file);
             if (flag != '*') {
                 int newSize = newMovie.registerByteSize();
                 if (newSize <= registerLength) {
@@ -248,24 +239,16 @@ public class SequentialFile {
      * @param id Identificador do movie a ser excluído.
      * @return true se a exclusão for bem-sucedida, false caso contrário.
      */
-    public static boolean Delete(int id, int index) {
+    public static boolean Delete(int id) {
         boolean response = false;
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
             Movie deletedMovie = null;
             long pos;
-            if (index == 3) {
-                pos = IndexController.GetPos(id, 2);
-                file.seek(pos);
-                Byte flag = file.readByte();
-                int registerLength = file.readInt();
-                deletedMovie = ReadMovie(file);
-            } else {
-                pos = IndexController.GetPos(id, index); //usa a arvore ou hash dependendo da escolha
-            }
-
+            pos = IndexController.GetPos(id, 2);
             file.seek(pos);
-            byte flag = file.readByte();
-            int registerSize = file.readInt();
+            Byte flag = file.readByte();
+            int registerLength = file.readInt();
+            deletedMovie = ReadMovie(file);
             if (flag == 0) {
                 file.seek(pos);
                 file.writeByte('*');
