@@ -17,11 +17,11 @@ public class IndexController{
             String[] wordsOfName = movie.getName().split(" ");
             for(String word : wordsOfName) if(word.length() > 3){
                 String wordSemCaracter = filtraLetras(word);
-                //if(!wordSemCaracter.equals(""))
-                //listName.create(wordSemCaracter.toLowerCase().trim(), new ElementoLista(movie.getId(), pos));
+                if(!wordSemCaracter.equals(""))
+                listName.create(wordSemCaracter.toLowerCase().trim(), new ElementoLista(movie.getId(), pos));
             }
             
-            //listGenre.create(movie.getGenre().toLowerCase(), new ElementoLista(movie.getId(), pos));
+            listGenre.create(movie.getGenre().toLowerCase(), new ElementoLista(movie.getId(), pos));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -195,7 +195,7 @@ public class IndexController{
         boolean deletado = false;
         try {
             HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH, BUCKET_HASH);
-           deletado = he.delete(id);
+            deletado = he.delete(id);
         } catch (Exception e) {
             e.printStackTrace();
         }
