@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -10,9 +13,17 @@ import java.util.Scanner;
  * Classe Controller responsável por gerenciar a interação com o usuário e manipular objetos da classe Film.
  */
 public class Controller {
+    private static String FILE_NAME = "SequentialFile.dat";
     private static final String COMPRESSED_HUFFMAN_PREFIX = "SequentialFileHuffManCompress_v";
     private static final String COMPRESSED_SUFFIX = ".dat";
     private static final String COMPRESSED_LZW_PREFIX = "SequentialFileLZWCompress_v";
+    private static final String BTREE_NAME = "tree.dat";
+    private static final String DIRECTORY_HASH = "hashDirectory.dat";
+    private static final String BUCKET_HASH = "hashBuckets.dat";
+    private static final String DICIONARYNAME_LIST_NAME = "dicionaryListName.dat";
+    private static final String BLOCOSNAME_LIST_NAME = "blocosListName.dat";
+    private static final String DICIONARYGENRE_LIST_NAME = "dicionaryGenre.dat";
+    private static final String BLOCOSGENRE_LIST_NAME = "blocosListGenre.dat";
     /**
      * Método responsável por capturar os dados de um filme a partir da entrada do usuário.
      * 
@@ -293,8 +304,9 @@ public class Controller {
                 long finalLZW = System.currentTimeMillis();
                 long resultadoLZWMilli = finalLZW - inicioLZW;
                 SequentialFile.compararAlgoritmoDescompressao(resultadoMilliHuff, resultadoLZWMilli);
-            
-    }
+                
+}
+    
 
     public static void Match(Scanner scanner) {
         System.out.print("Digite o padrão a ser buscado: ");

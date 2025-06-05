@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
+import java.net.FileNameMap;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -300,145 +301,145 @@ public class SequentialFile {
             e.printStackTrace();
         }
 
-    //     //BTREE
-    //     try {
-    //     RandomAccessFile rafBTREE = new RandomAccessFile(BTREE_NAME, "r");
-    //     int lengthOriginal = (int) rafBTREE.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        //BTREE
+        try {
+        RandomAccessFile rafBTREE = new RandomAccessFile(BTREE_NAME, "r");
+        int lengthOriginal = (int) rafBTREE.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = rafBTREE.readByte();
-    //     }
-    //     HashMap<Byte, String> codigosBtree = Huffman.geraCodigos(arrayBytes);
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = rafBTREE.readByte();
+        }
+        HashMap<Byte, String> codigosBtree = Huffman.geraCodigos(arrayBytes);
 
-    //     byte[] vb1 = Huffman.codifica(arrayBytes, codigosBtree);
-    //     int versao = contarVersoes(COMPRESSED_BTREE_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivobtree = COMPRESSED_BTREE_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
-    //     escreveArquivoHuff(nomeArquivobtree, codigosBtree, vb1);
-    //     rafBTREE.close();
-    // } catch (Exception e) {
-    //     e.printStackTrace();
-    // }
+        byte[] vb1 = Huffman.codifica(arrayBytes, codigosBtree);
+        int versao = contarVersoes(COMPRESSED_BTREE_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivobtree = COMPRESSED_BTREE_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        escreveArquivoHuff(nomeArquivobtree, codigosBtree, vb1);
+        rafBTREE.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
 
-    // //HashDirectory
-    //     try {
-    //     RandomAccessFile rafDirectory = new RandomAccessFile(DIRECTORY_HASH, "r");
-    //     int lengthOriginal = (int) rafDirectory.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+    //HashDirectory
+        try {
+        RandomAccessFile rafDirectory = new RandomAccessFile(DIRECTORY_HASH, "r");
+        int lengthOriginal = (int) rafDirectory.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = rafDirectory.readByte();
-    //     }
-    //     HashMap<Byte, String> codigosDirectory = Huffman.geraCodigos(arrayBytes);
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = rafDirectory.readByte();
+        }
+        HashMap<Byte, String> codigosDirectory = Huffman.geraCodigos(arrayBytes);
 
-    //     byte[] vb = Huffman.codifica(arrayBytes, codigosDirectory);
-    //     int versao = contarVersoes(COMPRESSED_DIRECTORY_HASH_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivobtree = COMPRESSED_DIRECTORY_HASH_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
-    //     escreveArquivoHuff(nomeArquivobtree, codigosDirectory, vb);
-    //     rafDirectory.close();
-    // } catch (Exception e) {
-    //     e.printStackTrace();
-    // }
+        byte[] vb = Huffman.codifica(arrayBytes, codigosDirectory);
+        int versao = contarVersoes(COMPRESSED_DIRECTORY_HASH_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivobtree = COMPRESSED_DIRECTORY_HASH_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        escreveArquivoHuff(nomeArquivobtree, codigosDirectory, vb);
+        rafDirectory.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
 
-    //  //HashBucket
-    //     try {
-    //     RandomAccessFile rafBucket = new RandomAccessFile(BUCKET_HASH, "r");
-    //     int lengthOriginal = (int) rafBucket.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+     //HashBucket
+        try {
+        RandomAccessFile rafBucket = new RandomAccessFile(BUCKET_HASH, "r");
+        int lengthOriginal = (int) rafBucket.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = rafBucket.readByte();
-    //     }
-    //     HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = rafBucket.readByte();
+        }
+        HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
-    //     byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-    //     int versao = contarVersoes(COMPRESSED_BUCKET_HASH_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivobtree = COMPRESSED_BUCKET_HASH_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
-    //     escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
-    //     rafBucket.close();
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
+        int versao = contarVersoes(COMPRESSED_BUCKET_HASH_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivobtree = COMPRESSED_BUCKET_HASH_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
+        rafBucket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
-    //     //DicionaryNameList
-    //     try {
-    //     RandomAccessFile rafBucket = new RandomAccessFile(DICIONARYNAME_LIST_NAME, "r");
-    //     int lengthOriginal = (int) rafBucket.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        //DicionaryNameList
+        try {
+        RandomAccessFile rafBucket = new RandomAccessFile(DICIONARYNAME_LIST_NAME, "r");
+        int lengthOriginal = (int) rafBucket.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = rafBucket.readByte();
-    //     }
-    //     HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = rafBucket.readByte();
+        }
+        HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
-    //     byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-    //     int versao = contarVersoes(COMPRESSED_DICIONARYNAME_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivobtree = COMPRESSED_DICIONARYNAME_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
-    //     escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
-    //     rafBucket.close();
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
+        int versao = contarVersoes(COMPRESSED_DICIONARYNAME_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivobtree = COMPRESSED_DICIONARYNAME_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
+        rafBucket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     //DicionaryGenreList
-    //     try {
-    //     RandomAccessFile rafBucket = new RandomAccessFile(DICIONARYGENRE_LIST_NAME, "r");
-    //     int lengthOriginal = (int) rafBucket.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        //DicionaryGenreList
+        try {
+        RandomAccessFile rafBucket = new RandomAccessFile(DICIONARYGENRE_LIST_NAME, "r");
+        int lengthOriginal = (int) rafBucket.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = rafBucket.readByte();
-    //     }
-    //     HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = rafBucket.readByte();
+        }
+        HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
-    //     byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-    //     int versao = contarVersoes(COMPRESSED_DICIONARYGENRE_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivobtree = COMPRESSED_DICIONARYGENRE_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
-    //     escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
-    //     rafBucket.close();
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
+        int versao = contarVersoes(COMPRESSED_DICIONARYGENRE_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivobtree = COMPRESSED_DICIONARYGENRE_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
+        rafBucket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     //blocoNomesList
-    //     try {
-    //     RandomAccessFile rafBucket = new RandomAccessFile(BLOCOSNAME_LIST_NAME, "r");
-    //     int lengthOriginal = (int) rafBucket.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        //blocoNomesList
+        try {
+        RandomAccessFile rafBucket = new RandomAccessFile(BLOCOSNAME_LIST_NAME, "r");
+        int lengthOriginal = (int) rafBucket.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = rafBucket.readByte();
-    //     }
-    //     HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = rafBucket.readByte();
+        }
+        HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
-    //     byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-    //     int versao = contarVersoes(COMPRESSED_BLOCOSNAME_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivobtree = COMPRESSED_BLOCOSNAME_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
-    //     escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
-    //     rafBucket.close();
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
+        int versao = contarVersoes(COMPRESSED_BLOCOSNAME_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivobtree = COMPRESSED_BLOCOSNAME_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
+        rafBucket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     //BlocosGenreList
-    //     try {
-    //     RandomAccessFile rafBucket = new RandomAccessFile(BLOCOSGENRE_LIST_NAME, "r");
-    //     int lengthOriginal = (int) rafBucket.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        //BlocosGenreList
+        try {
+        RandomAccessFile rafBucket = new RandomAccessFile(BLOCOSGENRE_LIST_NAME, "r");
+        int lengthOriginal = (int) rafBucket.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = rafBucket.readByte();
-    //     }
-    //     HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = rafBucket.readByte();
+        }
+        HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
-    //     byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-    //     int versao = contarVersoes(COMPRESSED_BLOCOSGENRE_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivobtree = COMPRESSED_BLOCOSGENRE_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
-    //     escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
-    //     rafBucket.close();
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
+        int versao = contarVersoes(COMPRESSED_BLOCOSGENRE_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivobtree = COMPRESSED_BLOCOSGENRE_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
+        rafBucket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     return nomeArquivo;
 }
@@ -482,13 +483,7 @@ public static void DecompressHuffman(String nomeArquivo) {
             FileOutputStream fos = new FileOutputStream(FILE_NAME);
 
         fos.close();
-        // boolean achou = false;
-        // int versao;
-        // for(int i=nomeArquivo.length()-1;i>0 && !achou;i--) {
-        //     if (Character.isDigit(nomeArquivo.charAt(i))) {
-        //         versao = nomeArquivo.charAt(i);
-        //         achou = true; 
-        // }
+
 
 
         } catch (Exception e) {
@@ -518,156 +513,156 @@ public static void DecompressHuffman(String nomeArquivo) {
             e.printStackTrace();
         }
         
-    //     //BTREE
-    //     try {
-    //     RandomAccessFile raf = new RandomAccessFile(BTREE_NAME, "r");
-    //     int lengthOriginal = (int) raf.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        //BTREE
+        try {
+        RandomAccessFile raf = new RandomAccessFile(BTREE_NAME, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = raf.readByte();
-    //     }
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
 
-    //     byte[] arqCodificado = LZW.codifica(arrayBytes);
+        byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-    //     int versao = contarVersoes(COMPRESSED_BTREE_LZW_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivo2 = COMPRESSED_BTREE_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        int versao = contarVersoes(COMPRESSED_BTREE_LZW_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivo2 = COMPRESSED_BTREE_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
-    //     escreveArquivoLZW(nomeArquivo2, arqCodificado);
+        escreveArquivoLZW(nomeArquivo2, arqCodificado);
         
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     //HASHDIRECTORY
-    //     try {
-    //     RandomAccessFile raf = new RandomAccessFile(DIRECTORY_HASH, "r");
-    //     int lengthOriginal = (int) raf.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        //HASHDIRECTORY
+        try {
+        RandomAccessFile raf = new RandomAccessFile(DIRECTORY_HASH, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = raf.readByte();
-    //     }
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
 
-    //     byte[] arqCodificado = LZW.codifica(arrayBytes);
+        byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-    //     int versao = contarVersoes(COMPRESSED_DIRECTORY_HASH_LZW_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivo2 = COMPRESSED_DIRECTORY_HASH_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        int versao = contarVersoes(COMPRESSED_DIRECTORY_HASH_LZW_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivo2 = COMPRESSED_DIRECTORY_HASH_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
-    //     escreveArquivoLZW(nomeArquivo2, arqCodificado);
+        escreveArquivoLZW(nomeArquivo2, arqCodificado);
         
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     //HASHBUCKET
+        //HASHBUCKET
 
-    //     try {
-    //     RandomAccessFile raf = new RandomAccessFile(BUCKET_HASH, "r");
-    //     int lengthOriginal = (int) raf.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        try {
+        RandomAccessFile raf = new RandomAccessFile(BUCKET_HASH, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = raf.readByte();
-    //     }
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
 
-    //     byte[] arqCodificado = LZW.codifica(arrayBytes);
+        byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-    //     int versao = contarVersoes(COMPRESSED_BUCKET_HASH_LZW_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivo2 = COMPRESSED_BUCKET_HASH_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        int versao = contarVersoes(COMPRESSED_BUCKET_HASH_LZW_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivo2 = COMPRESSED_BUCKET_HASH_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
-    //     escreveArquivoLZW(nomeArquivo2, arqCodificado);
+        escreveArquivoLZW(nomeArquivo2, arqCodificado);
         
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     //DICIONARYNAMELIST
+        //DICIONARYNAMELIST
 
-    //     try {
-    //     RandomAccessFile raf = new RandomAccessFile(DICIONARYNAME_LIST_NAME, "r");
-    //     int lengthOriginal = (int) raf.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        try {
+        RandomAccessFile raf = new RandomAccessFile(DICIONARYNAME_LIST_NAME, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = raf.readByte();
-    //     }
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
 
-    //     byte[] arqCodificado = LZW.codifica(arrayBytes);
+        byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-    //     int versao = contarVersoes(COMPRESSED_DICIONARYNAME_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivo2 = COMPRESSED_DICIONARYNAME_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        int versao = contarVersoes(COMPRESSED_DICIONARYNAME_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivo2 = COMPRESSED_DICIONARYNAME_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
-    //     escreveArquivoLZW(nomeArquivo2, arqCodificado);
+        escreveArquivoLZW(nomeArquivo2, arqCodificado);
         
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     //DICIONARYGENRELIST
-    //     try {
-    //     RandomAccessFile raf = new RandomAccessFile(DICIONARYGENRE_LIST_NAME, "r");
-    //     int lengthOriginal = (int) raf.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        //DICIONARYGENRELIST
+        try {
+        RandomAccessFile raf = new RandomAccessFile(DICIONARYGENRE_LIST_NAME, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = raf.readByte();
-    //     }
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
 
-    //     byte[] arqCodificado = LZW.codifica(arrayBytes);
+        byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-    //     int versao = contarVersoes(COMPRESSED_DICIONARYGENRE_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivo2 = COMPRESSED_DICIONARYGENRE_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        int versao = contarVersoes(COMPRESSED_DICIONARYGENRE_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivo2 = COMPRESSED_DICIONARYGENRE_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
-    //     escreveArquivoLZW(nomeArquivo2, arqCodificado);
+        escreveArquivoLZW(nomeArquivo2, arqCodificado);
         
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     //BLOCOSNAMELIST
+        //BLOCOSNAMELIST
 
-    //     try {
-    //     RandomAccessFile raf = new RandomAccessFile(BLOCOSNAME_LIST_NAME, "r");
-    //     int lengthOriginal = (int) raf.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        try {
+        RandomAccessFile raf = new RandomAccessFile(BLOCOSNAME_LIST_NAME, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = raf.readByte();
-    //     }
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
 
-    //     byte[] arqCodificado = LZW.codifica(arrayBytes);
+        byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-    //     int versao = contarVersoes(COMPRESSED_BLOCOSNAME_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivo2 = COMPRESSED_BLOCOSNAME_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        int versao = contarVersoes(COMPRESSED_BLOCOSNAME_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivo2 = COMPRESSED_BLOCOSNAME_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
-    //     escreveArquivoLZW(nomeArquivo2, arqCodificado);
+        escreveArquivoLZW(nomeArquivo2, arqCodificado);
         
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     //BLOCOSGENRELIST
+        //BLOCOSGENRELIST
 
-    //     try {
-    //     RandomAccessFile raf = new RandomAccessFile(BLOCOSGENRE_LIST_NAME, "r");
-    //     int lengthOriginal = (int) raf.length();
-    //     byte[] arrayBytes = new byte[lengthOriginal];
+        try {
+        RandomAccessFile raf = new RandomAccessFile(BLOCOSGENRE_LIST_NAME, "r");
+        int lengthOriginal = (int) raf.length();
+        byte[] arrayBytes = new byte[lengthOriginal];
 
-    //     for (int i = 0; i < lengthOriginal; i++) {
-    //         arrayBytes[i] = raf.readByte();
-    //     }
+        for (int i = 0; i < lengthOriginal; i++) {
+            arrayBytes[i] = raf.readByte();
+        }
 
-    //     byte[] arqCodificado = LZW.codifica(arrayBytes);
+        byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-    //     int versao = contarVersoes(COMPRESSED_BLOCOSGENRE_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
-    //     String nomeArquivo2 = COMPRESSED_BLOCOSGENRE_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
+        int versao = contarVersoes(COMPRESSED_BLOCOSGENRE_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
+        String nomeArquivo2 = COMPRESSED_BLOCOSGENRE_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
-    //     escreveArquivoLZW(nomeArquivo2, arqCodificado);
+        escreveArquivoLZW(nomeArquivo2, arqCodificado);
         
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return nomeArquivo;
     }
@@ -683,6 +678,15 @@ public static void DecompressHuffman(String nomeArquivo) {
     }
 
     public static void DecompressLZW(String nomeArquivo) {
+        boolean achou = false;
+            int versao = 0;
+            for(int i=nomeArquivo.length()-1;i>0 && !achou;i--) {
+                if (Character.isDigit(nomeArquivo.charAt(i))) {
+                    versao = nomeArquivo.charAt(i);
+                    achou = true; 
+            }
+        }
+        //SEQUENTIAL FILE
         try {  
             FileInputStream fis = new FileInputStream(nomeArquivo);
             
@@ -693,15 +697,152 @@ public static void DecompressHuffman(String nomeArquivo) {
             FileOutputStream fos = new FileOutputStream(FILE_NAME);
 
             fos.write(arqDecodificado);
-
             fis.close();
             fos.close();
 
-        } catch (Exception e) {
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        //BTREE
+        try {  
+            nomeArquivo = COMPRESSED_BTREE_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
+            FileInputStream fis = new FileInputStream(nomeArquivo);
+            
+            byte[] arqComprimido = fis.readAllBytes();
+
+            byte[] arqDecodificado = LZW.decodifica(arqComprimido);
+
+            FileOutputStream fos = new FileOutputStream(BTREE_NAME);
+
+            fos.write(arqDecodificado);
+            fis.close();
+            fos.close();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        //HasHDirectory
+
+        try {  
+            nomeArquivo = COMPRESSED_DIRECTORY_HASH_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
+            FileInputStream fis = new FileInputStream(nomeArquivo);
+            
+            byte[] arqComprimido = fis.readAllBytes();
+
+            byte[] arqDecodificado = LZW.decodifica(arqComprimido);
+
+            FileOutputStream fos = new FileOutputStream(DIRECTORY_HASH);
+
+            fos.write(arqDecodificado);
+            fis.close();
+            fos.close();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        //HashBucket
+
+        try {  
+            nomeArquivo = COMPRESSED_BUCKET_HASH_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
+            FileInputStream fis = new FileInputStream(nomeArquivo);
+            
+            byte[] arqComprimido = fis.readAllBytes();
+
+            byte[] arqDecodificado = LZW.decodifica(arqComprimido);
+
+            FileOutputStream fos = new FileOutputStream(BUCKET_HASH);
+
+            fos.write(arqDecodificado);
+            fis.close();
+            fos.close();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        //DICIONARYLISTNAME
+
+        try {  
+            nomeArquivo = COMPRESSED_DICIONARYNAME_LIST_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
+            FileInputStream fis = new FileInputStream(nomeArquivo);
+            
+            byte[] arqComprimido = fis.readAllBytes();
+
+            byte[] arqDecodificado = LZW.decodifica(arqComprimido);
+
+            FileOutputStream fos = new FileOutputStream(DICIONARYNAME_LIST_NAME);
+
+            fos.write(arqDecodificado);
+            fis.close();
+            fos.close();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        //DICIONARYLISTGENRE
+
+        try {  
+            nomeArquivo = COMPRESSED_DICIONARYGENRE_LIST_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
+            FileInputStream fis = new FileInputStream(nomeArquivo);
+            
+            byte[] arqComprimido = fis.readAllBytes();
+
+            byte[] arqDecodificado = LZW.decodifica(arqComprimido);
+
+            FileOutputStream fos = new FileOutputStream(DICIONARYGENRE_LIST_NAME);
+
+            fos.write(arqDecodificado);
+            fis.close();
+            fos.close();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        //BLOCOSLISTANAME
+
+        try {  
+            nomeArquivo = COMPRESSED_BLOCOSNAME_LIST_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
+            FileInputStream fis = new FileInputStream(nomeArquivo);
+            
+            byte[] arqComprimido = fis.readAllBytes();
+
+            byte[] arqDecodificado = LZW.decodifica(arqComprimido);
+
+            FileOutputStream fos = new FileOutputStream(BLOCOSNAME_LIST_NAME);
+
+            fos.write(arqDecodificado);
+            fis.close();
+            fos.close();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        //BLOCOSLISTAGENRE
+        
+        try {  
+            nomeArquivo = COMPRESSED_BLOCOSGENRE_LIST_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
+            FileInputStream fis = new FileInputStream(nomeArquivo);
+            
+            byte[] arqComprimido = fis.readAllBytes();
+
+            byte[] arqDecodificado = LZW.decodifica(arqComprimido);
+
+            FileOutputStream fos = new FileOutputStream(BLOCOSGENRE_LIST_NAME);
+
+            fos.write(arqDecodificado);
+            fis.close();
+            fos.close();
+
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
-
 
     public static void compararAlgoritmoCompressao(String nomeArquivoHuff, String nomeArquivoLZW, long resultadoHuff, long resultadoLZW) {
         try {
