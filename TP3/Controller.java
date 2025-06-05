@@ -300,7 +300,7 @@ public class Controller {
                 long finalHuffman = System.currentTimeMillis();
                 long resultadoMilliHuff = finalHuffman - inicioHuffman;
                 long inicioLZW = System.currentTimeMillis();
-                SequentialFile.DecompressLZW(nomeArquivoLZW);
+                SequentialFile.DecompressLZW(nomeArquivoLZW, versao);
                 long finalLZW = System.currentTimeMillis();
                 long resultadoLZWMilli = finalLZW - inicioLZW;
                 SequentialFile.compararAlgoritmoDescompressao(resultadoMilliHuff, resultadoLZWMilli);

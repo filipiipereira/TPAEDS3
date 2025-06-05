@@ -677,15 +677,7 @@ public static void DecompressHuffman(String nomeArquivo) {
         }
     }
 
-    public static void DecompressLZW(String nomeArquivo) {
-        boolean achou = false;
-            int versao = 0;
-            for(int i=nomeArquivo.length()-1;i>0 && !achou;i--) {
-                if (Character.isDigit(nomeArquivo.charAt(i))) {
-                    versao = nomeArquivo.charAt(i);
-                    achou = true; 
-            }
-        }
+    public static void DecompressLZW(String nomeArquivo, int versao) {
         //SEQUENTIAL FILE
         try {  
             FileInputStream fis = new FileInputStream(nomeArquivo);
