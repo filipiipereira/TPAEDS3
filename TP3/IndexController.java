@@ -154,19 +154,12 @@ public class IndexController{
             ListaInvertida listaNome = new ListaInvertida(4, DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
             String[] wordsOfOldName = oldMovie.getName().split(" ");
             for(String word : wordsOfOldName) if(word.length() > 3){
-                String wordSemCaracter = filtraLetras(word);
-                if(!wordSemCaracter.equals("")){
-                    System.out.println("Nome: " + wordSemCaracter.toLowerCase().trim() + " ID: " + oldMovie.getId());
-                    listaNome.delete(wordSemCaracter.toLowerCase().trim(), oldMovie.getId());
-                }
-                
+                listaNome.delete(word.toLowerCase().trim(), oldMovie.getId());
             }    
             listaGenre.delete(oldMovie.getGenre().toLowerCase(), oldMovie.getId());
             String[] wordsOfName = newMovie.getName().split(" ");
             for(String word : wordsOfName) if(word.length() > 3){
-                String wordSemCaracter = filtraLetras(word);
-                if(!wordSemCaracter.equals(""))
-                listaNome.create(wordSemCaracter.toLowerCase().trim(), new ElementoLista(newMovie.getId(), pos));
+                listaNome.create(word.toLowerCase().trim(), new ElementoLista(newMovie.getId(), pos));
             }
             listaGenre.create(newMovie.getGenre().toLowerCase(), new ElementoLista(newMovie.getId(), pos));
 
@@ -186,7 +179,6 @@ public class IndexController{
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
             deletado = bTree.delete(new ParIntLong(id,-1));
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return deletado;
     }

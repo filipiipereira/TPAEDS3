@@ -14,10 +14,7 @@ public class KMP {
             StringBuilder sb = new StringBuilder();
             if (j == padrao.length()) {
                 System.out.println("Padrão encontrado na posição: " + (i - j));
-                for(int k=0;k<tamPadrao;k++) {
-                    sb.append(texto.charAt(i-j + k));
-                }
-                System.out.println(sb.toString());
+
                 j = vetorFalha[j - 1];
             } else if (i < texto.length() && padrao.charAt(j) != texto.charAt(i)) {
                 if (j != 0) {

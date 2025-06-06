@@ -90,8 +90,10 @@ public class ArvoreBMais<T extends RegistroArvoreBMais<T>> {
                 out.write(this.elementos.get(i).toByteArray());
                 i++;
             }
-            if (this.filhos.size() > 0)
+            if (this.filhos.size() > 0){
                 out.writeLong(this.filhos.get(i).longValue());
+            }
+ 
             else
                 out.writeLong(-1L);
 
