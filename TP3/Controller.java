@@ -303,8 +303,9 @@ public class Controller {
         int escolha;
         boolean flag;
         do{
-            System.out.print("\n1) KMP\n2)Boyer Moore\nDigite o algoritmo a ser executado: ");
+            System.out.print("\n1) KMP\n2) Boyer Moore\nDigite o algoritmo a ser executado: ");
             escolha = scanner.nextInt();
+            System.out.println("");
             flag = escolha != 1 && escolha != 2;
             if(flag) System.out.println("Opção inválida!");
         }while(flag);

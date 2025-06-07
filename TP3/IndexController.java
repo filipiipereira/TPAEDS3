@@ -17,11 +17,11 @@ public class IndexController{
             String[] wordsOfName = movie.getName().split(" ");
             for(String word : wordsOfName) if(word.length() > 3){
                 String wordSemCaracter = filtraLetras(word);
-                //if(!wordSemCaracter.equals(""))
-                //listName.create(wordSemCaracter.toLowerCase().trim(), new ElementoLista(movie.getId(), pos));
+                if(!wordSemCaracter.equals(""))
+                listName.create(wordSemCaracter.toLowerCase().trim(), new ElementoLista(movie.getId(), pos));
             }
             
-            //listGenre.create(movie.getGenre().toLowerCase(), new ElementoLista(movie.getId(), pos));
+            listGenre.create(movie.getGenre().toLowerCase(), new ElementoLista(movie.getId(), pos));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -186,7 +186,6 @@ public class IndexController{
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
             deletado = bTree.delete(new ParIntLong(id,-1));
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return deletado;
     }
