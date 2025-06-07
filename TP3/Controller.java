@@ -186,6 +186,7 @@ public class Controller {
     public static void Compress() {
         long inicioHuffman = System.currentTimeMillis(); 
         System.out.println("Comprimindo...");
+        System.out.println("");
         String nomeArquivoHuff = SequentialFile.CompressHuffman();
         if(nomeArquivoHuff != null) System.out.println("Compressão Huffman OK");
         else System.out.println("Compressão Huffman ERRO");
@@ -199,6 +200,7 @@ public class Controller {
         long finalLZW = System.currentTimeMillis();
         long resultadoLZWMilli = finalLZW - inicioLZW;
         System.out.println("Compressão Finalizada.");
+        System.out.println("");
         SequentialFile.compararAlgoritmoCompressao(nomeArquivoHuff,nomeArquivoLZW,resultadoMilliHuff,resultadoLZWMilli);
     }
 
@@ -206,7 +208,7 @@ public class Controller {
         int versao;
             System.out.println("Por qual versão deseja descomprimir? Existem " + SequentialFile.contarVersoes(COMPRESSED_LZW_PREFIX, COMPRESSED_SUFFIX) + " versões: ");
             versao = scanner.nextInt();
-                System.out.println("Descomprimindo pela versão: " + versao + "...");
+                System.out.println("Descomprimindo pela versão " + versao + "...");
                 String nomeArquivoLZW = COMPRESSED_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
                 String nomeArquivoHuff = COMPRESSED_HUFFMAN_PREFIX + versao + COMPRESSED_SUFFIX;
                 long inicioHuffman = System.currentTimeMillis(); 
