@@ -10,9 +10,17 @@ import java.util.Scanner;
  * Classe Controller responsável por gerenciar a interação com o usuário e manipular objetos da classe Film.
  */
 public class Controller {
+    private static String FILE_NAME = "SequentialFile.dat";
     private static final String COMPRESSED_HUFFMAN_PREFIX = "SequentialFileHuffManCompress_v";
     private static final String COMPRESSED_SUFFIX = ".dat";
     private static final String COMPRESSED_LZW_PREFIX = "SequentialFileLZWCompress_v";
+    private static final String BTREE_NAME = "tree.dat";
+    private static final String DIRECTORY_HASH = "hashDirectory.dat";
+    private static final String BUCKET_HASH = "hashBuckets.dat";
+    private static final String DICIONARYNAME_LIST_NAME = "dicionaryListName.dat";
+    private static final String BLOCOSNAME_LIST_NAME = "blocosListName.dat";
+    private static final String DICIONARYGENRE_LIST_NAME = "dicionaryGenre.dat";
+    private static final String BLOCOSGENRE_LIST_NAME = "blocosListGenre.dat";
     /**
      * Método responsável por capturar os dados de um filme a partir da entrada do usuário.
      * 
@@ -115,60 +123,12 @@ public class Controller {
      */
 
     public static boolean Update(Scanner scanner) {
-        int index = MenuIndex();
-        boolean flag = false;
-        if(index == 1 | index == 2){
-            System.out.println("Which ID: ");
-            int id = scanner.nextInt();
-            SequentialFile.Get(id, index).toStr();
-            Movie movie = Form(scanner);
-            movie.setId(id);
-            flag = SequentialFile.Update(movie, index);
-        }
-        else{
-            Movie[] lista;
-            int option = MenuLista();
-            scanner.nextLine(); //cleaning buffer
-            System.out.print("Digite a palavra: ");
-            String palavra = scanner.nextLine();
-            if(option == 3) {
-                System.out.print("Digite a segunda palavra: ");
-                String genre = scanner.nextLine();
-                lista = SequentialFile.GetLista(palavra, genre, option);
-            } else {
-                lista = SequentialFile.GetLista(palavra, "",option);
-            }
-            if(lista.length == 0) System.out.println("Nenhum filme encontrado");
-            else if(lista.length == 1){
-                lista[0].toStr();
-                Movie movie = Form(scanner);
-                movie.setId(lista[0].getId());
-                flag = SequentialFile.Update(movie, index);
-            }
-            else{
-                for(Movie m : lista){
-                    m.toStr();
-                }
-                System.out.println("Você escolheu uma palavra utilizada em vários filmes!\nEscolha um dos ID's presente no resultado");
-                int id = scanner.nextInt();
-                boolean find = false;
-                int filmeSelecionado = 0;
-                for(int i = 0; i < lista.length; i++){
-                    if(lista[i].getId() == id){
-                        find = true;
-                        filmeSelecionado = i;
-                    }
-                }
-                if(find){
-                    System.out.println("Filme selecionado:");
-                    lista[filmeSelecionado].toStr();
-                    Movie movie = Form(scanner);
-                    movie.setId(lista[filmeSelecionado].getId());
-                    flag = SequentialFile.Update(movie, index);
-                }
-            }
-        }
-        return flag;
+        System.out.println("Which ID: ");
+        int id = scanner.nextInt();
+        SequentialFile.Get(id, 2).toStr();
+        Movie movie = Form(scanner);
+        movie.setId(id);
+        return SequentialFile.Update(movie);
     }
 
     /**
@@ -178,49 +138,12 @@ public class Controller {
      * @return true se a exclusão foi bem-sucedida, false caso contrário.
      */
 
-    public static boolean Delete(Scanner scanner) {
-        int index = MenuIndex();
+    public static void Delete(Scanner scanner) {
         boolean flag = false;
-        if(index == 1 | index == 2){
-            System.out.println("Which ID: ");
-            int id = scanner.nextInt();
-            flag = SequentialFile.Delete(id, index);
-        }
-        else{
-            Movie[] lista;
-            int option = MenuLista();
-            scanner.nextLine(); //cleaning buffer
-            System.out.print("Digite a palavra: ");
-            String palavra = scanner.nextLine();
-            if(option == 3) {
-                System.out.print("Digite a segunda palavra: ");
-                String genre = scanner.nextLine();
-                lista = SequentialFile.GetLista(palavra, genre, option);
-            } else {
-                lista = SequentialFile.GetLista(palavra, "",option);
-            }
-            if(lista.length == 0) System.out.println("Nenhum filme encontrado");
-            else if(lista.length == 1){
-                flag = SequentialFile.Delete(lista[0].getId(), index);
-            }
-            else{
-                for(Movie m : lista){
-                    m.toStr();
-                }
-                System.out.println("Você escolheu uma palavra utilizada em vários filmes!\nEscolha um dos ID's presente no resultado");
-                int id = scanner.nextInt();
-                boolean find = false;
-                for(int i = 0; i < lista.length; i++){
-                    if(lista[i].getId() == id){
-                        find = true;
-                    }
-                }
-                if(find){
-                    flag = SequentialFile.Delete(id, index);
-                }
-            }
-        }
-        return flag;
+       
+        System.out.println("Which ID: ");
+        int id = scanner.nextInt();
+        flag = SequentialFile.Delete(id);
     }
 
     /**
@@ -262,6 +185,7 @@ public class Controller {
 
     public static void Compress() {
         long inicioHuffman = System.currentTimeMillis(); 
+        System.out.println("Comprimindo...");
         String nomeArquivoHuff = SequentialFile.CompressHuffman();
         if(nomeArquivoHuff != null) System.out.println("Compressão Huffman OK");
         else System.out.println("Compressão Huffman ERRO");
@@ -274,6 +198,7 @@ public class Controller {
         System.out.println("");
         long finalLZW = System.currentTimeMillis();
         long resultadoLZWMilli = finalLZW - inicioLZW;
+        System.out.println("Compressão Finalizada.");
         SequentialFile.compararAlgoritmoCompressao(nomeArquivoHuff,nomeArquivoLZW,resultadoMilliHuff,resultadoLZWMilli);
     }
 
@@ -281,7 +206,7 @@ public class Controller {
         int versao;
             System.out.println("Por qual versão deseja descomprimir? Existem " + SequentialFile.contarVersoes(COMPRESSED_LZW_PREFIX, COMPRESSED_SUFFIX) + " versões: ");
             versao = scanner.nextInt();
-
+                System.out.println("Descomprimindo pela versão: " + versao + "...");
                 String nomeArquivoLZW = COMPRESSED_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
                 String nomeArquivoHuff = COMPRESSED_HUFFMAN_PREFIX + versao + COMPRESSED_SUFFIX;
                 long inicioHuffman = System.currentTimeMillis(); 
@@ -289,12 +214,13 @@ public class Controller {
                 long finalHuffman = System.currentTimeMillis();
                 long resultadoMilliHuff = finalHuffman - inicioHuffman;
                 long inicioLZW = System.currentTimeMillis();
-                SequentialFile.DecompressLZW(nomeArquivoLZW);
+                SequentialFile.DecompressLZW(nomeArquivoLZW, versao);
                 long finalLZW = System.currentTimeMillis();
                 long resultadoLZWMilli = finalLZW - inicioLZW;
+                System.out.println("Descompressão Finalizada.");
                 SequentialFile.compararAlgoritmoDescompressao(resultadoMilliHuff, resultadoLZWMilli);
-            
-    }
+}
+    
 
     public static void Match(Scanner scanner) {
         System.out.print("Digite o padrão a ser buscado: ");

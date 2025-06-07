@@ -1,97 +1,81 @@
 import java.util.HashMap;
-public class BoyerMoore{
-    public static HashMap<Character, Integer> createHash(String padrao){
-        HashMap<Character, Integer> hashMap = new HashMap<>();
-        for(int i = padrao.length() - 2; i >= 0; i--){
-            char caractere = padrao.charAt(i);
-            if(!hashMap.containsKey(caractere)){
-                hashMap.put(caractere, i);
-            }
+
+public class BoyerMoore {
+
+    public static HashMap<Character, Integer> createBadCharTable(String padrao) {
+        HashMap<Character, Integer> tabela = new HashMap<>();
+        for (int i = 0; i < padrao.length(); i++) {
+            tabela.put(padrao.charAt(i), i); // posição mais à direita
         }
-        return hashMap;
+        return tabela;
     }
 
-    public static int[] createArray(String padrao) {
+    public static int[] createGoodSuffixTable(String padrao) {
         int m = padrao.length();
-        int[] sb = new int[m];
-        int[] z = new int[m];
-        
-        // Computa o Z-array do padrão reverso
-        String padraoReverso = new StringBuilder(padrao).reverse().toString();
-        computeZArray(padraoReverso, z);
-        
-        for (int j = 0; j < m; j++) {
-            sb[j] = m; // valor padrão
+        int[] shift = new int[m + 1];
+        int[] border = new int[m + 1];
+
+        int i = m;
+        int j = m + 1;
+        border[i] = j;
+
+        while (i > 0) {
+            while (j <= m && padrao.charAt(i - 1) != padrao.charAt(j - 1)) {
+                if (shift[j] == 0) {
+                    shift[j] = j - i;
+                }
+                j = border[j];
+            }
+            i--;
+            j--;
+            border[i] = j;
         }
 
-        for (int i = m - 1; i >= 0; i--) {
-            int j = m - z[i];
-            if (j < m) {
-                sb[j] = i;
+        for (i = 0; i <= m; i++) {
+            if (shift[i] == 0) {
+                shift[i] = j;
+            }
+            if (i == j) {
+                j = border[j];
             }
         }
 
-        return sb;
+        // remove a posição extra (0 não é usada)
+        int[] finalShift = new int[m];
+        System.arraycopy(shift, 1, finalShift, 0, m);
+        return finalShift;
     }
 
-    // Função auxiliar para calcular o Z-array (usada no sufixo bom)
-    private static void computeZArray(String s, int[] z) {
-        int n = s.length();
-        int l = 0, r = 0;
-        z[0] = n;
-        for (int i = 1; i < n; i++) {
-            if (i > r) {
-                l = r = i;
-                while (r < n && s.charAt(r - l) == s.charAt(r)) {
-                    r++;
-                }
-                z[i] = r - l;
-                r--;
-            } else {
-                int k = i - l;
-                if (z[k] < r - i + 1) {
-                    z[i] = z[k];
-                } else {
-                    l = i;
-                    while (r < n && s.charAt(r - l) == s.charAt(r)) {
-                        r++;
-                    }
-                    z[i] = r - l;
-                    r--;
-                }
-            }
-        }
-    }
-
-    public static void searchPattern(String texto, String padrao){
-        HashMap<Character, Integer> hash_cr = createHash(padrao);
-        int[] array_sb = createArray(padrao);
-        int m = padrao.length();
+    public static void searchPattern(String texto, String padrao) {
         int n = texto.length();
-        int i = m - 1;
+        int m = padrao.length();
+        int quantidadePadrao = 0;
 
-        while(i < n){
+        if (m == 0) return;
+
+        HashMap<Character, Integer> badChar = createBadCharTable(padrao);
+        int[] goodSuffix = createGoodSuffixTable(padrao);
+
+        int i = 0;
+
+        while (i <= n - m) {
             int j = m - 1;
-            int k = i;
 
-            while(j >= 0 && texto.charAt(k) == padrao.charAt(j)){
-                k--;
+            while (j >= 0 && padrao.charAt(j) == texto.charAt(i + j)) {
                 j--;
             }
 
-            if(j < 0){
-                System.out.println("Posição: " + (k + 1));
-                // Move para a próxima possível ocorrência
-                i += m; // ou i += 1 se quiser achar todas
+            if (j < 0) {
+                System.out.println("Padrão encontrado na posição: " + i);
+                quantidadePadrao++;
+                i += goodSuffix[0];  // continuar busca
             } else {
-                char c = texto.charAt(k);
-                int crShift = hash_cr.containsKey(c) ? m - 1 - hash_cr.get(c) : m;
-                int sbShift = array_sb[j];
-                int shift = Math.max(crShift, sbShift);
-                if (shift <= 0) shift = 1; // segurança contra loop infinito
-                i += shift;
+                char c = texto.charAt(i + j);
+                int badCharShift = j - badChar.getOrDefault(c, -1);
+                int goodSuffixShift = goodSuffix[j];
+                i += Math.max(badCharShift, goodSuffixShift);
             }
         }
+        System.out.println("Quantidade de padrões encontrados no arquivo: " + quantidadePadrao);
     }
-
 }

@@ -5,7 +5,7 @@ public class KMP {
         int[] vetorFalha = construirVetorFalha(padrao);
         int i = 0; 
         int j = 0; 
-        int tamPadrao = padrao.length();
+        int quantidadePadrao = 0;
         while (i < texto.length()) {
             if (padrao.charAt(j) == texto.charAt(i)) {
                 i++;
@@ -14,10 +14,7 @@ public class KMP {
             StringBuilder sb = new StringBuilder();
             if (j == padrao.length()) {
                 System.out.println("Padrão encontrado na posição: " + (i - j));
-                for(int k=0;k<tamPadrao;k++) {
-                    sb.append(texto.charAt(i-j + k));
-                }
-                System.out.println(sb.toString());
+                quantidadePadrao++;
                 j = vetorFalha[j - 1];
             } else if (i < texto.length() && padrao.charAt(j) != texto.charAt(i)) {
                 if (j != 0) {
@@ -27,6 +24,7 @@ public class KMP {
                 }
             }
         }
+        System.out.println("Quantidade de padrões encontrados no arquivo: " + quantidadePadrao);
     }
 
     public static int[] construirVetorFalha(String padrao) {

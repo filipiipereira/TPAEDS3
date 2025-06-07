@@ -31,7 +31,7 @@ public class CsvController {
      * e cria objetos da classe Movie, os quais são inseridos em um arquivo sequencial.
      */
     
-     public static void LoadFromCsv() {
+    public static void LoadFromCsv() {
         String line;
         SequentialFile sequentialFile = new SequentialFile();
         System.out.println("Loading...");
