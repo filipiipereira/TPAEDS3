@@ -141,10 +141,4 @@ Na etapa final, o foco foi garantir a confidencialidade dos dados por meio de al
 ---
 
 ## Conclusão
-O projeto permitiu aplicar na prática diversos conceitos teóricos essenciais para o tratamento eficiente de dados. Cada módulo complementou o aprendizado dos anteriores, culminando em uma compreensão sólida sobre armazenamento, busca, compressão, e segurança da informação.  
-Como trabalhos futuros, seria interessante integrar uma interface gráfica, paralelizar alguns processos (como compressão ou criptografia), e aplicar os algoritmos em cenários reais com grandes volumes de dados.
-
----
-
-> Projeto desenvolvido por [Seu Nome].  
-> Para dúvidas ou sugestões, entre em contato via [seu-email@exemplo.com].
+O projeto permitiu aplicar na prática diversos conceitos teóricos essenciais para o tratamento eficiente de dados. Cada entrega complementou o aprendizado dos anteriores, culminando em uma compreensão sólida sobre armazenamento, busca, compressão, e segurança da informação.  
