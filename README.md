@@ -14,7 +14,7 @@ Este projeto tem como objetivo desenvolver os algoritmos aprendidos nessa discip
 
 Durante a disciplina, foram estudados diversos conceitos fundamentais relacionados ao tratamento de dados em arquivos e à segurança da informação. Este projeto busca aplicar esses conhecimentos de forma prática, por meio de quatro módulos principais, que abrangem desde a manipulação de arquivos até algoritmos clássicos de compressão, busca por padrão e criptografia.
 
-O conjunto de dados utilizado no projeto foi extraído da plataforma **Kaggle**, com o arquivo intitulado `"moviesDataSer.csv"`. Esse arquivo contém informações sobre produções cinematográficas e foi utilizado como base para alimentar o sistema e realizar os testes das funcionalidades implementadas.
+O conjunto de dados utilizado no projeto foi extraído da plataforma **Kaggle**, com o arquivo intitulado `"moviesDataSet.csv"`. Esse arquivo contém informações sobre produções cinematográficas e foi utilizado como base para alimentar o sistema e realizar os testes das funcionalidades implementadas.
 
 ### Estrutura dos Dados
 
@@ -40,7 +40,7 @@ Esta etapa teve como foco o armazenamento eficiente de dados em um arquivo seque
 - O arquivo sequencial é gerado a partir de uma base de dados em formato CSV.
 - Os **4 primeiros bytes** do arquivo armazenam o **maior ID já utilizado**, facilitando o controle e a geração de novos registros.
 - Cada registro é composto por:
-  - **Lápide** (`byte`): indica se o registro está ativo (`' '` ou `0`) ou logicamente excluído (`'*'` ou `1`);
+  - **Lápide** (`byte`): indica se o registro está ativo (`0`) ou logicamente excluído (`'*'`);
   - **Indicador de tamanho** (`int`): informa o tamanho total do vetor de bytes do registro;
   - **Vetor de bytes**: contém os dados serializados do objeto (incluindo um campo `ID: int`, adicionado à estrutura original da base).
 
@@ -129,14 +129,14 @@ Na etapa final, o foco foi garantir a confidencialidade dos dados por meio de al
 ### Exemplos de Métricas Obtidas:
 
 | Algoritmo         | Tempo Médio | Observações                                     |
-|------------------|-------------|-------------------------------------------------|
-| Ordenação Externa| 1200 ms     | Arquivo com 1 milhão de registros               |
-| Huffman          | 2:1         | Taxa média de compressão                        |
-| LZW              | 1.8:1       | Alta eficiência com textos repetitivos          |
-| DES              | 300 ms      | Encriptação de arquivo de 1 MB                  |
-| Boyer-Moore      | 50 ms       | Alta performance em buscas com grandes textos   |
-| KMP              | 70 ms       | Desempenho linear, eficiente em qualquer caso   |
-| Cifra de César   | 10 ms       | Algoritmo simples, usado para fins didáticos    |
+|------------------ |-------------|-------------------------------------------------|
+| Ordenação Externa | 1200 ms     | 200 registros por bloco e 5 caminhos            |
+| Compressão Huffman| 3390 ms     | Taxa de Compressão: 0,685                       |
+| Compressão LZW    | 18999 ms    | Taxa de Compressão: 0,599                       |
+| DES               | 300 ms      | Encriptação de arquivo de 1 MB                  |
+| Boyer-Moore       | 50 ms       | Alta performance em buscas com grandes textos   |
+| KMP               | 70 ms       | Desempenho linear, eficiente em qualquer caso   |
+| Cifra de César    | 10 ms       | Algoritmo simples, usado para fins didáticos    |
 
 ---
 
