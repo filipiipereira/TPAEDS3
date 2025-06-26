@@ -133,10 +133,10 @@ Na etapa final, o foco foi garantir a confidencialidade dos dados por meio de al
 | Ordenação Externa | 1200 ms     | 200 registros por bloco e 5 caminhos            |
 | Compressão Huffman| 3390 ms     | Taxa de Compressão: 0,685                       |
 | Compressão LZW    | 18999 ms    | Taxa de Compressão: 0,599                       |
-| DES               | 300 ms      | Encriptação de arquivo de 1 MB                  |
-| Boyer-Moore       | 50 ms       | Alta performance em buscas com grandes textos   |
-| KMP               | 70 ms       | Desempenho linear, eficiente em qualquer caso   |
-| Cifra de César    | 10 ms       | Algoritmo simples, usado para fins didáticos    |
+| Boyer-Moore       | 30 ms       |                      -----                      |
+| KMP               | 43 ms       |                      -----                      |
+| Cifra de César    | 20 ms       | Deslocamento: 3                                 |
+| DES               | 122 ms      |                      -----                      |
 
 ---
 
