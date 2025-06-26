@@ -515,10 +515,8 @@ public static void DecompressHuffman(String nomeArquivo) {
             byte[] descomprimido = Huffman.decodifica(arquivoComprimido, codigos);
 
             FileOutputStream fos = new FileOutputStream(FILE_NAME);
-
-        fos.close();
-
-
+            
+            fos.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -967,8 +965,10 @@ public static void DecompressHuffman(String nomeArquivo) {
 
     public static void Match(String padrao, int escolha) {
         StringBuilder texto = new StringBuilder();
+        if(algoritmoCrip == 1) Criptografia.ciframentoCesarDescriptografar();
+        else Criptografia.descriptografarDES();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
+            BufferedReader br = new BufferedReader(new FileReader(FILE_TEMP));
             String linha;
             while ((linha = br.readLine()) != null) {
                 texto.append(linha).append("\n");
@@ -982,5 +982,12 @@ public static void DecompressHuffman(String nomeArquivo) {
        // System.out.println(texto.toString());
         if(escolha == 1) KMP.procuraPadrao(texto.toString(), padrao);
         else BoyerMoore.searchPattern(texto.toString(), padrao);
+        File arquivoTemp = new File(FILE_TEMP);
+            if (arquivoTemp.exists()) {
+                boolean excluido = arquivoTemp.delete();
+                if (!excluido) {
+                    System.out.println("Não foi possível excluir o arquivo temporário: " + FILE_TEMP);
+                }
+            }
     }
 }
