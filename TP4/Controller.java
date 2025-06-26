@@ -1,3 +1,4 @@
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -10,7 +11,8 @@ import java.util.Scanner;
  * Classe Controller responsável por gerenciar a interação com o usuário e manipular objetos da classe Film.
  */
 public class Controller {
-    private static String FILE_NAME = "SequentialFile.dat";
+    private static final String FILE_NAME = "SequentialFile.dat";
+    private static final String FILE_TEMP = "Temp.dat";
     private static final String COMPRESSED_HUFFMAN_PREFIX = "SequentialFileHuffManCompress_v";
     private static final String COMPRESSED_SUFFIX = ".dat";
     private static final String COMPRESSED_LZW_PREFIX = "SequentialFileLZWCompress_v";
@@ -140,7 +142,6 @@ public class Controller {
 
     public static void Delete(Scanner scanner) {
         boolean flag = false;
-       
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         flag = SequentialFile.Delete(id);
@@ -202,6 +203,13 @@ public class Controller {
         System.out.println("Compressão Finalizada.");
         System.out.println("");
         SequentialFile.compararAlgoritmoCompressao(nomeArquivoHuff,nomeArquivoLZW,resultadoMilliHuff,resultadoLZWMilli);
+        File arquivoTemp = new File(FILE_TEMP);
+            if (arquivoTemp.exists()) {
+                boolean excluido = arquivoTemp.delete();
+                if (!excluido) {
+                    System.out.println("Não foi possível excluir o arquivo temporário (Compress LZW): " + FILE_TEMP);
+                }
+            }
     }
 
     public static void Decompress(Scanner scanner) {

@@ -28,10 +28,10 @@ public class Criptografia {
     private static final byte[] keyBytes = "12345678".getBytes();
 
     /** Caminho do arquivo principal */
-    private static String FILE_NAME = "SequentialFile.dat";
+    private static final String FILE_NAME = "SequentialFile.dat";
 
     /** Caminho do arquivo temporário */
-    private static String FILE_TEMP = "Temp.dat";
+    private static final String FILE_TEMP = "Temp.dat";
 
     /**
      * Define o valor do deslocamento para uso na Cifra de César.
@@ -164,6 +164,8 @@ public class Criptografia {
             // Escrever resultado
             try (FileOutputStream fos = new FileOutputStream(FILE_TEMP)) {
                 fos.write(dadosDescriptografados);
+
+                fos.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
