@@ -1,4 +1,4 @@
-# Projeto Prático - Arquivos Sequenciais, Indexação, Compressão, Casamento de padrões e Criptografia
+# Trabalho Prático - Arquivos Sequenciais, Indexação, Compressão, Casamento de padrões e Criptografia
 
 ## Resumo
 Este projeto tem como objetivo desenvolver os algoritmos aprendidos nessa disciplina. O trabalho foi dividido em 4 entregas:
