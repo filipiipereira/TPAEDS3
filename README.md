@@ -136,9 +136,13 @@ Na etapa final, o foco foi garantir a confidencialidade dos dados por meio de al
 | Boyer-Moore       | 30 ms       |                      -----                      |
 | KMP               | 43 ms       |                      -----                      |
 | Cifra de César    | 20 ms       | Deslocamento: 3                                 |
-| DES               | 122 ms      |                      -----                      |
+| Ciframento DES    | 122 ms      |                      -----                      |
 
 ---
 
 ## Conclusão
 O projeto permitiu aplicar na prática diversos conceitos teóricos essenciais para o tratamento eficiente de dados. Cada entrega complementou o aprendizado dos anteriores, culminando em uma compreensão sólida sobre armazenamento, busca, compressão, e segurança da informação.  
+
+---
+
+> Projeto desenvolvido por Filipi Pereira de Mesquita Faria e Julio Cesar Thurow Buzzi.  
