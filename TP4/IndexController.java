@@ -2,13 +2,15 @@
 import java.util.ArrayList;
 
 public class IndexController{
-    private static final String BTREE_NAME = "tree.dat";
-    private static final String DIRECTORY_HASH = "hashDirectory.dat";
-    private static final String BUCKET_HASH = "hashBuckets.dat";
-    private static final String DICIONARYNAME_LIST_NAME = "dicionaryListName.dat";
-    private static final String BLOCOSNAME_LIST_NAME = "blocosListName.dat";
-    private static final String DICIONARYGENRE_LIST_NAME = "dicionaryGenre.dat";
-    private static final String BLOCOSGENRE_LIST_NAME = "blocosListGenre.dat";
+    private static final String DIR_INDEXS = "Indexs/";
+
+    private static final String BTREE_NAME = DIR_INDEXS + "tree.dat";
+    private static final String DIRECTORY_HASH = DIR_INDEXS + "hashDirectory.dat";
+    private static final String BUCKET_HASH = DIR_INDEXS + "hashBuckets.dat";
+    private static final String DICIONARYNAME_LIST_NAME = DIR_INDEXS + "dicionaryListName.dat";
+    private static final String BLOCOSNAME_LIST_NAME = DIR_INDEXS + "blocosListName.dat";
+    private static final String DICIONARYGENRE_LIST_NAME = DIR_INDEXS + "dicionaryGenre.dat";
+    private static final String BLOCOSGENRE_LIST_NAME = DIR_INDEXS + "blocosListGenre.dat";
 
     public static void Create(Movie movie, long pos, ArvoreBMais bTree, HashExtensivel he, ListaInvertida listName, ListaInvertida listGenre){
         try {

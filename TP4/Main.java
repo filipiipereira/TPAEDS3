@@ -11,12 +11,16 @@ public class Main {
      * @param args Argumentos da linha de comando (não utilizados).
      */
     private static final String FILE_NAME = "SequentialFile.dat";
+    private static final String DIR_INDEXS = "Indexs/";
 
     public static void main(String[] args) {
         int option;
         int index = 0;
         Scanner scanner = new Scanner(System.in);
-        
+        File dir = new File(DIR_INDEXS);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
         do {
             System.out.println("\nMenu: ");
             System.out.println("0) End program");

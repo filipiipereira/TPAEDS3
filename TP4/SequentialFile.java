@@ -20,32 +20,36 @@ public class SequentialFile {
 
     private static int algoritmoCrip;
 
+    private static final String DIR_INDEXS = "Indexs/";
+    private static final String DIR_HUFFMAN = "CompressedHuffman/";
+    private static final String DIR_LZW = "CompressedLZW/";
+
     private static String FILE_NAME = "SequentialFile.dat";
     private static String FILE_TEMP = "temp.dat";
-    private static final String BTREE_NAME = "tree.dat";
-    private static final String DIRECTORY_HASH = "hashDirectory.dat";
-    private static final String BUCKET_HASH = "hashBuckets.dat";
-    private static final String DICIONARYNAME_LIST_NAME = "dicionaryListName.dat";
-    private static final String BLOCOSNAME_LIST_NAME = "blocosListName.dat";
-    private static final String DICIONARYGENRE_LIST_NAME = "dicionaryGenre.dat";
-    private static final String BLOCOSGENRE_LIST_NAME = "blocosListGenre.dat";
-    private static final String COMPRESSED_HUFFMAN_PREFIX = "SequentialFileHuffManCompress_v";
-    private static final String COMPRESSED_LZW_PREFIX = "SequentialFileLZWCompress_v";
+    private static final String BTREE_NAME = DIR_INDEXS + "tree.dat";
+    private static final String DIRECTORY_HASH = DIR_INDEXS + "hashDirectory.dat";
+    private static final String BUCKET_HASH = DIR_INDEXS + "hashBuckets.dat";
+    private static final String DICIONARYNAME_LIST_NAME = DIR_INDEXS + "dicionaryListName.dat";
+    private static final String BLOCOSNAME_LIST_NAME = DIR_INDEXS + "blocosListName.dat";
+    private static final String DICIONARYGENRE_LIST_NAME = DIR_INDEXS + "dicionaryGenre.dat";
+    private static final String BLOCOSGENRE_LIST_NAME = DIR_INDEXS + "blocosListGenre.dat";
+    private static final String COMPRESSED_HUFFMAN_PREFIX = DIR_HUFFMAN + "SequentialFileHuffManCompress_v";
+    private static final String COMPRESSED_LZW_PREFIX = DIR_LZW + "SequentialFileLZWCompress_v";
     private static final String COMPRESSED_SUFFIX = ".dat";
-    private static final String COMPRESSED_BTREE_HUFMANN_PREFIX = "TreeHuffManCompress_v";
-    private static final String COMPRESSED_DIRECTORY_HASH_HUFMANN_PREFIX = "hashDirectoryHuffManCompress_v";
-    private static final String COMPRESSED_BUCKET_HASH_HUFMANN_PREFIX = "hashBucketHuffManCompress_v";
-    private static final String COMPRESSED_DICIONARYNAME_LIST_HUFMANN_PREFIX = "dicionaryListNameHuffManCompress_v";
-    private static final String COMPRESSED_DICIONARYGENRE_LIST_HUFMANN_PREFIX = "dicionaryListGenreHuffManCompress_v";
-    private static final String COMPRESSED_BLOCOSNAME_LIST_HUFMANN_PREFIX = "blocosListNameHuffManCompress_v";
-    private static final String COMPRESSED_BLOCOSGENRE_LIST_HUFMANN_PREFIX = "blocosListaGenreHuffManCompress_v";
-    private static final String COMPRESSED_BTREE_LZW_PREFIX = "TreeLZWCompress_v";
-    private static final String COMPRESSED_DIRECTORY_HASH_LZW_PREFIX = "hashDirectoryLZWCompress_v";
-    private static final String COMPRESSED_BUCKET_HASH_LZW_PREFIX = "hashBucketLZWCompress_v";
-    private static final String COMPRESSED_DICIONARYNAME_LIST_LZW_PREFIX = "dicionaryListNameLZWCompress_v";
-    private static final String COMPRESSED_DICIONARYGENRE_LIST_LZW_PREFIX = "dicionaryListGenreLZWCompress_v";
-    private static final String COMPRESSED_BLOCOSNAME_LIST_LZW_PREFIX = "blocosListNameLZWCompress_v";
-    private static final String COMPRESSED_BLOCOSGENRE_LIST_LZW_PREFIX = "blocosListaGenreLZWCompress_v";
+    private static final String COMPRESSED_BTREE_HUFMANN_PREFIX = DIR_HUFFMAN + "TreeHuffManCompress_v";
+    private static final String COMPRESSED_DIRECTORY_HASH_HUFMANN_PREFIX = DIR_HUFFMAN + "hashDirectoryHuffManCompress_v";
+    private static final String COMPRESSED_BUCKET_HASH_HUFMANN_PREFIX = DIR_HUFFMAN + "hashBucketHuffManCompress_v";
+    private static final String COMPRESSED_DICIONARYNAME_LIST_HUFMANN_PREFIX = DIR_HUFFMAN + "dicionaryListNameHuffManCompress_v";
+    private static final String COMPRESSED_DICIONARYGENRE_LIST_HUFMANN_PREFIX = DIR_HUFFMAN + "dicionaryListGenreHuffManCompress_v";
+    private static final String COMPRESSED_BLOCOSNAME_LIST_HUFMANN_PREFIX = DIR_HUFFMAN + "blocosListNameHuffManCompress_v";
+    private static final String COMPRESSED_BLOCOSGENRE_LIST_HUFMANN_PREFIX = DIR_HUFFMAN + "blocosListaGenreHuffManCompress_v";
+    private static final String COMPRESSED_BTREE_LZW_PREFIX = DIR_LZW + "TreeLZWCompress_v";
+    private static final String COMPRESSED_DIRECTORY_HASH_LZW_PREFIX = DIR_LZW + "hashDirectoryLZWCompress_v";
+    private static final String COMPRESSED_BUCKET_HASH_LZW_PREFIX = DIR_LZW + "hashBucketLZWCompress_v";
+    private static final String COMPRESSED_DICIONARYNAME_LIST_LZW_PREFIX = DIR_LZW + "dicionaryListNameLZWCompress_v";
+    private static final String COMPRESSED_DICIONARYGENRE_LIST_LZW_PREFIX = DIR_LZW + "dicionaryListGenreLZWCompress_v";
+    private static final String COMPRESSED_BLOCOSNAME_LIST_LZW_PREFIX = DIR_LZW + "blocosListNameLZWCompress_v";
+    private static final String COMPRESSED_BLOCOSGENRE_LIST_LZW_PREFIX = DIR_LZW + "blocosListaGenreLZWCompress_v";
 
     private static int numberOfMovies = 0;
 
@@ -314,6 +318,8 @@ public class SequentialFile {
 
     public static String CompressHuffman() {
         String nomeArquivo = null;
+        String[] dividirArquivo = COMPRESSED_HUFFMAN_PREFIX.split("/");
+        int versao = contarVersoesHuff(dividirArquivo[1], COMPRESSED_SUFFIX);
         try {
         RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
         int lengthOriginal = (int) raf.length();
@@ -327,7 +333,6 @@ public class SequentialFile {
 
         byte[] vb = Huffman.codifica(arrayBytes, codigos);
         //System.out.println(vb);
-        int versao = contarVersoes(COMPRESSED_HUFFMAN_PREFIX, COMPRESSED_SUFFIX);
         nomeArquivo = COMPRESSED_HUFFMAN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
         escreveArquivoHuff(nomeArquivo, codigos, vb);
         }
@@ -347,7 +352,6 @@ public class SequentialFile {
         HashMap<Byte, String> codigosBtree = Huffman.geraCodigos(arrayBytes);
 
         byte[] vb1 = Huffman.codifica(arrayBytes, codigosBtree);
-        int versao = contarVersoes(COMPRESSED_BTREE_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
         String nomeArquivobtree = COMPRESSED_BTREE_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
         escreveArquivoHuff(nomeArquivobtree, codigosBtree, vb1);
         rafBTREE.close();
@@ -367,7 +371,6 @@ public class SequentialFile {
         HashMap<Byte, String> codigosDirectory = Huffman.geraCodigos(arrayBytes);
 
         byte[] vb = Huffman.codifica(arrayBytes, codigosDirectory);
-        int versao = contarVersoes(COMPRESSED_DIRECTORY_HASH_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
         String nomeArquivobtree = COMPRESSED_DIRECTORY_HASH_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
         escreveArquivoHuff(nomeArquivobtree, codigosDirectory, vb);
         rafDirectory.close();
@@ -387,7 +390,6 @@ public class SequentialFile {
         HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
         byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-        int versao = contarVersoes(COMPRESSED_BUCKET_HASH_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
         String nomeArquivobtree = COMPRESSED_BUCKET_HASH_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
         escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
         rafBucket.close();
@@ -407,7 +409,6 @@ public class SequentialFile {
         HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
         byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-        int versao = contarVersoes(COMPRESSED_DICIONARYNAME_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
         String nomeArquivobtree = COMPRESSED_DICIONARYNAME_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
         escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
         rafBucket.close();
@@ -427,7 +428,6 @@ public class SequentialFile {
         HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
         byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-        int versao = contarVersoes(COMPRESSED_DICIONARYGENRE_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
         String nomeArquivobtree = COMPRESSED_DICIONARYGENRE_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
         escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
         rafBucket.close();
@@ -447,7 +447,6 @@ public class SequentialFile {
         HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
         byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-        int versao = contarVersoes(COMPRESSED_BLOCOSNAME_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
         String nomeArquivobtree = COMPRESSED_BLOCOSNAME_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
         escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
         rafBucket.close();
@@ -467,7 +466,6 @@ public class SequentialFile {
         HashMap<Byte, String> codigosBucket = Huffman.geraCodigos(arrayBytes);
 
         byte[] vb = Huffman.codifica(arrayBytes, codigosBucket);
-        int versao = contarVersoes(COMPRESSED_BLOCOSGENRE_LIST_HUFMANN_PREFIX, COMPRESSED_SUFFIX);
         String nomeArquivobtree = COMPRESSED_BLOCOSGENRE_LIST_HUFMANN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
         escreveArquivoHuff(nomeArquivobtree, codigosBucket, vb);
         rafBucket.close();
@@ -525,6 +523,8 @@ public static void DecompressHuffman(String nomeArquivo) {
 
     public static String CompressLZW() {
         String nomeArquivo = null;
+        String[] dividirArquivo = COMPRESSED_LZW_PREFIX.split("/");
+        int versao = contarVersoesLZW(dividirArquivo[1], COMPRESSED_SUFFIX);
         try {
         RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
         int lengthOriginal = (int) raf.length();
@@ -535,8 +535,7 @@ public static void DecompressHuffman(String nomeArquivo) {
         }
 
         byte[] arqCodificado = LZW.codifica(arrayBytes);
-
-        int versao = contarVersoes(COMPRESSED_LZW_PREFIX, COMPRESSED_SUFFIX);
+        dividirArquivo = COMPRESSED_HUFFMAN_PREFIX.split("/");
         nomeArquivo = COMPRESSED_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
         escreveArquivoLZW(nomeArquivo, arqCodificado);
@@ -557,7 +556,7 @@ public static void DecompressHuffman(String nomeArquivo) {
 
         byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-        int versao = contarVersoes(COMPRESSED_BTREE_LZW_PREFIX, COMPRESSED_SUFFIX);
+        dividirArquivo = COMPRESSED_BTREE_HUFMANN_PREFIX.split("/");
         String nomeArquivo2 = COMPRESSED_BTREE_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
         escreveArquivoLZW(nomeArquivo2, arqCodificado);
@@ -578,7 +577,7 @@ public static void DecompressHuffman(String nomeArquivo) {
 
         byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-        int versao = contarVersoes(COMPRESSED_DIRECTORY_HASH_LZW_PREFIX, COMPRESSED_SUFFIX);
+        dividirArquivo = COMPRESSED_DIRECTORY_HASH_HUFMANN_PREFIX.split("/");
         String nomeArquivo2 = COMPRESSED_DIRECTORY_HASH_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
         escreveArquivoLZW(nomeArquivo2, arqCodificado);
@@ -600,7 +599,7 @@ public static void DecompressHuffman(String nomeArquivo) {
 
         byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-        int versao = contarVersoes(COMPRESSED_BUCKET_HASH_LZW_PREFIX, COMPRESSED_SUFFIX);
+        dividirArquivo = COMPRESSED_BUCKET_HASH_HUFMANN_PREFIX.split("/");
         String nomeArquivo2 = COMPRESSED_BUCKET_HASH_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
         escreveArquivoLZW(nomeArquivo2, arqCodificado);
@@ -622,7 +621,7 @@ public static void DecompressHuffman(String nomeArquivo) {
 
         byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-        int versao = contarVersoes(COMPRESSED_DICIONARYNAME_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
+        dividirArquivo = COMPRESSED_DICIONARYNAME_LIST_HUFMANN_PREFIX.split("/");
         String nomeArquivo2 = COMPRESSED_DICIONARYNAME_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
         escreveArquivoLZW(nomeArquivo2, arqCodificado);
@@ -643,7 +642,7 @@ public static void DecompressHuffman(String nomeArquivo) {
 
         byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-        int versao = contarVersoes(COMPRESSED_DICIONARYGENRE_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
+        dividirArquivo = COMPRESSED_DICIONARYGENRE_LIST_HUFMANN_PREFIX.split("/");
         String nomeArquivo2 = COMPRESSED_DICIONARYGENRE_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
         escreveArquivoLZW(nomeArquivo2, arqCodificado);
@@ -665,7 +664,7 @@ public static void DecompressHuffman(String nomeArquivo) {
 
         byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-        int versao = contarVersoes(COMPRESSED_BLOCOSNAME_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
+        dividirArquivo = COMPRESSED_BLOCOSNAME_LIST_HUFMANN_PREFIX.split("/");
         String nomeArquivo2 = COMPRESSED_BLOCOSNAME_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
         escreveArquivoLZW(nomeArquivo2, arqCodificado);
@@ -687,7 +686,7 @@ public static void DecompressHuffman(String nomeArquivo) {
 
         byte[] arqCodificado = LZW.codifica(arrayBytes);
 
-        int versao = contarVersoes(COMPRESSED_BLOCOSGENRE_LIST_LZW_PREFIX, COMPRESSED_SUFFIX);
+        dividirArquivo = COMPRESSED_BLOCOSGENRE_LIST_HUFMANN_PREFIX.split("/");
         String nomeArquivo2 = COMPRESSED_BLOCOSGENRE_LIST_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
         escreveArquivoLZW(nomeArquivo2, arqCodificado);
@@ -949,8 +948,8 @@ public static void DecompressHuffman(String nomeArquivo) {
         
     }
 
-    public static int contarVersoes(String prefixo, String sufixo) {
-    File pasta = new File(".");
+    public static int contarVersoesHuff(String prefixo, String sufixo) {
+    File pasta = new File(DIR_HUFFMAN);
     File[] arquivos = pasta.listFiles();
     int contador = 0;
     if (arquivos != null) {
@@ -960,6 +959,22 @@ public static void DecompressHuffman(String nomeArquivo) {
             }
         }
     }
+    System.out.println("CONTAR VERSOES: "+ contador);
+    return contador;
+}
+
+    public static int contarVersoesLZW(String prefixo, String sufixo) {
+    File pasta = new File(DIR_LZW);
+    File[] arquivos = pasta.listFiles();
+    int contador = 0;
+    if (arquivos != null) {
+        for (File f : arquivos) {
+            if (f.getName().startsWith(prefixo) && f.getName().endsWith(sufixo)) {
+                contador++;
+            }
+        }
+    }
+    System.out.println("CONTAR VERSOES: "+ contador);
     return contador;
 }
 

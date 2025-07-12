@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
@@ -15,16 +16,19 @@ public class CsvController {
     /**
      * Nome do arquivo CSV a ser carregado.
      */
+
+    private static final String DIR_INDEXS = "Indexs/";
+
     private static final String CSV_NAME = "moviesDataSet.csv";
     private static final String FILE_NAME = "SequentialFile.dat";
     private static final String FILE_TEMP = "Temp.dat";
-    private static final String BTREE_NAME = "tree.dat";
-    private static final String DIRECTORY_HASH = "hashDirectory.dat";
-    private static final String BUCKET_HASH = "hashBuckets.dat";
-    private static final String DICIONARYNAME_LIST_NAME = "dicionaryListName.dat";
-    private static final String BLOCOSNAME_LIST_NAME = "blocosListName.dat";
-    private static final String DICIONARYGENRE_LIST_NAME = "dicionaryGenre.dat";
-    private static final String BLOCOSGENRE_LIST_NAME = "blocosListGenre.dat";
+    private static final String BTREE_NAME = DIR_INDEXS + "tree.dat";
+    private static final String DIRECTORY_HASH = DIR_INDEXS + "hashDirectory.dat";
+    private static final String BUCKET_HASH = DIR_INDEXS + "hashBuckets.dat";
+    private static final String DICIONARYNAME_LIST_NAME = DIR_INDEXS + "dicionaryListName.dat";
+    private static final String BLOCOSNAME_LIST_NAME = DIR_INDEXS + "blocosListName.dat";
+    private static final String DICIONARYGENRE_LIST_NAME = DIR_INDEXS + "dicionaryGenre.dat";
+    private static final String BLOCOSGENRE_LIST_NAME = DIR_INDEXS + "blocosListGenre.dat";
 
     /**
      * Método para carregar os dados do arquivo CSV e inseri-los em um arquivo sequencial.
@@ -32,7 +36,6 @@ public class CsvController {
      * O método faz a leitura linha por linha do arquivo, processa os dados, converte tipos quando necessário
      * e cria objetos da classe Movie, os quais são inseridos em um arquivo sequencial.
      */
-    
     public static void LoadFromCsv(Scanner scanner) {
         String line;
         SequentialFile sequentialFile = new SequentialFile();
@@ -41,7 +44,7 @@ public class CsvController {
             ArvoreBMais bTree = new ArvoreBMais<>(ParIntLong.class.getConstructor(), 5, BTREE_NAME);
             HashExtensivel<ParIntLongHash> he = new HashExtensivel<>(ParIntLongHash.class.getConstructor(), 10, DIRECTORY_HASH,
             BUCKET_HASH);
-            ListaInvertida listName = new ListaInvertida(4, DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
+            ListaInvertida listName = new ListaInvertida(4,  DICIONARYNAME_LIST_NAME, BLOCOSNAME_LIST_NAME);
             ListaInvertida listGenre = new ListaInvertida(4, DICIONARYGENRE_LIST_NAME, BLOCOSGENRE_LIST_NAME);
             try (BufferedReader br = new BufferedReader(new FileReader(CSV_NAME))) {
                 br.readLine(); // Ignora o cabeçalho
@@ -74,7 +77,6 @@ public class CsvController {
             Criptografia.setDeslocamento(deslocamento);
             Criptografia.ciframentoCesarCriptografar();
         } else Criptografia.criptografarDES();
-        
         System.out.println("Load completed");
     }
 

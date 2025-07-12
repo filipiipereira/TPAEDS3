@@ -1,3 +1,4 @@
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -10,6 +11,8 @@ import java.util.Scanner;
  * Classe Controller responsável por gerenciar a interação com o usuário e manipular objetos da classe Film.
  */
 public class Controller {
+    private static final String DIR_HUFFMAN = "CompressedHuffman/";
+    private static final String DIR_LZW = "CompressedLZW/";
     private static String FILE_NAME = "SequentialFile.dat";
     private static final String COMPRESSED_HUFFMAN_PREFIX = "SequentialFileHuffManCompress_v";
     private static final String COMPRESSED_SUFFIX = ".dat";
@@ -140,7 +143,6 @@ public class Controller {
 
     public static void Delete(Scanner scanner) {
         boolean flag = false;
-       
         System.out.println("Which ID: ");
         int id = scanner.nextInt();
         flag = SequentialFile.Delete(id);
@@ -184,6 +186,14 @@ public class Controller {
     }
 
     public static void Compress() {
+        File dir = new File(DIR_HUFFMAN);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File dir2 = new File(DIR_LZW);
+        if (!dir2.exists()) {
+            dir2.mkdirs();
+        }
         long inicioHuffman = System.currentTimeMillis(); 
         System.out.println("Comprimindo...");
         System.out.println("");
@@ -206,11 +216,11 @@ public class Controller {
 
     public static void Decompress(Scanner scanner) {
         int versao;
-            System.out.println("Por qual versão deseja descomprimir? Existem " + SequentialFile.contarVersoes(COMPRESSED_LZW_PREFIX, COMPRESSED_SUFFIX) + " versões: ");
+            System.out.println("Por qual versão deseja descomprimir? Existem " + SequentialFile.contarVersoesLZW(COMPRESSED_LZW_PREFIX, COMPRESSED_SUFFIX) + " versões: ");
             versao = scanner.nextInt();
                 System.out.println("Descomprimindo pela versão " + versao + "...");
-                String nomeArquivoLZW = COMPRESSED_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
-                String nomeArquivoHuff = COMPRESSED_HUFFMAN_PREFIX + versao + COMPRESSED_SUFFIX;
+                String nomeArquivoLZW = DIR_LZW + COMPRESSED_LZW_PREFIX + versao + COMPRESSED_SUFFIX;
+                String nomeArquivoHuff = DIR_HUFFMAN + COMPRESSED_HUFFMAN_PREFIX + versao + COMPRESSED_SUFFIX;
                 long inicioHuffman = System.currentTimeMillis(); 
                 SequentialFile.DecompressHuffman(nomeArquivoHuff); 
                 long finalHuffman = System.currentTimeMillis();
