@@ -990,7 +990,6 @@ public static void DecompressHuffman(String nomeArquivo) {
             }
         }
     }
-    System.out.println("CONTAR VERSOES: "+ contador);
     return contador;
 }
 
@@ -1005,7 +1004,6 @@ public static void DecompressHuffman(String nomeArquivo) {
             }
         }
     }
-    System.out.println("CONTAR VERSOES: "+ contador);
     return contador;
 }
 
