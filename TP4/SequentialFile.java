@@ -317,11 +317,14 @@ public class SequentialFile {
     }
 
     public static String CompressHuffman() {
+        if(algoritmoCrip == 1) {
+            Criptografia.ciframentoCesarDescriptografar();
+        } else Criptografia.descriptografarDES();
         String nomeArquivo = null;
         String[] dividirArquivo = COMPRESSED_HUFFMAN_PREFIX.split("/");
         int versao = contarVersoesHuff(dividirArquivo[1], COMPRESSED_SUFFIX);
         try {
-        RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+        RandomAccessFile raf = new RandomAccessFile(FILE_TEMP, "r");
         int lengthOriginal = (int) raf.length();
         byte[] arrayBytes = new byte[lengthOriginal];
 
@@ -335,8 +338,8 @@ public class SequentialFile {
         //System.out.println(vb);
         nomeArquivo = COMPRESSED_HUFFMAN_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
         escreveArquivoHuff(nomeArquivo, codigos, vb);
-        }
-        catch (Exception e) {
+
+        }catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -512,10 +515,27 @@ public static void DecompressHuffman(String nomeArquivo) {
 
             byte[] descomprimido = Huffman.decodifica(arquivoComprimido, codigos);
 
-            FileOutputStream fos = new FileOutputStream(FILE_NAME);
+            File arquivoTemp = new File(FILE_TEMP);
+            if (arquivoTemp.exists()) {
+                boolean excluido = arquivoTemp.delete();
+                if (!excluido) {
+                    System.out.println("Não foi possível excluir o arquivo temporário (Decompress Huffman 1): " + FILE_TEMP);
+                }
+            }
+
+            FileOutputStream fos = new FileOutputStream(FILE_TEMP);
             
             fos.close();
+            if(algoritmoCrip == 1) Criptografia.ciframentoCesarCriptografar();
+            else Criptografia.criptografarDES();
 
+            File arquivoTemp2 = new File(FILE_TEMP);
+            if (arquivoTemp2.exists()) {
+                boolean excluido = arquivoTemp.delete();
+                if (!excluido) {
+                    System.out.println("Não foi possível excluir o arquivo temporário (Decompress Huffman 2): " + FILE_TEMP);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -526,7 +546,7 @@ public static void DecompressHuffman(String nomeArquivo) {
         String[] dividirArquivo = COMPRESSED_LZW_PREFIX.split("/");
         int versao = contarVersoesLZW(dividirArquivo[1], COMPRESSED_SUFFIX);
         try {
-        RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "r");
+        RandomAccessFile raf = new RandomAccessFile(FILE_TEMP, "r");
         int lengthOriginal = (int) raf.length();
         byte[] arrayBytes = new byte[lengthOriginal];
 
@@ -539,7 +559,7 @@ public static void DecompressHuffman(String nomeArquivo) {
         nomeArquivo = COMPRESSED_LZW_PREFIX + (versao + 1) + COMPRESSED_SUFFIX;
 
         escreveArquivoLZW(nomeArquivo, arqCodificado);
-        
+        raf.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -717,11 +737,22 @@ public static void DecompressHuffman(String nomeArquivo) {
 
             byte[] arqDecodificado = LZW.decodifica(arqComprimido);
 
-            FileOutputStream fos = new FileOutputStream(FILE_NAME);
+            FileOutputStream fos = new FileOutputStream(FILE_TEMP);
 
             fos.write(arqDecodificado);
             fis.close();
             fos.close();
+
+            if(algoritmoCrip == 1) Criptografia.ciframentoCesarCriptografar();
+            else Criptografia.criptografarDES();
+
+            File arquivoTemp = new File(FILE_TEMP);
+            if (arquivoTemp.exists()) {
+                boolean excluido = arquivoTemp.delete();
+                if (!excluido) {
+                    System.out.println("Não foi possível excluir o arquivo temporário (Decompress LZW): " + FILE_TEMP);
+                }
+            }
 
         } catch(Exception e) {
             e.printStackTrace();

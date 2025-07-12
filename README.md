@@ -3,10 +3,17 @@
 ## Resumo
 Este projeto tem como objetivo desenvolver os algoritmos aprendidos nessa disciplina. O trabalho foi dividido em 4 entregas:
 
-- **TP1:** CRUD e ordenação externa de arquivo sequencial.
-- **TP2:** Utilizar arquivo indexado com Árvore B+, Hash e Lista Invertida para melhoria de performance.
-- **TP3:** Compactação com algoritmos Huffman e LZW e casamento de padrão com algoritmos Boyer-Moore e KMP.  
-- **TP4:** Criptografia com algoritmos de Ciframento de César e DES (Data Encryption Standard).
+- **TP1:** CRUD e ordenação externa de arquivo sequencial  
+  - [Apresentação TP1](https://youtu.be/WxskxHvtQbI)
+
+- **TP2:** Utilizar arquivo indexado com Árvore B+, Hash e Lista Invertida para melhoria de performance  
+  - [Apresentação TP2](https://youtu.be/Cc_nQoN8HO0)
+
+- **TP3:** Compactação com algoritmos Huffman e LZW e casamento de padrão com algoritmos Boyer-Moore e KMP  
+  - [Apresentação TP3](https://youtu.be/gSDt1Ph816o)
+
+- **TP4:** Criptografia com algoritmos de Ciframento de César e DES (Data Encryption Standard)  
+  - [Apresentação TP4](https://youtu.be/PVqWXxWlFmM)
 
 ---
 

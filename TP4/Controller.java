@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -13,6 +14,7 @@ import java.util.Scanner;
 public class Controller {
     private static final String DIR_HUFFMAN = "CompressedHuffman/";
     private static final String DIR_LZW = "CompressedLZW/";
+    private static String FILE_TEMP = "temp.dat";
     private static String FILE_NAME = "SequentialFile.dat";
     private static final String COMPRESSED_HUFFMAN_PREFIX = "SequentialFileHuffManCompress_v";
     private static final String COMPRESSED_SUFFIX = ".dat";
@@ -212,6 +214,13 @@ public class Controller {
         System.out.println("Compressão Finalizada.");
         System.out.println("");
         SequentialFile.compararAlgoritmoCompressao(nomeArquivoHuff,nomeArquivoLZW,resultadoMilliHuff,resultadoLZWMilli);
+        File arquivoTemp = new File(FILE_TEMP);
+            if (arquivoTemp.exists()) {
+                boolean excluido = arquivoTemp.delete();
+                if (!excluido) {
+                    System.out.println("Não foi possível excluir o arquivo temporário (Compress LZW): " + FILE_TEMP);
+                }
+            }
     }
 
     public static void Decompress(Scanner scanner) {
